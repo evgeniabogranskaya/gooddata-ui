@@ -1,0 +1,28 @@
+{
+  "events": {
+    "items": [
+      {
+        "event": {
+          "id": "123",
+          "domain": "default",
+          "userId": "user123",
+          "timestamp":"1993-09-03T00:00:00.000Z"
+        }
+      },
+      {
+        "event": {
+          "id": "456",
+          "domain": "default",
+          "userId": "user123",
+          "timestamp":"1993-09-03T00:00:00.000Z"
+        }
+      }
+    ],
+    "paging": {
+      "next": "/gdc/audit/admin/events?offset=456&limit=100"
+    },
+    "links": {
+      "self": "/gdc/audit/events"
+    }
+  }
+}
