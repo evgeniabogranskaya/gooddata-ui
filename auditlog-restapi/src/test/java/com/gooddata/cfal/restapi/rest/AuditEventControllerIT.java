@@ -9,7 +9,7 @@ import com.gooddata.c4.user.C4User;
 import com.gooddata.c4.user.UserService;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.model.AuditEvent;
-import com.gooddata.cfal.restapi.repository.AuditEventRepository;
+import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import com.gooddata.cfal.restapi.util.EntityDTOIdMatcher;
 import com.gooddata.collections.PageRequest;
 import com.gooddata.exception.servlet.ErrorStructure;
@@ -63,7 +63,7 @@ public class AuditEventControllerIT {
     private TestRestTemplate testRestTemplate;
 
     @Autowired
-    private AuditEventRepository auditEventRepository;
+    private AuditLogEventRepository auditLogEventRepository;
 
     private AuditEvent event1 = new AuditEvent(DOMAIN, USER1, new DateTime());
     private AuditEvent event2 = new AuditEvent(DOMAIN, USER2, new DateTime());
@@ -78,14 +78,14 @@ public class AuditEventControllerIT {
 
     @Before
     public void setUp() {
-        auditEventRepository.deleteAllByDomain(DOMAIN);
+        auditLogEventRepository.deleteAllByDomain(DOMAIN);
 
-        auditEventRepository.save(event1);
-        auditEventRepository.save(event2);
-        auditEventRepository.save(event3);
-        auditEventRepository.save(event3);
-        auditEventRepository.save(event4);
-        auditEventRepository.save(event5);
+        auditLogEventRepository.save(event1);
+        auditLogEventRepository.save(event2);
+        auditLogEventRepository.save(event3);
+        auditLogEventRepository.save(event3);
+        auditLogEventRepository.save(event4);
+        auditLogEventRepository.save(event5);
 
         c4User1 = mock(C4User.class);
         c4User2 = mock(C4User.class);

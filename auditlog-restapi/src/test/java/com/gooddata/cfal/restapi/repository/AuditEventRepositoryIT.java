@@ -40,7 +40,7 @@ public class AuditEventRepositoryIT {
     private static final String USER2 = RandomStringUtils.randomAlphabetic(10);
 
     @Autowired
-    private AuditEventRepository auditEventRepository;
+    private AuditLogEventRepository auditLogEventRepository;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -65,7 +65,7 @@ public class AuditEventRepositoryIT {
 
     @Test
     public void testFindByDomain() {
-        List<AuditEvent> events = auditEventRepository.findByDomain(DOMAIN1, 10, null);
+        List<AuditEvent> events = auditLogEventRepository.findByDomain(DOMAIN1, 10, null);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, containsInAnyOrder(EntityIdMatcher.hasSameIdAs(event1), EntityIdMatcher.hasSameIdAs(event2), EntityIdMatcher.hasSameIdAs(event3)));
@@ -73,7 +73,7 @@ public class AuditEventRepositoryIT {
 
     @Test
     public void testFindByDomainHitPageLimit() {
-        List<AuditEvent> events = auditEventRepository.findByDomain(DOMAIN1, 2, null);
+        List<AuditEvent> events = auditLogEventRepository.findByDomain(DOMAIN1, 2, null);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, containsInAnyOrder(EntityIdMatcher.hasSameIdAs(event1), EntityIdMatcher.hasSameIdAs(event2)));
@@ -81,7 +81,7 @@ public class AuditEventRepositoryIT {
 
     @Test
     public void testFindByDomainNextPage() {
-        List<AuditEvent> events = auditEventRepository.findByDomain(DOMAIN1, 2, event2.getId());
+        List<AuditEvent> events = auditLogEventRepository.findByDomain(DOMAIN1, 2, event2.getId());
 
         assertThat(events, is(notNullValue()));
         assertThat(events, Matchers.contains(EntityIdMatcher.hasSameIdAs(event3)));
@@ -89,7 +89,7 @@ public class AuditEventRepositoryIT {
 
     @Test
     public void testFindByDomainWithNotExistentOffset() {
-        List<AuditEvent> events = auditEventRepository.findByDomain(DOMAIN1, 2, new ObjectId());
+        List<AuditEvent> events = auditLogEventRepository.findByDomain(DOMAIN1, 2, new ObjectId());
 
         assertThat(events, is(notNullValue()));
         assertThat(events, hasSize(0));
@@ -99,28 +99,28 @@ public class AuditEventRepositoryIT {
     public void testSave() {
         AuditEvent test = new AuditEvent(DOMAIN2, USER1, new DateTime());
 
-        auditEventRepository.save(test);
+        auditLogEventRepository.save(test);
 
         assertThat(test.getId(), is(notNullValue()));
     }
 
     @Test
     public void testDeleteAll() {
-        auditEventRepository.save(new AuditEvent(DOMAIN2, USER2, new DateTime()));
+        auditLogEventRepository.save(new AuditEvent(DOMAIN2, USER2, new DateTime()));
 
-        auditEventRepository.deleteAllByDomain(DOMAIN2);
+        auditLogEventRepository.deleteAllByDomain(DOMAIN2);
 
         assertThat(mongoTemplate.findAll(AuditEvent.class, DOMAIN2), hasSize(0));
     }
 
     @Test
     public void testFindByDomainAndUser() {
-        List<AuditEvent> eventsUser1 = auditEventRepository.findByDomainAndUser(DOMAIN1, USER1, 10, null);
+        List<AuditEvent> eventsUser1 = auditLogEventRepository.findByDomainAndUser(DOMAIN1, USER1, 10, null);
 
         assertThat(eventsUser1, is(notNullValue()));
         assertThat(eventsUser1, containsInAnyOrder(EntityIdMatcher.hasSameIdAs(event1), EntityIdMatcher.hasSameIdAs(event3)));
 
-        List<AuditEvent> eventsUser2 = auditEventRepository.findByDomainAndUser(DOMAIN1, USER2, 10, null);
+        List<AuditEvent> eventsUser2 = auditLogEventRepository.findByDomainAndUser(DOMAIN1, USER2, 10, null);
 
         assertThat(eventsUser2, is(notNullValue()));
         assertThat(eventsUser2, Matchers.contains(EntityIdMatcher.hasSameIdAs(event2)));
@@ -128,12 +128,12 @@ public class AuditEventRepositoryIT {
 
     @Test
     public void testFindByDomainAndUserWithOffset() {
-        List<AuditEvent> eventsUser1 = auditEventRepository.findByDomainAndUser(DOMAIN1, USER1, 10, event1.getId());
+        List<AuditEvent> eventsUser1 = auditLogEventRepository.findByDomainAndUser(DOMAIN1, USER1, 10, event1.getId());
 
         assertThat(eventsUser1, is(notNullValue()));
         assertThat(eventsUser1, Matchers.contains(EntityIdMatcher.hasSameIdAs(event3)));
 
-        List<AuditEvent> eventsUser2 = auditEventRepository.findByDomainAndUser(DOMAIN1, USER2, 10, event2.getId());
+        List<AuditEvent> eventsUser2 = auditLogEventRepository.findByDomainAndUser(DOMAIN1, USER2, 10, event2.getId());
 
         assertThat(eventsUser2, is(notNullValue()));
         assertThat(eventsUser2, hasSize(0));
@@ -141,17 +141,17 @@ public class AuditEventRepositoryIT {
 
     @Test
     public void testFindByDomainAndUserMultiplePages() {
-        List<AuditEvent> firstPage = auditEventRepository.findByDomainAndUser(DOMAIN1, USER1, 1, null);
+        List<AuditEvent> firstPage = auditLogEventRepository.findByDomainAndUser(DOMAIN1, USER1, 1, null);
 
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage, Matchers.contains(EntityIdMatcher.hasSameIdAs(event1)));
 
-        List<AuditEvent> secondPage = auditEventRepository.findByDomainAndUser(DOMAIN1, USER1, 1, event1.getId());
+        List<AuditEvent> secondPage = auditLogEventRepository.findByDomainAndUser(DOMAIN1, USER1, 1, event1.getId());
 
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage, Matchers.contains(EntityIdMatcher.hasSameIdAs(event3)));
 
-        List<AuditEvent> thirdPage = auditEventRepository.findByDomainAndUser(DOMAIN1, USER1, 1, event3.getId());
+        List<AuditEvent> thirdPage = auditLogEventRepository.findByDomainAndUser(DOMAIN1, USER1, 1, event3.getId());
 
         assertThat(thirdPage, is(notNullValue()));
         assertThat(thirdPage, hasSize(0));

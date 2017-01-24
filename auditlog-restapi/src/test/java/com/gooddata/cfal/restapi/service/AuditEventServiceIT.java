@@ -11,7 +11,7 @@ import static org.junit.Assert.assertThat;
 import com.gooddata.collections.PageRequest;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.model.AuditEvent;
-import com.gooddata.cfal.restapi.repository.AuditEventRepository;
+import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
 import org.joda.time.DateTime;
@@ -34,7 +34,7 @@ public class AuditEventServiceIT {
     private static final String USER2 = RandomStringUtils.randomAlphabetic(10);
 
     @Autowired
-    private AuditEventRepository auditEventRepository;
+    private AuditLogEventRepository auditLogEventRepository;
 
     @Autowired
     private AuditEventService auditEventService;
@@ -45,15 +45,15 @@ public class AuditEventServiceIT {
 
     @Before
     public void setUp() {
-        auditEventRepository.deleteAllByDomain(DOMAIN);
+        auditLogEventRepository.deleteAllByDomain(DOMAIN);
 
         event1 = new AuditEvent(DOMAIN, USER1, new DateTime());
         event2 = new AuditEvent(DOMAIN, USER2, new DateTime());
         event3 = new AuditEvent(DOMAIN, USER1, new DateTime());
 
-        auditEventRepository.save(event1);
-        auditEventRepository.save(event2);
-        auditEventRepository.save(event3);
+        auditLogEventRepository.save(event1);
+        auditLogEventRepository.save(event2);
+        auditLogEventRepository.save(event3);
     }
 
     @Test

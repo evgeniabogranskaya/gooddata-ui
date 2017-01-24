@@ -7,7 +7,7 @@ import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.exception.InvalidOffsetException;
 import com.gooddata.cfal.restapi.model.AuditEvent;
-import com.gooddata.cfal.restapi.repository.AuditEventRepository;
+import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import com.gooddata.collections.PageRequest;
 import com.gooddata.collections.Paging;
 import org.bson.types.ObjectId;
@@ -31,11 +31,11 @@ import static org.springframework.web.util.UriComponentsBuilder.fromUri;
 @Service
 public class AuditEventService {
 
-    private AuditEventRepository auditEventRepository;
+    private AuditLogEventRepository auditLogEventRepository;
 
     @Autowired
-    public AuditEventService(final AuditEventRepository auditEventRepository) {
-        this.auditEventRepository = notNull(auditEventRepository, "auditEventRepository cannot be null");
+    public AuditEventService(final AuditLogEventRepository auditLogEventRepository) {
+        this.auditLogEventRepository = notNull(auditLogEventRepository, "auditEventRepository cannot be null");
     }
 
     /**
@@ -50,7 +50,7 @@ public class AuditEventService {
         notNull(pageReq, "pageReq cannot be null");
 
         final ObjectId offsetId = getObjectId(pageReq);
-        final List<AuditEvent> list = auditEventRepository.findByDomain(domain, pageReq.getLimit(), offsetId);
+        final List<AuditEvent> list = auditLogEventRepository.findByDomain(domain, pageReq.getLimit(), offsetId);
 
         return getAuditEventDTOs(pageReq, list, ADMIN_URI);
     }
@@ -69,7 +69,7 @@ public class AuditEventService {
         notNull(pageReq, "pageReq cannot be null");
 
         final ObjectId offsetId = getObjectId(pageReq);
-        final List<AuditEvent> list = auditEventRepository
+        final List<AuditEvent> list = auditLogEventRepository
                 .findByDomainAndUser(domain, userId, pageReq.getSanitizedLimit(), offsetId);
 
         return getAuditEventDTOs(pageReq, list, USER_URI);

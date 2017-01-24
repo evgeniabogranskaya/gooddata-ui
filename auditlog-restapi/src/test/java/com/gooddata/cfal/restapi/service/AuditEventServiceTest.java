@@ -17,7 +17,7 @@ import com.gooddata.cfal.restapi.util.EntityDTOIdMatcher;
 import com.gooddata.collections.PageRequest;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.model.AuditEvent;
-import com.gooddata.cfal.restapi.repository.AuditEventRepository;
+import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import org.bson.types.ObjectId;
 import org.hamcrest.Matchers;
 import org.joda.time.DateTime;
@@ -34,7 +34,7 @@ public class AuditEventServiceTest {
     private static final Integer CUSTOM_LIMIT = 2;
 
     @Mock
-    private AuditEventRepository auditEventRepository;
+    private AuditLogEventRepository auditLogEventRepository;
 
     private AuditEventService auditEventService;
 
@@ -46,16 +46,16 @@ public class AuditEventServiceTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        auditEventService = new AuditEventService(auditEventRepository);
+        auditEventService = new AuditEventService(auditLogEventRepository);
 
         mockEvents();
 
-        when(auditEventRepository.findByDomain(DOMAIN, PageRequest.DEFAULT_LIMIT, null)).thenReturn(asList(event1, event2, event3));
-        when(auditEventRepository.findByDomain(DOMAIN, CUSTOM_LIMIT, null)).thenReturn(asList(event1, event2));
-        when(auditEventRepository.findByDomain(DOMAIN, CUSTOM_LIMIT, event2.getId())).thenReturn(singletonList(event3));
-        when(auditEventRepository.findByDomainAndUser(DOMAIN, USER_ID, PageRequest.DEFAULT_LIMIT, null)).thenReturn(asList(event1, event2, event3));
-        when(auditEventRepository.findByDomainAndUser(DOMAIN, USER_ID, CUSTOM_LIMIT, null)).thenReturn(asList(event1, event2));
-        when(auditEventRepository.findByDomainAndUser(DOMAIN, USER_ID, CUSTOM_LIMIT, event2.getId())).thenReturn(singletonList(event3));
+        when(auditLogEventRepository.findByDomain(DOMAIN, PageRequest.DEFAULT_LIMIT, null)).thenReturn(asList(event1, event2, event3));
+        when(auditLogEventRepository.findByDomain(DOMAIN, CUSTOM_LIMIT, null)).thenReturn(asList(event1, event2));
+        when(auditLogEventRepository.findByDomain(DOMAIN, CUSTOM_LIMIT, event2.getId())).thenReturn(singletonList(event3));
+        when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, PageRequest.DEFAULT_LIMIT, null)).thenReturn(asList(event1, event2, event3));
+        when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, CUSTOM_LIMIT, null)).thenReturn(asList(event1, event2));
+        when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, CUSTOM_LIMIT, event2.getId())).thenReturn(singletonList(event3));
     }
 
     @Test

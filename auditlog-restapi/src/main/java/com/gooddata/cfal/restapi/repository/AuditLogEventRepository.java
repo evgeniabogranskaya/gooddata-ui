@@ -20,12 +20,12 @@ import static org.apache.commons.lang3.Validate.notNull;
  * Repository for audit event management
  */
 @Repository
-public class AuditEventRepository {
+public class AuditLogEventRepository {
 
     private MongoTemplate mongoTemplate;
 
     @Autowired
-    public AuditEventRepository(final MongoTemplate mongoTemplate) {
+    public AuditLogEventRepository(final MongoTemplate mongoTemplate) {
         this.mongoTemplate = notNull(mongoTemplate, "mongoTemplate cannot be null");
     }
 
