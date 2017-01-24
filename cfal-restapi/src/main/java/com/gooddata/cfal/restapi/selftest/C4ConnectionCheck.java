@@ -6,10 +6,12 @@ import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.stereotype.Component;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 /**
  * Health check for a C4 client
  * <p>
- * It should use C4 const resource for making sure C4 is accessible with current configuration
+ * It uses C4 <i>about</i> resource for making sure C4 is accessible with current configuration
  */
 @Component
 public class C4ConnectionCheck extends AbstractHealthIndicator {
@@ -18,11 +20,13 @@ public class C4ConnectionCheck extends AbstractHealthIndicator {
 
     @Autowired
     public C4ConnectionCheck(final C4Client c4Client) {
+        notNull(c4Client, "c4Client cannot be null");
+
         this.c4Client = c4Client;
     }
 
     @Override
     protected void doHealthCheck(Health.Builder builder) throws Exception {
-        c4Client.getDomainService().getDomain("default");
+        c4Client.getAboutService().getAbout();
     }
 }
