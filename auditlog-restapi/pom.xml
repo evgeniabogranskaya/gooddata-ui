@@ -7,6 +7,7 @@
     <groupId>com.gooddata.audit</groupId>
     <artifactId>auditlog-restapi</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
 
     <parent>
         <groupId>com.gooddata</groupId>
@@ -43,6 +44,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.gooddata</groupId>
@@ -186,6 +192,15 @@
 
     <build>
         <plugins>
+            <!--This needs to be in place because we don't use spring-boot as a parent.
+            Without it, WAR packaging would fail on "webxml attribute is required" error
+            -->
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
