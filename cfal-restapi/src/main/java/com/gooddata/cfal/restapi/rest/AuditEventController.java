@@ -61,7 +61,7 @@ public class AuditEventController {
         final GdcCallContext currentContext = GdcCallContext.getCurrentContext();
         final String userId = currentContext.getUserId();
         if (userId == null) {
-            throw new UserNotSpecifiedException("User ID is not specified in request header");
+            throw new UserNotSpecifiedException("User ID is not specified");
         }
         return userId;
     }

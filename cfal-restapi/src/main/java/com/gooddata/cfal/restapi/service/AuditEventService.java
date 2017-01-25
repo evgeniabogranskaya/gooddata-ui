@@ -49,7 +49,7 @@ public class AuditEventService {
         notEmpty(domain, "domain cannot be empty");
         notNull(pageReq, "pageReq cannot be null");
 
-        final ObjectId offsetId = getObjectId(pageReq);
+        final ObjectId offsetId = getObjectIdFromOffset(pageReq);
         final List<AuditEvent> list = auditLogEventRepository.findByDomain(domain, pageReq.getLimit(), offsetId);
 
         return getAuditEventDTOs(pageReq, list, ADMIN_URI);
@@ -68,7 +68,7 @@ public class AuditEventService {
         notEmpty(userId, "userId cannot be empty");
         notNull(pageReq, "pageReq cannot be null");
 
-        final ObjectId offsetId = getObjectId(pageReq);
+        final ObjectId offsetId = getObjectIdFromOffset(pageReq);
         final List<AuditEvent> list = auditLogEventRepository
                 .findByDomainAndUser(domain, userId, pageReq.getSanitizedLimit(), offsetId);
 
@@ -95,7 +95,7 @@ public class AuditEventService {
         return pageReq.getOffset();
     }
 
-    private ObjectId getObjectId(final PageRequest pageReq) {
+    private ObjectId getObjectIdFromOffset(final PageRequest pageReq) {
         try {
             return pageReq.getOffset() == null ? null : new ObjectId(pageReq.getOffset());
         } catch (IllegalArgumentException ex) {
