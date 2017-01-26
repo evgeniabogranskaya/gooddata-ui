@@ -5,6 +5,7 @@ package com.gooddata.cfal.restapi.config;
 
 import com.gooddata.c4.C4Client;
 import com.gooddata.c4.HttpClientSettings;
+import com.gooddata.c4.about.AboutService;
 import com.gooddata.c4.domain.DomainService;
 import com.gooddata.c4.user.UserService;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,11 @@ public class C4Config {
     @Bean
     public DomainService domainService(C4Client c4Client) {
         return c4Client.getDomainService();
+    }
+
+    @Bean
+    public AboutService aboutService(C4Client c4Client) {
+        return c4Client.getAboutService();
     }
 
     @Bean

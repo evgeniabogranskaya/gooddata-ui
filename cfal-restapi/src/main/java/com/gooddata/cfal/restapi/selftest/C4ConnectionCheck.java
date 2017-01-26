@@ -1,6 +1,6 @@
 package com.gooddata.cfal.restapi.selftest;
 
-import com.gooddata.c4.C4Client;
+import com.gooddata.c4.about.AboutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
@@ -16,17 +16,17 @@ import static org.apache.commons.lang3.Validate.notNull;
 @Component
 public class C4ConnectionCheck extends AbstractHealthIndicator {
 
-    private final C4Client c4Client;
+    private final AboutService aboutService;
 
     @Autowired
-    public C4ConnectionCheck(final C4Client c4Client) {
-        notNull(c4Client, "c4Client cannot be null");
+    public C4ConnectionCheck(final AboutService aboutService) {
+        notNull(aboutService, "aboutService cannot be null");
 
-        this.c4Client = c4Client;
+        this.aboutService = aboutService;
     }
 
     @Override
     protected void doHealthCheck(Health.Builder builder) throws Exception {
-        c4Client.getAboutService().getAbout();
+        aboutService.getAbout();
     }
 }
