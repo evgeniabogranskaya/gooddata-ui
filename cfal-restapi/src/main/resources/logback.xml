@@ -15,7 +15,7 @@
         <facility>local2</facility>
         <syslogHost>localhost</syslogHost>
         <suffixPattern>
-            %d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %t %c %p: %m component=cfal_restapi request_id=%X{requestId} auth_user=%X{userId} impersonator=%X{impersonatorId} %n %xEx{50}
+            %d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %t %c %p: %m component=cfal.restapi request_id=%X{requestId} auth_user=%X{userId} impersonator=%X{impersonatorId} %n %xEx{50}
         </suffixPattern>
     </appender>
 

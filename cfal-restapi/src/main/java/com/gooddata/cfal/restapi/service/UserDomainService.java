@@ -12,6 +12,8 @@ import com.gooddata.c4.user.UserService;
 import com.gooddata.cfal.restapi.exception.DomainNotFoundException;
 import com.gooddata.cfal.restapi.exception.UserNotDomainAdminException;
 import com.gooddata.cfal.restapi.exception.UserNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,8 @@ import static org.apache.commons.lang3.Validate.notNull;
  */
 @Service
 public class UserDomainService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserDomainService.class);
 
     private final UserService userService;
     private final DomainService domainService;
@@ -42,9 +46,15 @@ public class UserDomainService {
     public String findDomainForUser(final String userId) {
         notEmpty(userId, "userId cannot be empty");
 
+        logger.info("action=find_domain_for_user status=start user_id={}", userId);
+
         try {
-            C4User user = userService.getUser(userId);
-            return C4Domain.DOMAIN_URI_TEMPLATE.match(user.getDomainUri()).get("id");
+            final C4User user = userService.getUser(userId);
+            final String domain = C4Domain.DOMAIN_URI_TEMPLATE.match(user.getDomainUri()).get("id");
+
+            logger.info("action=find_domain_for_user status=finished user_id={} domain={}", userId, domain);
+
+            return domain;
         } catch (C4UserNotFoundException ex) {
             throw new UserNotFoundException("user with ID " + userId + " not found", ex);
         }
@@ -61,11 +71,20 @@ public class UserDomainService {
         notEmpty(userId, "userId cannot be empty");
         notEmpty(domainId, "domainId cannot be empty");
 
+        logger.error("action=authorize_admin status=start domain={} user_id={}",
+                domainId, userId);
+
         try {
             C4Domain domain = domainService.getDomain(domainId);
             if (!C4User.uri2id(domain.getOwner()).equals(userId)) {
+                logger.error("action=authorize_admin status=error domain={} user_id={}",
+                        domainId, userId);
                 throw new UserNotDomainAdminException("user with ID " + userId + " is not admin of domain with ID " + domainId);
             }
+
+            logger.info("action=authorize_admin status=finished domain={} user_id={}",
+                    domainId, userId);
+
         } catch (C4DomainNotFoundException ex) {
             throw new DomainNotFoundException("domain with ID " + domainId + " not found", ex);
         }
