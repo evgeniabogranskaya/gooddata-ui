@@ -35,7 +35,7 @@ public class AuditEventService {
 
     private static final Logger logger = LoggerFactory.getLogger(AuditEventService.class);
 
-    private AuditLogEventRepository auditLogEventRepository;
+    private final AuditLogEventRepository auditLogEventRepository;
 
     @Autowired
     public AuditEventService(final AuditLogEventRepository auditLogEventRepository) {

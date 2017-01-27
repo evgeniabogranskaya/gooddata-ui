@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * Converts exceptions thrown inside controller to ErrorStructure
+ * Needed because of the RestControllerAdvice annotation, which is not in HandlerExceptionResolver.
+ * Exceptions are not translated from controllers otherwise
  */
 @RestControllerAdvice
 public class AuditlogExceptionTranslatorAdvice extends HandlerExceptionResolver {

@@ -18,13 +18,13 @@ public class AuditEvent {
     private ObjectId id;
 
     @NotNull
-    private String domain;
+    private final String domain;
 
     @NotNull
-    private String userId;
+    private final String userId;
 
     @NotNull
-    private DateTime timestamp;
+    private final DateTime timestamp;
 
     public AuditEvent(final String domain, final String userId, final DateTime timestamp) {
         this.domain = domain;

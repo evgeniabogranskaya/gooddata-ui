@@ -20,7 +20,7 @@ public class AuditEventDTOTest {
     @Autowired
     private JacksonTester<AuditEventDTO> json;
 
-    private AuditEventDTO event = new AuditEventDTO("123", "default", "user123", new DateTime(1993, 9, 3, 0, 0, DateTimeZone.UTC));
+    private final AuditEventDTO event = new AuditEventDTO("123", "default", "user123", new DateTime(1993, 9, 3, 0, 0, DateTimeZone.UTC));
 
     @Test
     public void testSerialize() throws Exception {

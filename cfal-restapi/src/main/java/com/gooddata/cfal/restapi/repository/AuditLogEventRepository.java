@@ -22,7 +22,7 @@ import static org.apache.commons.lang3.Validate.notNull;
 @Repository
 public class AuditLogEventRepository {
 
-    private MongoTemplate mongoTemplate;
+    private final MongoTemplate mongoTemplate;
 
     @Autowired
     public AuditLogEventRepository(final MongoTemplate mongoTemplate) {

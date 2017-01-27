@@ -65,11 +65,11 @@ public class AuditEventControllerIT {
     @Autowired
     private AuditLogEventRepository auditLogEventRepository;
 
-    private AuditEvent event1 = new AuditEvent(DOMAIN, USER1, new DateTime());
-    private AuditEvent event2 = new AuditEvent(DOMAIN, USER2, new DateTime());
-    private AuditEvent event3 = new AuditEvent(DOMAIN, USER1, new DateTime());
-    private AuditEvent event4 = new AuditEvent(DOMAIN, USER1, new DateTime());
-    private AuditEvent event5 = new AuditEvent(DOMAIN, USER2, new DateTime());
+    private final AuditEvent event1 = new AuditEvent(DOMAIN, USER1, new DateTime());
+    private final AuditEvent event2 = new AuditEvent(DOMAIN, USER2, new DateTime());
+    private final AuditEvent event3 = new AuditEvent(DOMAIN, USER1, new DateTime());
+    private final AuditEvent event4 = new AuditEvent(DOMAIN, USER1, new DateTime());
+    private final AuditEvent event5 = new AuditEvent(DOMAIN, USER2, new DateTime());
 
     private C4User c4User1;
     private C4User c4User2;

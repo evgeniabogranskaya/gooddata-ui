@@ -63,7 +63,7 @@ public class AuditEventControllerTest {
     @MockBean
     private UserDomainService userDomainService;
 
-    private AuditEventsDTO domainEvents = new AuditEventsDTO(
+    private final AuditEventsDTO domainEvents = new AuditEventsDTO(
             Arrays.asList(new AuditEventDTO("123", "default", "user123", new DateTime(1993, 9, 3, 0, 0, DateTimeZone.UTC)),
                     new AuditEventDTO("456", "default", "user456", new DateTime(1993, 9, 3, 0, 0, DateTimeZone.UTC))),
             new Paging("/gdc/audit/admin/events?offset=456&limit=" + PageRequest.DEFAULT_LIMIT),
@@ -71,7 +71,7 @@ public class AuditEventControllerTest {
                 put("self", AuditEventDTO.ADMIN_URI);
             }});
 
-    private AuditEventsDTO eventsForUser = new AuditEventsDTO(
+    private final AuditEventsDTO eventsForUser = new AuditEventsDTO(
             Arrays.asList(new AuditEventDTO("123", "default", "user123", new DateTime(1993, 9, 3, 0, 0, DateTimeZone.UTC)),
                     new AuditEventDTO("456", "default", "user123", new DateTime(1993, 9, 3, 0, 0, DateTimeZone.UTC))),
             new Paging("/gdc/audit/admin/events?offset=456&limit=" + PageRequest.DEFAULT_LIMIT),

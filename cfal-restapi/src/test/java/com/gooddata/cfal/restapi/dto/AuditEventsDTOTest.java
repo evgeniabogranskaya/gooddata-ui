@@ -26,7 +26,7 @@ public class AuditEventsDTOTest {
     @Autowired
     private JacksonTester<AuditEventsDTO> json;
 
-    private AuditEventsDTO events = new AuditEventsDTO(
+    private final AuditEventsDTO events = new AuditEventsDTO(
             Arrays.asList(new AuditEventDTO("123", "default", "user123", new DateTime(1993, 9, 3, 0, 0, DateTimeZone.UTC)),
                           new AuditEventDTO("456", "default", "user456", new DateTime(1993, 9, 3, 0, 0, DateTimeZone.UTC))),
             new Paging("/gdc/audit/admin/events?offset=456&limit=100"),
