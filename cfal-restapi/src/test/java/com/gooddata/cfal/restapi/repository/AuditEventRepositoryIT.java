@@ -50,16 +50,16 @@ public class AuditEventRepositoryIT {
 
     @Before
     public void setUp() {
-        mongoTemplate.remove(new Query(), DOMAIN1);
-        mongoTemplate.remove(new Query(), DOMAIN2);
+        mongoTemplate.remove(new Query(), auditLogEventRepository.getMongoCollectionPrefix() + DOMAIN1);
+        mongoTemplate.remove(new Query(), auditLogEventRepository.getMongoCollectionPrefix() + DOMAIN2);
 
         event1 = new AuditEvent(DOMAIN1, USER1, new DateTime());
         event2 = new AuditEvent(DOMAIN1, USER2, new DateTime());
         event3 = new AuditEvent(DOMAIN1, USER1, new DateTime());
 
-        mongoTemplate.save(event1, DOMAIN1);
-        mongoTemplate.save(event2, DOMAIN1);
-        mongoTemplate.save(event3, DOMAIN1);
+        mongoTemplate.save(event1, auditLogEventRepository.getMongoCollectionPrefix() + DOMAIN1);
+        mongoTemplate.save(event2, auditLogEventRepository.getMongoCollectionPrefix() + DOMAIN1);
+        mongoTemplate.save(event3, auditLogEventRepository.getMongoCollectionPrefix() + DOMAIN1);
     }
 
     @Test
