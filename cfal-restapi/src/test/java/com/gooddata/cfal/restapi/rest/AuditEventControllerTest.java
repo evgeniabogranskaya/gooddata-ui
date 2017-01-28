@@ -34,8 +34,10 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -100,7 +102,6 @@ public class AuditEventControllerTest {
         mockMvc.perform(get(AuditEventDTO.ADMIN_URI))
                .andExpect(status().isBadRequest())
                .andExpect(jsonPath("$.error.errorClass", is(UserNotSpecifiedException.class.getName())));
-
     }
 
     @Test
@@ -158,5 +159,21 @@ public class AuditEventControllerTest {
                 .param("limit", "not number")
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testListAuditEventsExpectedContentType() throws Exception {
+        mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Content-Type", APPLICATION_JSON_VALUE + ";charset=UTF-8"));
+    }
+
+    @Test
+    public void testListAuditEventsForUserExpectedContentType() throws Exception {
+        mockMvc.perform(get(AuditEventDTO.USER_URI)
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Content-Type", APPLICATION_JSON_VALUE + ";charset=UTF-8"));
     }
 }

@@ -11,6 +11,7 @@ import com.gooddata.cfal.restapi.service.UserDomainService;
 import com.gooddata.collections.PageRequest;
 import com.gooddata.context.GdcCallContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,7 +36,7 @@ public class AuditEventController {
         this.userDomainService = notNull(userDomainService, "userDomainService cannot be null");
     }
 
-    @RequestMapping(path = AuditEventDTO.ADMIN_URI, method = RequestMethod.GET)
+    @RequestMapping(path = AuditEventDTO.ADMIN_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public AuditEventsDTO listAuditEvents(@ModelAttribute PageRequest pageReq) {
 
         final String userId = getUserIdFromContext();
@@ -47,7 +48,7 @@ public class AuditEventController {
         return auditEventService.findByDomain(domainForUser, pageReq);
     }
 
-    @RequestMapping(path = AuditEventDTO.USER_URI, method = RequestMethod.GET)
+    @RequestMapping(path = AuditEventDTO.USER_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public AuditEventsDTO listAuditEventsForUser(@ModelAttribute PageRequest pageReq) {
 
         final String userId = getUserIdFromContext();
