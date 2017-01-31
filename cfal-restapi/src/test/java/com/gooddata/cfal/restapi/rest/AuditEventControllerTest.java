@@ -34,8 +34,10 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -100,28 +102,31 @@ public class AuditEventControllerTest {
         mockMvc.perform(get(AuditEventDTO.ADMIN_URI))
                .andExpect(status().isBadRequest())
                .andExpect(jsonPath("$.error.errorClass", is(UserNotSpecifiedException.class.getName())));
-
     }
 
     @Test
     public void testListAuditEventsInvalidOffset() throws Exception {
-        mockMvc.perform(get(AuditEventDTO.ADMIN_URI + "?offset=" + BAD_OFFSET).header(X_PUBLIC_USER_ID, USER_ID))
-               .andExpect(status().isBadRequest())
-               .andExpect(jsonPath("$.error.errorClass", is(InvalidOffsetException.class.getName())));
+        mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
+                .param("offset", BAD_OFFSET)
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.errorClass", is(InvalidOffsetException.class.getName())));
     }
 
     @Test
     public void testListAuditEventsNotAdmin() throws Exception {
-        mockMvc.perform(get(AuditEventDTO.ADMIN_URI).header(X_PUBLIC_USER_ID, NOT_ADMIN_USER_ID))
-               .andExpect(status().isUnauthorized())
-               .andExpect(jsonPath("$.error.errorClass", is(UserNotDomainAdminException.class.getName())));
-
+        mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
+                .header(X_PUBLIC_USER_ID, NOT_ADMIN_USER_ID))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.errorClass", is(UserNotDomainAdminException.class.getName())));
     }
 
     @Test
     public void testListAuditEventsDefaultPaging() throws Exception {
-        mockMvc.perform(get(AuditEventDTO.ADMIN_URI).header(X_PUBLIC_USER_ID, USER_ID))
-                .andExpect(status().isOk()).andExpect(content().json(IOUtils.toString(getClass().getResourceAsStream("auditEvents.json"))));
+        mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isOk())
+                .andExpect(content().json(IOUtils.toString(getClass().getResourceAsStream("auditEvents.json"))));
     }
 
     @Test
@@ -133,14 +138,49 @@ public class AuditEventControllerTest {
 
     @Test
     public void testListAuditEventsForUserInvalidUser() throws Exception {
-        mockMvc.perform(get(AuditEventDTO.USER_URI + "?offset=" + BAD_OFFSET).header(X_PUBLIC_USER_ID, USER_ID))
+        mockMvc.perform(get(AuditEventDTO.USER_URI)
+                .param("offset", BAD_OFFSET)
+                .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(InvalidOffsetException.class.getName())));
     }
 
     @Test
     public void testListAuditEventsForUserDefaultPaging() throws Exception {
-        mockMvc.perform(get(AuditEventDTO.USER_URI).header(X_PUBLIC_USER_ID, USER_ID))
+        mockMvc.perform(get(AuditEventDTO.USER_URI)
+                .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isOk()).andExpect(content().json(IOUtils.toString(getClass().getResourceAsStream("userAuditEvents.json"))));
+    }
+
+    @Test
+    public void testListAuditEventsWithBadLimit() throws Exception {
+        mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
+                .param("limit", "not number")
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testListAuditEventsForUserWithBadLimit() throws Exception {
+        mockMvc.perform(get(AuditEventDTO.USER_URI)
+                .param("limit", "not number")
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testListAuditEventsExpectedContentType() throws Exception {
+        mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Content-Type", APPLICATION_JSON_VALUE + ";charset=UTF-8"));
+    }
+
+    @Test
+    public void testListAuditEventsForUserExpectedContentType() throws Exception {
+        mockMvc.perform(get(AuditEventDTO.USER_URI)
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Content-Type", APPLICATION_JSON_VALUE + ";charset=UTF-8"));
     }
 }

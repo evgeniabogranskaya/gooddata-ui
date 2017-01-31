@@ -6,6 +6,7 @@ package com.gooddata.cfal.restapi.repository;
 import com.gooddata.cfal.restapi.model.AuditEvent;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -22,11 +23,15 @@ import static org.apache.commons.lang3.Validate.notNull;
 @Repository
 public class AuditLogEventRepository {
 
+    private final String mongoCollectionPrefix;
+
     private final MongoTemplate mongoTemplate;
 
     @Autowired
-    public AuditLogEventRepository(final MongoTemplate mongoTemplate) {
+    public AuditLogEventRepository(final MongoTemplate mongoTemplate,
+                                   @Value("${gdc.cfal.mongo.collection.prefix}") final String mongoCollectionPrefix) {
         this.mongoTemplate = notNull(mongoTemplate, "mongoTemplate cannot be null");
+        this.mongoCollectionPrefix = mongoCollectionPrefix == null ? "" : mongoCollectionPrefix;
     }
 
     /**
@@ -42,7 +47,7 @@ public class AuditLogEventRepository {
         notEmpty(domain, "domain cannot be empty");
 
         final Query query = createQuery(limit, offset);
-        return mongoTemplate.find(query, AuditEvent.class, domain);
+        return mongoTemplate.find(query, AuditEvent.class, getMongoCollectionName(domain));
     }
 
     /**
@@ -60,7 +65,7 @@ public class AuditLogEventRepository {
         notEmpty(userId, "userId cannot be empty");
 
         final Query query = createQuery(limit, offset).addCriteria(Criteria.where("userId").is(userId));
-        return mongoTemplate.find(query, AuditEvent.class, domain);
+        return mongoTemplate.find(query, AuditEvent.class, getMongoCollectionName(domain));
     }
 
     /**
@@ -71,7 +76,7 @@ public class AuditLogEventRepository {
     public void save(final AuditEvent auditEvent) {
         notNull(auditEvent, "auditEvent cannot be null");
 
-        mongoTemplate.save(auditEvent, auditEvent.getDomain());
+        mongoTemplate.save(auditEvent, getMongoCollectionName(auditEvent.getDomain()));
     }
 
     /**
@@ -82,7 +87,7 @@ public class AuditLogEventRepository {
     public void deleteAllByDomain(final String domain) {
         notEmpty(domain, "domain cannot be empty");
 
-        mongoTemplate.remove(new Query(), domain);
+        mongoTemplate.remove(new Query(), getMongoCollectionName(domain));
     }
 
     /**
@@ -101,5 +106,16 @@ public class AuditLogEventRepository {
 
         query.limit(limit);
         return query;
+    }
+
+    String getMongoCollectionPrefix() {
+        return mongoCollectionPrefix;
+    }
+
+    /**
+     * Get mongo collection name from domain and mongo collection prefix
+     */
+    private String getMongoCollectionName(final String domain) {
+        return mongoCollectionPrefix + domain;
     }
 }
