@@ -106,23 +106,27 @@ public class AuditEventControllerTest {
 
     @Test
     public void testListAuditEventsInvalidOffset() throws Exception {
-        mockMvc.perform(get(AuditEventDTO.ADMIN_URI + "?offset=" + BAD_OFFSET).header(X_PUBLIC_USER_ID, USER_ID))
-               .andExpect(status().isBadRequest())
-               .andExpect(jsonPath("$.error.errorClass", is(InvalidOffsetException.class.getName())));
+        mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
+                .param("offset", BAD_OFFSET)
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.errorClass", is(InvalidOffsetException.class.getName())));
     }
 
     @Test
     public void testListAuditEventsNotAdmin() throws Exception {
-        mockMvc.perform(get(AuditEventDTO.ADMIN_URI).header(X_PUBLIC_USER_ID, NOT_ADMIN_USER_ID))
-               .andExpect(status().isUnauthorized())
-               .andExpect(jsonPath("$.error.errorClass", is(UserNotDomainAdminException.class.getName())));
-
+        mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
+                .header(X_PUBLIC_USER_ID, NOT_ADMIN_USER_ID))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.errorClass", is(UserNotDomainAdminException.class.getName())));
     }
 
     @Test
     public void testListAuditEventsDefaultPaging() throws Exception {
-        mockMvc.perform(get(AuditEventDTO.ADMIN_URI).header(X_PUBLIC_USER_ID, USER_ID))
-                .andExpect(status().isOk()).andExpect(content().json(IOUtils.toString(getClass().getResourceAsStream("auditEvents.json"))));
+        mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isOk())
+                .andExpect(content().json(IOUtils.toString(getClass().getResourceAsStream("auditEvents.json"))));
     }
 
     @Test
@@ -134,14 +138,17 @@ public class AuditEventControllerTest {
 
     @Test
     public void testListAuditEventsForUserInvalidUser() throws Exception {
-        mockMvc.perform(get(AuditEventDTO.USER_URI + "?offset=" + BAD_OFFSET).header(X_PUBLIC_USER_ID, USER_ID))
+        mockMvc.perform(get(AuditEventDTO.USER_URI)
+                .param("offset", BAD_OFFSET)
+                .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(InvalidOffsetException.class.getName())));
     }
 
     @Test
     public void testListAuditEventsForUserDefaultPaging() throws Exception {
-        mockMvc.perform(get(AuditEventDTO.USER_URI).header(X_PUBLIC_USER_ID, USER_ID))
+        mockMvc.perform(get(AuditEventDTO.USER_URI)
+                .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isOk()).andExpect(content().json(IOUtils.toString(getClass().getResourceAsStream("userAuditEvents.json"))));
     }
 
