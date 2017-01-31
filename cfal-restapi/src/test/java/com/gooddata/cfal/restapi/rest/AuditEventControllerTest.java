@@ -143,4 +143,20 @@ public class AuditEventControllerTest {
         mockMvc.perform(get(AuditEventDTO.USER_URI).header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isOk()).andExpect(content().json(IOUtils.toString(getClass().getResourceAsStream("userAuditEvents.json"))));
     }
+
+    @Test
+    public void testListAuditEventsWithBadLimit() throws Exception {
+        mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
+                .param("limit", "not number")
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testListAuditEventsForUserWithBadLimit() throws Exception {
+        mockMvc.perform(get(AuditEventDTO.USER_URI)
+                .param("limit", "not number")
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isBadRequest());
+    }
 }
