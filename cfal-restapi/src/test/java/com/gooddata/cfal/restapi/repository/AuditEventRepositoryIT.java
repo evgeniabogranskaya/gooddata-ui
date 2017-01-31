@@ -258,4 +258,52 @@ public class AuditEventRepositoryIT {
         assertThat(events, is(notNullValue()));
         assertThat(events, hasSize(0));
     }
+
+    public void testFindByDomainEventsAreOrdered() {
+        AuditEvent auditEvent1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN2, USER1, new DateTime());
+        AuditEvent auditEvent2 = new AuditEvent(convertDateTimeToObjectId(date("1994-03-09")), DOMAIN2, USER1, new DateTime());
+        AuditEvent auditEvent3 = new AuditEvent(convertDateTimeToObjectId(date("2000-03-09")), DOMAIN2, USER1, new DateTime());
+        AuditEvent auditEvent4 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN2, USER1, new DateTime());
+        AuditEvent auditEvent5 = new AuditEvent(convertDateTimeToObjectId(date("2010-03-09")), DOMAIN2, USER1, new DateTime());
+
+        //persist in random order
+        auditLogEventRepository.save(auditEvent3);
+        auditLogEventRepository.save(auditEvent1);
+        auditLogEventRepository.save(auditEvent5);
+        auditLogEventRepository.save(auditEvent2);
+        auditLogEventRepository.save(auditEvent4);
+
+
+        List<AuditEvent> events = auditLogEventRepository.findByDomain(DOMAIN2, new RequestParameters());
+
+        assertThat(events, contains(EntityIdMatcher.hasSameIdAs(auditEvent1),
+                EntityIdMatcher.hasSameIdAs(auditEvent2),
+                EntityIdMatcher.hasSameIdAs(auditEvent3),
+                EntityIdMatcher.hasSameIdAs(auditEvent4),
+                EntityIdMatcher.hasSameIdAs(auditEvent5)));
+    }
+
+    @Test
+    public void testFindByDomainAndUserEventsAreOrdered() {
+        AuditEvent auditEvent1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN2, USER1, new DateTime());
+        AuditEvent auditEvent2 = new AuditEvent(convertDateTimeToObjectId(date("1994-03-09")), DOMAIN2, USER1, new DateTime());
+        AuditEvent auditEvent3 = new AuditEvent(convertDateTimeToObjectId(date("2000-03-09")), DOMAIN2, USER1, new DateTime());
+        AuditEvent auditEvent4 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN2, USER1, new DateTime());
+        AuditEvent auditEvent5 = new AuditEvent(convertDateTimeToObjectId(date("2010-03-09")), DOMAIN2, USER1, new DateTime());
+
+        //persist in random order
+        auditLogEventRepository.save(auditEvent3);
+        auditLogEventRepository.save(auditEvent1);
+        auditLogEventRepository.save(auditEvent5);
+        auditLogEventRepository.save(auditEvent2);
+        auditLogEventRepository.save(auditEvent4);
+
+        List<AuditEvent> events = auditLogEventRepository.findByDomainAndUser(DOMAIN2, USER1, new RequestParameters());
+
+        assertThat(events, contains(EntityIdMatcher.hasSameIdAs(auditEvent1),
+                EntityIdMatcher.hasSameIdAs(auditEvent2),
+                EntityIdMatcher.hasSameIdAs(auditEvent3),
+                EntityIdMatcher.hasSameIdAs(auditEvent4),
+                EntityIdMatcher.hasSameIdAs(auditEvent5)));
+    }
 }

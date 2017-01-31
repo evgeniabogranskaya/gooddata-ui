@@ -8,6 +8,7 @@ import com.gooddata.cfal.restapi.model.AuditEvent;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -107,6 +108,7 @@ public class AuditLogEventRepository {
             query.addCriteria(idCriteria);
         }
 
+        query.with(new Sort(Sort.Direction.ASC, "id"));
         query.limit(requestParameters.getSanitizedLimit());
 
         return query;
