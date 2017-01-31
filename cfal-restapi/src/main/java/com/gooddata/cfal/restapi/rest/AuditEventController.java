@@ -5,10 +5,11 @@ package com.gooddata.cfal.restapi.rest;
 
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
+import com.gooddata.cfal.restapi.dto.RequestParameters;
 import com.gooddata.cfal.restapi.exception.UserNotSpecifiedException;
 import com.gooddata.cfal.restapi.service.AuditEventService;
 import com.gooddata.cfal.restapi.service.UserDomainService;
-import com.gooddata.collections.PageRequest;
+import com.gooddata.cfal.restapi.util.ValidationUtils;
 import com.gooddata.context.GdcCallContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -37,7 +38,9 @@ public class AuditEventController {
     }
 
     @RequestMapping(path = AuditEventDTO.ADMIN_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public AuditEventsDTO listAuditEvents(@ModelAttribute PageRequest pageReq) {
+    public AuditEventsDTO listAuditEvents(@ModelAttribute RequestParameters requestParameters) {
+
+        ValidationUtils.validate(requestParameters);
 
         final String userId = getUserIdFromContext();
 
@@ -45,17 +48,19 @@ public class AuditEventController {
 
         userDomainService.authorizeAdmin(userId, domainForUser);
 
-        return auditEventService.findByDomain(domainForUser, pageReq);
+        return auditEventService.findByDomain(domainForUser, requestParameters);
     }
 
     @RequestMapping(path = AuditEventDTO.USER_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public AuditEventsDTO listAuditEventsForUser(@ModelAttribute PageRequest pageReq) {
+    public AuditEventsDTO listAuditEventsForUser(@ModelAttribute RequestParameters requestParameters) {
+
+        ValidationUtils.validate(requestParameters);
 
         final String userId = getUserIdFromContext();
 
         final String domainForUser = userDomainService.findDomainForUser(userId);
 
-        return auditEventService.findByDomainAndUser(domainForUser, userId, pageReq);
+        return auditEventService.findByDomainAndUser(domainForUser, userId, requestParameters);
     }
 
     private String getUserIdFromContext() {
