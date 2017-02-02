@@ -33,8 +33,9 @@ public class ConversionUtils {
         notNull(baseUri, "baseUri cannot be null");
         notNull(requestParameters, "requestParameters cannot be null");
 
-        final String offset = getOffset(requestParameters, list);
-        final Paging paging = createPaging(baseUri, requestParameters, offset);
+        final String offset = getOffset(list);
+
+        Paging paging = createPaging(baseUri, requestParameters, offset);
 
         final List<AuditEventDTO> listDTOs = list
                 .stream()
@@ -58,15 +59,13 @@ public class ConversionUtils {
     }
 
     /**
-     * Get new offset based on list or if list is empty, return offset same as page request offset
+     * Get new offset based on list or if list is empty returns null
      */
-    private static String getOffset(final RequestParameters pageReq, final List<AuditEvent> list) {
+    private static String getOffset(final List<AuditEvent> list) {
         if (!list.isEmpty()) {
             return list.get(list.size() - 1).getId().toString(); //last element's ID is offset for next page
         }
 
-        // if page (list) is empty, the offset should be same as request of request, because otherwise user would not be
-        // able to continuously page through new items
-        return pageReq.getOffset();
+        return null;
     }
 }

@@ -37,8 +37,10 @@ import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI;
 import static com.gooddata.cfal.restapi.util.DateUtils.convertDateTimeToObjectId;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
@@ -148,6 +150,11 @@ public class AuditEventControllerIT {
 
         String fourthPageUri = thirdPage.getBody().getNextPage().getPageUri(UriComponentsBuilder.newInstance()).toString();
         assertThat(fourthPageUri, notNullValue());
+
+        ResponseEntity<AuditEventsDTO> fourthPage = testRestTemplate.exchange(fourthPageUri, HttpMethod.GET, requestWithGdcHeader(), AuditEventsDTO.class);
+        assertThat(fourthPage.getBody(), is(Matchers.notNullValue()));
+        assertThat(fourthPage.getBody(), hasSize(0));
+        assertThat(fourthPage.getBody().getPaging().getNextUri(), is(nullValue()));
     }
 
     @Test

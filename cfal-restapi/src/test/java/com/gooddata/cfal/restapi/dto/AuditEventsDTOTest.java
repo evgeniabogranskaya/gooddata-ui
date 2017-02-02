@@ -13,6 +13,7 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI;
@@ -33,6 +34,13 @@ public class AuditEventsDTOTest {
                 put("self", ADMIN_URI);
             }});
 
+    private final AuditEventsDTO emptyEvents = new AuditEventsDTO(
+            Collections.emptyList(),
+            new Paging(null),
+            new HashMap<String, String>() {{
+                put("self", ADMIN_URI);
+            }});
+
     @Test
     public void testSerialize() throws Exception {
         json.write(events).assertThat().isEqualToJson("auditEvents.json");
@@ -43,5 +51,16 @@ public class AuditEventsDTOTest {
         String content = IOUtils.toString(getClass().getResourceAsStream("auditEvents.json"));
 
         json.parse(content).assertThat().isEqualTo(events);
+    }
+
+    @Test
+    public void testSerializeEmptyEvents() throws Exception{
+        json.write(emptyEvents).assertThat().isEqualToJson("emptyAuditEvents.json");
+    }
+
+    @Test
+    public void testDeserializeEmptyEvents() throws Exception {
+        String content = IOUtils.toString(getClass().getResourceAsStream("emptyAuditEvents.json"));
+        json.parse(content).assertThat().isEqualTo(emptyEvents);
     }
 }

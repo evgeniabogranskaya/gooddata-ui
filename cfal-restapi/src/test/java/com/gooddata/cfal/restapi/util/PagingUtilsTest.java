@@ -4,6 +4,7 @@
 package com.gooddata.cfal.restapi.util;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.gooddata.cfal.restapi.dto.RequestParameters;
@@ -34,5 +35,13 @@ public class PagingUtilsTest {
 
         assertThat(paging.getNextUri(),
                 is(BASE_URI + "?to=" + TO + "&offset=" + NEXT_OFFSET + "&limit=" + requestParameters.getSanitizedLimit()));
+    }
+
+    @Test
+    public void testCreatePagingWithNullOffset() {
+        Paging paging = PagingUtils.createPaging(BASE_URI, new RequestParameters(), null);
+
+        assertThat(paging.getNextUri(),
+                is(nullValue()));
     }
 }
