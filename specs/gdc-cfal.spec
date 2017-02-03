@@ -34,10 +34,10 @@ GoodData CFAL REST API
 # looks like useless, but doesn't work without it
 %setup -q -n %{name} -c
 
-%build restapi
+%build
 mvn -f cfal-restapi/pom.xml -DskipTests=true -Dmaven.test.skip=true --update-snapshots clean package
 
-%install restapi
+%install
 rm -rf $RPM_BUILD_ROOT
 
 # Web App
