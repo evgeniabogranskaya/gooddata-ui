@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gooddata.collections.PageableList;
 import com.gooddata.collections.Paging;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,15 +44,32 @@ public class AuditEventsDTO extends PageableList<AuditEventDTO> {
             return false;
         }
 
-        if (!this.getNextPage().getPageUri(UriComponentsBuilder.newInstance()).equals(that.getNextPage().getPageUri(UriComponentsBuilder.newInstance()))) {
+        if ((this.getPaging() == null && that.getPaging() != null) || (this.getPaging() != null && that.getPaging() == null)) {
             return false;
         }
 
-        return this.getLinks().equals(that.getLinks());
+        if(this.getPaging() != null && that.getPaging() != null) {
+            if ((this.getPaging().getNextUri() == null && that.getPaging().getNextUri() != null) ||  (this.getPaging().getNextUri() != null && that.getPaging().getNextUri() == null)) {
+                return false;
+            }
+            if(this.getPaging().getNextUri() != that.getPaging().getNextUri()) {
+                if (!this.getPaging().getNextUri().equals(that.getPaging().getNextUri())) {
+                    return false;
+                }
+            }
+        }
+
+        if(this.getLinks() != null && that.getLinks() != null) {
+            return this.getLinks().equals(that.getLinks());
+        }
+
+        return this.getLinks() == that.getLinks();
     }
 
     @Override
     public int hashCode() {
-        return iterator().hashCode() + getNextPage().hashCode() + getLinks().hashCode();
+        return iterator().hashCode() +
+                (getNextPage() == null ? 0 : getNextPage().hashCode()) +
+                (getLinks() == null ? 0 : getLinks().hashCode());
     }
 }

@@ -3,6 +3,7 @@
     "id": "123",
     "domain": "default",
     "userId": "user123",
-    "timestamp":"1993-09-03T00:00:00.000Z"
+    "realTimeOccurrence":"1993-03-09T00:00:00.000Z",
+    "timestamp":"1993-03-09T00:00:00.000Z"
   }
 }

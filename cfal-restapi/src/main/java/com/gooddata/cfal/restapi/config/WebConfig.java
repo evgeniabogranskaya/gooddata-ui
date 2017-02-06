@@ -4,6 +4,7 @@
 package com.gooddata.cfal.restapi.config;
 
 import com.gooddata.cfal.restapi.exception.AuditlogExceptionTranslatorAdvice;
+import com.gooddata.cfal.restapi.util.StringToUTCDateTimeConverter;
 import com.gooddata.commons.web.filter.LoggingContextSetupFilter;
 import com.gooddata.context.GdcCallContextFilter;
 import com.gooddata.exception.servlet.HttpExceptionTranslator;
@@ -13,6 +14,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.BindException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import static com.gooddata.cfal.restapi.dto.AuditEventDTO.DOMAIN_AUDIT_URI;
 
@@ -20,7 +23,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 @Configuration
-public class WebConfig {
+//NO @EnableWebMvc, because this is only additional MVC config to spring boot autoconfiguration
+public class WebConfig extends WebMvcConfigurerAdapter {
 
     /**
      * register GdcCallContextFilter as Filter
@@ -60,5 +64,14 @@ public class WebConfig {
             put(HttpStatus.SC_BAD_REQUEST, Arrays.asList(BindException.class, MethodArgumentTypeMismatchException.class));
         }});
         return httpExceptionTranslator;
+    }
+
+    /**
+     * register custom String to DateTime converter
+     * @see {@link StringToUTCDateTimeConverter}
+     */
+    @Override
+    public void addFormatters(final FormatterRegistry registry) {
+        registry.addConverter(new StringToUTCDateTimeConverter());
     }
 }

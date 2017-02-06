@@ -1,3 +1,6 @@
+/*
+ * Copyright (C) 2007-2017, GoodData(R) Corporation. All rights reserved.
+ */
 package com.gooddata.cfal.restapi.selftest;
 
 import com.gooddata.c4.about.AboutService;

@@ -3,10 +3,12 @@
  */
 package com.gooddata.cfal.restapi.repository;
 
+import com.gooddata.cfal.restapi.dto.RequestParameters;
 import com.gooddata.cfal.restapi.model.AuditEvent;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -35,36 +37,39 @@ public class AuditLogEventRepository {
     }
 
     /**
-     * Finds all events for domain. If <code>offset</code> is not null, than returns events younger (greater ID) than <code>offset</code>.
-     * Result list (page) has size equal to <code>limit</code>
+     * Finds all events for domain in given time interval. If <code>offset</code> is not null, than returns events younger (greater ID) than <code>offset</code>.
+     * Result list (page) has size equal to <code>limit</code>.
      *
      * @param domain domain to find events for
-     * @param limit  result list size
-     * @param offset ID of event, from which (excluding this event) list (page) starts. If null, it result list starts from the oldest event
+     * @param requestParameters parameters for filtering events
      * @return list starting from <code>offset</code>
      */
-    public List<AuditEvent> findByDomain(final String domain, final int limit, final ObjectId offset) {
+    public List<AuditEvent> findByDomain(final String domain,
+                                         final RequestParameters requestParameters) {
         notEmpty(domain, "domain cannot be empty");
+        notNull(requestParameters, "requestParameters cannot be null");
 
-        final Query query = createQuery(limit, offset);
+        final Query query = createQuery(requestParameters);
         return mongoTemplate.find(query, AuditEvent.class, getMongoCollectionName(domain));
     }
 
     /**
-     * Finds all events for domain for given userId. If <code>offset</code> is not null, than returns events younger (greater ID) than <code>offset</code>.
-     * Result list (page) has size equal to <code>limit</code>
+     * Finds all events for domain for given userId and in given time interval. If <code>offset</code> is not null, than returns events younger (greater ID) than <code>offset</code>.
+     * Result list (page) has size equal to <code>limit</code>.
      *
      * @param domain domain to find events for
      * @param userId user to find events for
-     * @param limit  result list size
-     * @param offset ID of event, from which (excluding this event) list (page) starts. If null, it result list starts from the oldest event
-     * @return list starting from <code>offset</code>
+     * @param requestParameters parameters for filtering events
+     * @return list starting from <code>offset</code> and limited on given time range
      */
-    public List<AuditEvent> findByDomainAndUser(final String domain, final String userId, final int limit, final ObjectId offset) {
+    public List<AuditEvent> findByDomainAndUser(final String domain,
+                                                final String userId,
+                                                final RequestParameters requestParameters) {
         notEmpty(domain, "domain cannot be empty");
         notEmpty(userId, "userId cannot be empty");
+        notNull(requestParameters, "requestParameters cannot be null");
 
-        final Query query = createQuery(limit, offset).addCriteria(Criteria.where("userId").is(userId));
+        final Query query = createQuery(requestParameters).addCriteria(Criteria.where("userId").is(userId));
         return mongoTemplate.find(query, AuditEvent.class, getMongoCollectionName(domain));
     }
 
@@ -91,21 +96,49 @@ public class AuditLogEventRepository {
     }
 
     /**
-     * Creates query, which will limit number events based on <code>limit</code> and finds events younger (greater ID) than <code>offset</code>
-     *
-     * @param limit  size of list (page)
-     * @param offset ID to start finding events, can be null. If null, starts from oldest event.
-     * @return Query, which limits result on <code>limit</code> and starts after event with ID <code>offset</code>
+     * Create query based on <code>requestParameters</code>
      */
-    private Query createQuery(final int limit, final ObjectId offset) {
+    private Query createQuery(final RequestParameters requestParameters) {
+
         final Query query = new Query();
 
-        if (offset != null) {
-            query.addCriteria(Criteria.where("id").gt(offset));
+        final Criteria idCriteria = createCriteriaForId(requestParameters);
+
+        if(idCriteria != null) {
+            query.addCriteria(idCriteria);
         }
 
-        query.limit(limit);
+        query.with(new Sort(Sort.Direction.ASC, "id"));
+        query.limit(requestParameters.getSanitizedLimit());
+
         return query;
+    }
+
+    private Criteria createCriteriaForId(final RequestParameters requestParameters) {
+        Criteria idCriteria = null;
+
+        if (requestParameters.getOffsetAsObjectId() != null) {
+            idCriteria = nullSafeIdCriteria(idCriteria);
+            idCriteria.gt(requestParameters.getOffsetAsObjectId());
+        }
+
+        if (requestParameters.getFrom() != null) {
+            idCriteria = nullSafeIdCriteria(idCriteria);
+            //use constructor ObjectId(Date, int, short, int, int) in order to get ObjectID with value xxxxxxxx0000000000000000
+            idCriteria.gte(new ObjectId(requestParameters.getFrom().toDate(), 0, (short) 0, 0));
+        }
+
+        if (requestParameters.getTo() != null) {
+            idCriteria = nullSafeIdCriteria(idCriteria);
+            //use constructor ObjectId(Date, int, short, int, int) in order to get ObjectID with value xxxxxxxx0000000000000000
+            idCriteria.lte(new ObjectId(requestParameters.getTo().toDate(), 0, (short) 0, 0));
+        }
+
+        return idCriteria;
+    }
+
+    private Criteria nullSafeIdCriteria(final Criteria idCriteria) {
+        return (idCriteria == null)? Criteria.where("id") : idCriteria;
     }
 
     String getMongoCollectionPrefix() {

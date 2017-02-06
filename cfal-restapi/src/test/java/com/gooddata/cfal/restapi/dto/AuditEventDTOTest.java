@@ -3,9 +3,9 @@
  */
 package com.gooddata.cfal.restapi.dto;
 
+import static com.gooddata.cfal.restapi.util.DateUtils.date;
+
 import org.apache.commons.io.IOUtils;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class AuditEventDTOTest {
     @Autowired
     private JacksonTester<AuditEventDTO> json;
 
-    private final AuditEventDTO event = new AuditEventDTO("123", "default", "user123", new DateTime(1993, 9, 3, 0, 0, DateTimeZone.UTC));
+    private final AuditEventDTO event = new AuditEventDTO("123", "default", "user123", date("1993-03-09"), date("1993-03-09"));
 
     @Test
     public void testSerialize() throws Exception {

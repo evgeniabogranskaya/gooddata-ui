@@ -18,18 +18,31 @@ public class AuditEvent {
     private ObjectId id;
 
     @NotNull
-    private final String domain;
+    private String domain;
 
     @NotNull
-    private final String userId;
+    private String userId;
 
     @NotNull
-    private final DateTime timestamp;
+    private DateTime realTimeOccurrence; //time event happened at component
 
-    public AuditEvent(final String domain, final String userId, final DateTime timestamp) {
+    public AuditEvent(final String domain, final String userId, final DateTime realTimeOccurrence) {
         this.domain = domain;
         this.userId = userId;
-        this.timestamp = timestamp;
+        this.realTimeOccurrence = realTimeOccurrence;
+    }
+
+    /**
+     * Constructor for testing purposes
+     */
+    public AuditEvent(final ObjectId id, final String domain, final String userId, final DateTime realTimeOccurrence) {
+        this.id = id;
+        this.domain = domain;
+        this.userId = userId;
+        this.realTimeOccurrence = realTimeOccurrence;
+    }
+
+    AuditEvent() {
     }
 
     public ObjectId getId() {
@@ -44,7 +57,7 @@ public class AuditEvent {
         return userId;
     }
 
-    public DateTime getTimestamp() {
-        return timestamp;
+    public DateTime getRealTimeOccurrence() {
+        return realTimeOccurrence;
     }
 }
