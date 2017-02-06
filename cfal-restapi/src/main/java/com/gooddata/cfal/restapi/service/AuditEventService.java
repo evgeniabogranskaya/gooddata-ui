@@ -5,7 +5,6 @@ package com.gooddata.cfal.restapi.service;
 
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
-import com.gooddata.cfal.restapi.exception.OffsetAndFromSpecifiedException;
 import com.gooddata.cfal.restapi.model.AuditEvent;
 import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import org.slf4j.Logger;
