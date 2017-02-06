@@ -3,7 +3,6 @@
  */
 package com.gooddata.cfal.restapi.dto;
 
-import com.gooddata.cfal.restapi.exception.InvalidOffsetException;
 import com.gooddata.collections.PageRequest;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
@@ -43,11 +42,7 @@ public class RequestParameters extends PageRequest {
     }
 
     public ObjectId getOffsetAsObjectId() {
-        try {
-            return getOffset() == null ? null : new ObjectId(getOffset());
-        } catch (IllegalArgumentException ex) {
-            throw new InvalidOffsetException("Invalid offset " + getOffset(), ex);
-        }
+        return getOffset() == null ? null : new ObjectId(getOffset());
     }
 
     @Override
