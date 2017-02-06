@@ -17,7 +17,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.gooddata.cfal.restapi.dto.RequestParameters;
-import com.gooddata.cfal.restapi.exception.OffsetAndFromSpecifiedException;
 import com.gooddata.cfal.restapi.util.EntityDTOIdMatcher;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.model.AuditEvent;
