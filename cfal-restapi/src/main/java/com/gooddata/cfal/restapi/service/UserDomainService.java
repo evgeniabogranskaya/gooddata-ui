@@ -14,7 +14,6 @@ import com.gooddata.cfal.restapi.exception.UserNotDomainAdminException;
 import com.gooddata.cfal.restapi.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static org.apache.commons.lang3.Validate.notEmpty;
@@ -31,7 +30,6 @@ public class UserDomainService {
     private final UserService userService;
     private final DomainService domainService;
 
-    @Autowired
     public UserDomainService(final UserService userService, final DomainService domainService) {
         this.userService = notNull(userService, "userService cannot be null");
         this.domainService = notNull(domainService, "domainService cannot be null");

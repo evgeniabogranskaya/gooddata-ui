@@ -6,7 +6,6 @@ package com.gooddata.cfal.restapi.repository;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
 import com.gooddata.cfal.restapi.model.AuditEvent;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -29,7 +28,6 @@ public class AuditLogEventRepository {
 
     private final MongoTemplate mongoTemplate;
 
-    @Autowired
     public AuditLogEventRepository(final MongoTemplate mongoTemplate,
                                    @Value("${gdc.cfal.mongo.collection.prefix}") final String mongoCollectionPrefix) {
         this.mongoTemplate = notNull(mongoTemplate, "mongoTemplate cannot be null");

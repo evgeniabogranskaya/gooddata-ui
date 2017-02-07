@@ -11,7 +11,6 @@ import com.gooddata.cfal.restapi.exception.UserNotSpecifiedException;
 import com.gooddata.cfal.restapi.service.AuditEventService;
 import com.gooddata.cfal.restapi.service.UserDomainService;
 import com.gooddata.context.GdcCallContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -24,7 +23,6 @@ import static org.apache.commons.lang3.Validate.notNull;
 
 import javax.validation.Valid;
 
-
 /**
  * Audit event controller
  */
@@ -34,7 +32,6 @@ public class AuditEventController {
     private final AuditEventService auditEventService;
     private final UserDomainService userDomainService;
 
-    @Autowired
     public AuditEventController(final AuditEventService auditEventService,
                                 final UserDomainService userDomainService) {
         this.auditEventService = notNull(auditEventService, "auditEventService cannot be null");
