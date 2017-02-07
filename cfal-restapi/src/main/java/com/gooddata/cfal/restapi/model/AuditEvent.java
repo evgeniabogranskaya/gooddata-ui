@@ -7,8 +7,6 @@ import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Audit event entity
  */
@@ -17,13 +15,10 @@ public class AuditEvent {
     @Id
     private ObjectId id;
 
-    @NotNull
     private String domain;
 
-    @NotNull
     private String userId;
 
-    @NotNull
     private DateTime realTimeOccurrence; //time event happened at component
 
     public AuditEvent(final String domain, final String userId, final DateTime realTimeOccurrence) {
