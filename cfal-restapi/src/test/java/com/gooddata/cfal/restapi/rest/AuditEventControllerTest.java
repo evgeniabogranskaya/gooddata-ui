@@ -29,6 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static com.gooddata.cfal.restapi.config.WebConfig.COMPONENT_NAME;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static java.lang.String.format;
 import static org.hamcrest.core.Is.is;
@@ -71,8 +72,6 @@ public class AuditEventControllerTest {
     private static final String USER_NOT_SPECIFIED_MESSAGE = "User ID is not specified";
 
     private static final String USER_NOT_ADMIN_MESSAGE = "User is not admin";
-
-    private static final String COMPONENT_NAME = "auditlog";
 
     @Autowired
     private MockMvc mockMvc;
