@@ -54,7 +54,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     /**
      * Create http exception translator and map exceptions to http statuses
-     * @see {@link AuditlogExceptionTranslatorAdvice}
+     * @see AuditlogExceptionTranslatorAdvice
      */
     @Bean
     public HttpExceptionTranslator httpExceptionTranslator() {
@@ -69,7 +69,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     /**
      * register custom String to DateTime converter
-     * @see {@link StringToUTCDateTimeConverter}
+     * @see StringToUTCDateTimeConverter
      */
     @Override
     public void addFormatters(final FormatterRegistry registry) {
