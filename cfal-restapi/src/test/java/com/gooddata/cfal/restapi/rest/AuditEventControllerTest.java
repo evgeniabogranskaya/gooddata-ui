@@ -72,6 +72,8 @@ public class AuditEventControllerTest {
 
     private static final String USER_NOT_ADMIN_MESSAGE = "User is not admin";
 
+    private static final String COMPONENT_NAME = "auditlog";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -141,7 +143,8 @@ public class AuditEventControllerTest {
         mockMvc.perform(get(AuditEventDTO.ADMIN_URI))
                .andExpect(status().isBadRequest())
                .andExpect(jsonPath("$.error.errorClass", is(UserNotSpecifiedException.class.getName())))
-               .andExpect(jsonPath("$.error.message", is(USER_NOT_SPECIFIED_MESSAGE)));
+               .andExpect(jsonPath("$.error.message", is(USER_NOT_SPECIFIED_MESSAGE)))
+               .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test
@@ -153,7 +156,8 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(errorMessage)));
+                .andExpect(jsonPath("$.error.message", is(errorMessage)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test
@@ -162,7 +166,8 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, NOT_ADMIN_USER_ID))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error.errorClass", is(UserNotDomainAdminException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(USER_NOT_ADMIN_MESSAGE)));
+                .andExpect(jsonPath("$.error.message", is(USER_NOT_ADMIN_MESSAGE)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test
@@ -178,7 +183,8 @@ public class AuditEventControllerTest {
         mockMvc.perform(get(AuditEventDTO.USER_URI))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(UserNotSpecifiedException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(USER_NOT_SPECIFIED_MESSAGE)));
+                .andExpect(jsonPath("$.error.message", is(USER_NOT_SPECIFIED_MESSAGE)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test
@@ -190,7 +196,8 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(errorMessage)));
+                .andExpect(jsonPath("$.error.message", is(errorMessage)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test
@@ -221,7 +228,8 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(errorMessage)));
+                .andExpect(jsonPath("$.error.message", is(errorMessage)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test
@@ -234,7 +242,8 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(errorMessage)));
+                .andExpect(jsonPath("$.error.message", is(errorMessage)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test
@@ -248,7 +257,8 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(errorMessage)));
+                .andExpect(jsonPath("$.error.message", is(errorMessage)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test
@@ -262,7 +272,8 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(errorMessage)));
+                .andExpect(jsonPath("$.error.message", is(errorMessage)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test
@@ -276,7 +287,8 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(errorMessage)));
+                .andExpect(jsonPath("$.error.message", is(errorMessage)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test
@@ -290,7 +302,8 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(errorMessage)));
+                .andExpect(jsonPath("$.error.message", is(errorMessage)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test
@@ -317,7 +330,8 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(OFFSET_AND_FROM_SPECIFIED_MESSAGE)));
+                .andExpect(jsonPath("$.error.message", is(OFFSET_AND_FROM_SPECIFIED_MESSAGE)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test
@@ -328,7 +342,8 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(OFFSET_AND_FROM_SPECIFIED_MESSAGE)));
+                .andExpect(jsonPath("$.error.message", is(OFFSET_AND_FROM_SPECIFIED_MESSAGE)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test
@@ -339,7 +354,8 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(INVALID_TIME_INTERVAL_MESSAGE)));
+                .andExpect(jsonPath("$.error.message", is(INVALID_TIME_INTERVAL_MESSAGE)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test
@@ -350,6 +366,7 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(INVALID_TIME_INTERVAL_MESSAGE)));
+                .andExpect(jsonPath("$.error.message", is(INVALID_TIME_INTERVAL_MESSAGE)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 }
