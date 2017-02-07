@@ -47,11 +47,11 @@ public class AuditEventDTO {
                          @JsonProperty("userId") String userId,
                          @JsonProperty("realTimeOccurrence") @JsonDeserialize(using = ISODateTimeDeserializer.class) DateTime realTimeOccurrence,
                          @JsonProperty("timestamp") @JsonDeserialize(using = ISODateTimeDeserializer.class) DateTime timestamp) {
-        this.id = notEmpty(id);
-        this.domain = notEmpty(domain);
-        this.userId = notEmpty(userId);
-        this.realTimeOccurrence = notNull(realTimeOccurrence);
-        this.timestamp = notNull(timestamp);
+        this.id = notEmpty(id, "id can't be empty");
+        this.domain = notEmpty(domain, "domain can't be empty");
+        this.userId = notEmpty(userId, "userId can't be empty");
+        this.realTimeOccurrence = notNull(realTimeOccurrence, "realTimeOccurrence can't be null");
+        this.timestamp = notNull(timestamp, "timestamp can't be null");
     }
 
     public String getId() {
