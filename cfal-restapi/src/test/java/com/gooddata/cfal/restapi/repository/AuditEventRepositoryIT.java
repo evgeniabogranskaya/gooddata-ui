@@ -5,6 +5,7 @@ package com.gooddata.cfal.restapi.repository;
 
 import static com.gooddata.cfal.restapi.util.DateUtils.convertDateTimeToObjectId;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -24,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.TestPropertySource;
@@ -305,5 +307,42 @@ public class AuditEventRepositoryIT {
                 EntityIdMatcher.hasSameIdAs(auditEvent3),
                 EntityIdMatcher.hasSameIdAs(auditEvent4),
                 EntityIdMatcher.hasSameIdAs(auditEvent5)));
+    }
+
+    @Test
+    public void testStringToDateTimeConversion() {
+        DateTime expectedDate = date("1993-03-09");
+        TestEntity objectToSave = new TestEntity(expectedDate.toString());
+
+        mongoTemplate.save(objectToSave, auditLogEventRepository.getMongoCollectionPrefix() + DOMAIN2);
+
+        List<AuditEvent> result = auditLogEventRepository.findByDomain(DOMAIN2, new RequestParameters());
+
+        assertThat(result, hasSize(1));
+        assertThat(result.get(0).getId(), is(equalTo(objectToSave.getId())));
+        assertThat(result.get(0).getRealTimeOccurrence(), is(equalTo(expectedDate)));
+    }
+
+    /**
+     * Test entity for String to DateTime conversion
+     */
+    static class TestEntity {
+
+        @Id
+        private ObjectId id;
+
+        private String realTimeOccurrence;
+
+        public TestEntity(final String realTimeOccurrence) {
+            this.realTimeOccurrence = realTimeOccurrence;
+        }
+
+        public ObjectId getId() {
+            return id;
+        }
+
+        public String getRealTimeOccurrence() {
+            return realTimeOccurrence;
+        }
     }
 }
