@@ -26,6 +26,8 @@ import java.util.HashMap;
 //NO @EnableWebMvc, because this is only additional MVC config to spring boot autoconfiguration
 public class WebConfig extends WebMvcConfigurerAdapter {
 
+    public static final String COMPONENT_NAME = "auditlog";
+
     /**
      * register GdcCallContextFilter as Filter
      */
@@ -54,12 +56,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     /**
      * Create http exception translator and map exceptions to http statuses
-     * @see {@link AuditlogExceptionTranslatorAdvice}
+     * @see AuditlogExceptionTranslatorAdvice
      */
     @Bean
     public HttpExceptionTranslator httpExceptionTranslator() {
         final HttpExceptionTranslator httpExceptionTranslator = new HttpExceptionTranslator();
-        httpExceptionTranslator.setComponent("auditlog");
+        httpExceptionTranslator.setComponent(COMPONENT_NAME);
         httpExceptionTranslator.setExceptionsToHTTPstatusMapping(new HashMap<Integer, java.util.List<Class<? extends Exception>>>(){{
             //map BindException and MethodArgumentTypeMismatchException (these exceptions are thrown due to type conversion error) to bad request status, because by default it is 5xx
             put(HttpStatus.SC_BAD_REQUEST, Arrays.asList(BindException.class, MethodArgumentTypeMismatchException.class));
@@ -69,7 +71,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     /**
      * register custom String to DateTime converter
-     * @see {@link StringToUTCDateTimeConverter}
+     * @see StringToUTCDateTimeConverter
      */
     @Override
     public void addFormatters(final FormatterRegistry registry) {

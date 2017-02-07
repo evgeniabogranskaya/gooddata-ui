@@ -9,7 +9,6 @@ import com.gooddata.cfal.restapi.model.AuditEvent;
 import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,7 +29,6 @@ public class AuditEventService {
 
     private final AuditLogEventRepository auditLogEventRepository;
 
-    @Autowired
     public AuditEventService(final AuditLogEventRepository auditLogEventRepository) {
         this.auditLogEventRepository = notNull(auditLogEventRepository, "auditEventRepository cannot be null");
     }
