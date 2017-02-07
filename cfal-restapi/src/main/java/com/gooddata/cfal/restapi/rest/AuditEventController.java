@@ -6,19 +6,23 @@ package com.gooddata.cfal.restapi.rest;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
+import com.gooddata.cfal.restapi.exception.RequestParametersValidator;
 import com.gooddata.cfal.restapi.exception.UserNotSpecifiedException;
 import com.gooddata.cfal.restapi.service.AuditEventService;
 import com.gooddata.cfal.restapi.service.UserDomainService;
-import com.gooddata.cfal.restapi.util.ValidationUtils;
 import com.gooddata.context.GdcCallContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.apache.commons.lang3.Validate.notNull;
+
+import javax.validation.Valid;
 
 
 /**
@@ -38,9 +42,8 @@ public class AuditEventController {
     }
 
     @RequestMapping(path = AuditEventDTO.ADMIN_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public AuditEventsDTO listAuditEvents(@ModelAttribute RequestParameters requestParameters) {
+    public AuditEventsDTO listAuditEvents(@Valid @ModelAttribute RequestParameters requestParameters) {
 
-        ValidationUtils.validate(requestParameters);
 
         final String userId = getUserIdFromContext();
 
@@ -52,15 +55,21 @@ public class AuditEventController {
     }
 
     @RequestMapping(path = AuditEventDTO.USER_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public AuditEventsDTO listAuditEventsForUser(@ModelAttribute RequestParameters requestParameters) {
-
-        ValidationUtils.validate(requestParameters);
+    public AuditEventsDTO listAuditEventsForUser(@Valid @ModelAttribute RequestParameters requestParameters) {
 
         final String userId = getUserIdFromContext();
 
         final String domainForUser = userDomainService.findDomainForUser(userId);
 
         return auditEventService.findByDomainAndUser(domainForUser, userId, requestParameters);
+    }
+
+    /**
+     * register validator
+     */
+    @InitBinder
+    protected void initBinder(WebDataBinder webDataBinder) {
+        webDataBinder.setValidator(new RequestParametersValidator());
     }
 
     private String getUserIdFromContext() {

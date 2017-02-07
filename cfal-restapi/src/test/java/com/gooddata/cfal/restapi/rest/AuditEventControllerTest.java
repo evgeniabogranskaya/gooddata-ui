@@ -7,11 +7,9 @@ import com.gooddata.cfal.restapi.config.WebConfig;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
-import com.gooddata.cfal.restapi.exception.InvalidOffsetException;
-import com.gooddata.cfal.restapi.exception.InvalidTimeIntervalException;
-import com.gooddata.cfal.restapi.exception.OffsetAndFromSpecifiedException;
 import com.gooddata.cfal.restapi.exception.UserNotDomainAdminException;
 import com.gooddata.cfal.restapi.exception.UserNotSpecifiedException;
+import com.gooddata.cfal.restapi.exception.ValidationException;
 import com.gooddata.cfal.restapi.service.AuditEventService;
 import com.gooddata.cfal.restapi.service.UserDomainService;
 import com.gooddata.collections.Paging;
@@ -32,6 +30,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
+import static java.lang.String.format;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -60,6 +59,18 @@ public class AuditEventControllerTest {
     private static final String DOMAIN = "test domain";
 
     private static final ObjectId OFFSET = new ObjectId();
+
+    private static final String INVALID_TIME_INTERVAL_MESSAGE = "\"to\" must be after \"before\"";
+
+    private static final String OFFSET_AND_FROM_SPECIFIED_MESSAGE = "offset and time interval param \"from\" cannot be specified at once";
+
+    private static final String TYPE_MISMATCH_MESSAGE = "Value \"%s\" is not valid for parameter \"%s\"";
+
+    private static final String INVALID_OFFSET_MESSAGE = "Invalid offset \"%s\"";
+
+    private static final String USER_NOT_SPECIFIED_MESSAGE = "User ID is not specified";
+
+    private static final String USER_NOT_ADMIN_MESSAGE = "User is not admin";
 
     @Autowired
     private MockMvc mockMvc;
@@ -101,17 +112,15 @@ public class AuditEventControllerTest {
     public void setUp() {
         doReturn(DOMAIN).when(userDomainService).findDomainForUser(USER_ID);
         doReturn(DOMAIN).when(userDomainService).findDomainForUser(NOT_ADMIN_USER_ID);
-        doThrow(new UserNotDomainAdminException("")).when(userDomainService).authorizeAdmin(NOT_ADMIN_USER_ID, DOMAIN);
+        doThrow(new UserNotDomainAdminException(USER_NOT_ADMIN_MESSAGE)).when(userDomainService).authorizeAdmin(NOT_ADMIN_USER_ID, DOMAIN);
 
         RequestParameters pageRequestWithBadOffset = new RequestParameters();
         pageRequestWithBadOffset.setOffset(BAD_OFFSET);
 
         RequestParameters pageRequestDefault = new RequestParameters();
 
-        when(auditEventService.findByDomain(eq(DOMAIN), eq(pageRequestWithBadOffset))).thenThrow(new InvalidOffsetException(""));
         when(auditEventService.findByDomain(eq(DOMAIN), eq(pageRequestDefault))).thenReturn(domainEvents);
 
-        when(auditEventService.findByDomainAndUser(eq(DOMAIN), eq(USER_ID), eq(pageRequestWithBadOffset))).thenThrow(new InvalidOffsetException(""));
         when(auditEventService.findByDomainAndUser(eq(DOMAIN), eq(USER_ID), eq(pageRequestDefault))).thenReturn(eventsForUser);
 
         RequestParameters boundedRequestParameters = new RequestParameters();
@@ -125,26 +134,26 @@ public class AuditEventControllerTest {
         RequestParameters pageRequestWithOffset = new RequestParameters();
         pageRequestWithOffset.setOffset(OFFSET.toString());
         pageRequestWithOffset.setFrom(LOWER_BOUND);
-
-        when(auditEventService.findByDomain(eq(DOMAIN), eq(pageRequestWithOffset))).thenThrow(new OffsetAndFromSpecifiedException(""));
-        when(auditEventService.findByDomainAndUser(eq(DOMAIN), eq(USER_ID), eq(pageRequestWithOffset))).thenThrow(new OffsetAndFromSpecifiedException(""));
-
     }
 
     @Test
     public void testListAuditEventsUserNotSpecified() throws Exception {
         mockMvc.perform(get(AuditEventDTO.ADMIN_URI))
                .andExpect(status().isBadRequest())
-               .andExpect(jsonPath("$.error.errorClass", is(UserNotSpecifiedException.class.getName())));
+               .andExpect(jsonPath("$.error.errorClass", is(UserNotSpecifiedException.class.getName())))
+               .andExpect(jsonPath("$.error.message", is(USER_NOT_SPECIFIED_MESSAGE)));
     }
 
     @Test
     public void testListAuditEventsInvalidOffset() throws Exception {
+        String errorMessage = format(INVALID_OFFSET_MESSAGE, BAD_OFFSET);
+
         mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
                 .param("offset", BAD_OFFSET)
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error.errorClass", is(InvalidOffsetException.class.getName())));
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(errorMessage)));
     }
 
     @Test
@@ -152,7 +161,8 @@ public class AuditEventControllerTest {
         mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
                 .header(X_PUBLIC_USER_ID, NOT_ADMIN_USER_ID))
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error.errorClass", is(UserNotDomainAdminException.class.getName())));
+                .andExpect(jsonPath("$.error.errorClass", is(UserNotDomainAdminException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(USER_NOT_ADMIN_MESSAGE)));
     }
 
     @Test
@@ -167,16 +177,20 @@ public class AuditEventControllerTest {
     public void testListAuditEventsForUserNotSpecified() throws Exception {
         mockMvc.perform(get(AuditEventDTO.USER_URI))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error.errorClass", is(UserNotSpecifiedException.class.getName())));
+                .andExpect(jsonPath("$.error.errorClass", is(UserNotSpecifiedException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(USER_NOT_SPECIFIED_MESSAGE)));
     }
 
     @Test
-    public void testListAuditEventsForUserInvalidUser() throws Exception {
+    public void testListAuditEventsForUserInvalidOffset() throws Exception {
+        String errorMessage = format(INVALID_OFFSET_MESSAGE, BAD_OFFSET);
+
         mockMvc.perform(get(AuditEventDTO.USER_URI)
                 .param("offset", BAD_OFFSET)
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error.errorClass", is(InvalidOffsetException.class.getName())));
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(errorMessage)));
     }
 
     @Test
@@ -199,54 +213,84 @@ public class AuditEventControllerTest {
 
     @Test
     public void testListAuditEventsWithBadLimit() throws Exception {
+        String wrongValue = "not number";
+        String errorMessage = format(TYPE_MISMATCH_MESSAGE, wrongValue, "limit");
+
         mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
-                .param("limit", "not number")
+                .param("limit", wrongValue)
                 .header(X_PUBLIC_USER_ID, USER_ID))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(errorMessage)));
     }
 
     @Test
     public void testListAuditEventsForUserWithBadLimit() throws Exception {
+        String wrongValue = "not number";
+        String errorMessage = format(TYPE_MISMATCH_MESSAGE, wrongValue, "limit");
+
         mockMvc.perform(get(AuditEventDTO.USER_URI)
-                .param("limit", "not number")
+                .param("limit", wrongValue)
                 .header(X_PUBLIC_USER_ID, USER_ID))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(errorMessage)));
     }
 
     @Test
     public void testListAuditEventsInvalidFrom() throws Exception {
+        String wrongValue = "a";
+        String errorMessage = format(TYPE_MISMATCH_MESSAGE, wrongValue, "from");
+
         mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
-                .param("from", "a")
+                .param("from", wrongValue)
                 .param("to", UPPER_BOUND.toString())
                 .header(X_PUBLIC_USER_ID, USER_ID))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(errorMessage)));
     }
 
     @Test
     public void testListAuditEventsInvalidTo() throws Exception {
+        String wrongValue = "a";
+        String errorMessage = format(TYPE_MISMATCH_MESSAGE, wrongValue, "to");
+
         mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
                 .param("from", LOWER_BOUND.toString())
-                .param("to", "a")
+                .param("to", wrongValue)
                 .header(X_PUBLIC_USER_ID, USER_ID))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(errorMessage)));
     }
 
     @Test
     public void testListAuditEventsForUserInvalidFrom() throws Exception {
+        String wrongValue = "a";
+        String errorMessage = format(TYPE_MISMATCH_MESSAGE, wrongValue, "from");
+
         mockMvc.perform(get(AuditEventDTO.USER_URI)
-                .param("from", "a")
+                .param("from", wrongValue)
                 .param("to", UPPER_BOUND.toString())
                 .header(X_PUBLIC_USER_ID, USER_ID))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(errorMessage)));
     }
 
     @Test
     public void testListAuditEventsForUserInvalidTo() throws Exception {
+        String wrongValue = "a";
+        String errorMessage = format(TYPE_MISMATCH_MESSAGE, wrongValue, "to");
+
         mockMvc.perform(get(AuditEventDTO.USER_URI)
                 .param("from", LOWER_BOUND.toString())
-                .param("to", "a")
+                .param("to", wrongValue)
                 .header(X_PUBLIC_USER_ID, USER_ID))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(errorMessage)));
     }
 
     @Test
@@ -272,7 +316,8 @@ public class AuditEventControllerTest {
                 .param("from", LOWER_BOUND.toString())
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error.errorClass", is(OffsetAndFromSpecifiedException.class.getName())));
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(OFFSET_AND_FROM_SPECIFIED_MESSAGE)));
     }
 
     @Test
@@ -282,7 +327,8 @@ public class AuditEventControllerTest {
                 .param("from", LOWER_BOUND.toString())
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error.errorClass", is(OffsetAndFromSpecifiedException.class.getName())));
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(OFFSET_AND_FROM_SPECIFIED_MESSAGE)));
     }
 
     @Test
@@ -292,7 +338,8 @@ public class AuditEventControllerTest {
                 .param("to", LOWER_BOUND.toString())
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error.errorClass", is(InvalidTimeIntervalException.class.getName())));
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(INVALID_TIME_INTERVAL_MESSAGE)));
     }
 
     @Test
@@ -302,6 +349,7 @@ public class AuditEventControllerTest {
                 .param("to", LOWER_BOUND.toString())
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error.errorClass", is(InvalidTimeIntervalException.class.getName())));
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(INVALID_TIME_INTERVAL_MESSAGE)));
     }
 }
