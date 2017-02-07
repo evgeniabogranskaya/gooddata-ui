@@ -6,6 +6,7 @@ package com.gooddata.cfal.restapi.service;
 import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI;
 import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -39,8 +40,11 @@ public class AuditEventServiceTest {
     private static final Integer CUSTOM_LIMIT = 2;
 
     private static final DateTime LOWER_BOUND = date("1995-01-01");
-
     private static final DateTime UPPER_BOUND = date("2000-01-01");
+
+    private RequestParameters requestParamLBUB;
+    private RequestParameters requestParamLB;
+    private RequestParameters requestParamUB;
 
     @Mock
     private AuditLogEventRepository auditLogEventRepository;
@@ -59,15 +63,15 @@ public class AuditEventServiceTest {
 
         mockEvents();
 
-        RequestParameters lowerBoundRequestParameters = new RequestParameters();
-        lowerBoundRequestParameters.setFrom(LOWER_BOUND);
+        requestParamLBUB = new RequestParameters();
+        requestParamLBUB.setFrom(LOWER_BOUND);
+        requestParamLBUB.setTo(UPPER_BOUND);
 
-        RequestParameters upperBoundRequestParameters = new RequestParameters();
-        upperBoundRequestParameters.setTo(UPPER_BOUND);
+        requestParamLB = new RequestParameters();
+        requestParamLB.setFrom(LOWER_BOUND);
 
-        RequestParameters boundedRequestParameters = new RequestParameters();
-        boundedRequestParameters.setFrom(LOWER_BOUND);
-        boundedRequestParameters.setTo(UPPER_BOUND);
+        requestParamUB = new RequestParameters();
+        requestParamUB.setTo(UPPER_BOUND);
 
         RequestParameters requestParametersWithCustomLimit = new RequestParameters();
         requestParametersWithCustomLimit.setLimit(CUSTOM_LIMIT);
@@ -84,13 +88,13 @@ public class AuditEventServiceTest {
         when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, requestParametersWithCustomLimit)).thenReturn(asList(event1, event2));
         when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, requestParametersWithCustomLimitAndOffset)).thenReturn(singletonList(event3));
 
-        when(auditLogEventRepository.findByDomain(DOMAIN, lowerBoundRequestParameters)).thenReturn(asList(event2, event3));
-        when(auditLogEventRepository.findByDomain(DOMAIN, upperBoundRequestParameters)).thenReturn(asList(event1, event2));
-        when(auditLogEventRepository.findByDomain(DOMAIN, boundedRequestParameters)).thenReturn(Collections.singletonList(event2));
+        when(auditLogEventRepository.findByDomain(DOMAIN, requestParamLB)).thenReturn(asList(event2, event3));
+        when(auditLogEventRepository.findByDomain(DOMAIN, requestParamUB)).thenReturn(asList(event1, event2));
+        when(auditLogEventRepository.findByDomain(DOMAIN, requestParamLBUB)).thenReturn(Collections.singletonList(event2));
 
-        when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, lowerBoundRequestParameters)).thenReturn(asList(event2, event3));
-        when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, upperBoundRequestParameters)).thenReturn(asList(event1, event2));
-        when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, boundedRequestParameters)).thenReturn(singletonList(event2));
+        when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, requestParamLB)).thenReturn(asList(event2, event3));
+        when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, requestParamUB)).thenReturn(asList(event1, event2));
+        when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, requestParamLBUB)).thenReturn(singletonList(event2));
     }
 
     @Test
@@ -101,7 +105,7 @@ public class AuditEventServiceTest {
         assertThat(events, is(notNullValue()));
         assertThat(events, containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2), EntityDTOIdMatcher.hasSameIdAs(event3)));
         assertThat(events.getPaging().getNextUri(),
-                is(ADMIN_URI + "?offset=" + event3.getId() + "&limit=" + pageReq.getSanitizedLimit()));
+                is(format("%s?offset=%s&limit=%d", ADMIN_URI, event3.getId(), pageReq.getSanitizedLimit())));
     }
 
     @Test
@@ -113,7 +117,7 @@ public class AuditEventServiceTest {
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage, containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2)));
         assertThat(firstPage.getPaging().getNextUri(),
-                is(ADMIN_URI + "?offset=" + event2.getId() + "&limit=" + firstPageReq.getSanitizedLimit()));
+                is(format("%s?offset=%s&limit=%d", ADMIN_URI, event2.getId(), firstPageReq.getSanitizedLimit())));
 
         RequestParameters secondPageReq = new RequestParameters();
         secondPageReq.setLimit(CUSTOM_LIMIT);
@@ -123,7 +127,7 @@ public class AuditEventServiceTest {
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage, Matchers.contains(EntityDTOIdMatcher.hasSameIdAs(event3)));
         assertThat(secondPage.getPaging().getNextUri(),
-                is(ADMIN_URI + "?offset=" + event3.getId() + "&limit=" + secondPageReq.getSanitizedLimit()));
+                is(format("%s?offset=%s&limit=%d", ADMIN_URI, event3.getId(), secondPageReq.getSanitizedLimit())));
     }
 
     @Test
@@ -134,7 +138,7 @@ public class AuditEventServiceTest {
         assertThat(events, is(notNullValue()));
         assertThat(events, containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2), EntityDTOIdMatcher.hasSameIdAs(event3)));
         assertThat(events.getPaging().getNextUri(),
-                is(USER_URI + "?offset=" + event3.getId() + "&limit=" + pageReq.getSanitizedLimit()));
+                is(format("%s?offset=%s&limit=%d", USER_URI, event3.getId(), pageReq.getSanitizedLimit())));
     }
 
     @Test
@@ -146,7 +150,7 @@ public class AuditEventServiceTest {
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage, containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2)));
         assertThat(firstPage.getPaging().getNextUri(),
-                is(USER_URI + "?offset=" + event2.getId() + "&limit=" + firstPageReq.getSanitizedLimit()));
+                is(format("%s?offset=%s&limit=%d", USER_URI, event2.getId(), firstPageReq.getSanitizedLimit())));
 
         RequestParameters secondPageReq = new RequestParameters();
         secondPageReq.setOffset(event2.getId().toString());
@@ -156,87 +160,67 @@ public class AuditEventServiceTest {
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage, Matchers.contains(EntityDTOIdMatcher.hasSameIdAs(event3)));
         assertThat(secondPage.getPaging().getNextUri(),
-                is(USER_URI + "?offset=" + event3.getId() + "&limit=" + secondPageReq.getSanitizedLimit()));
+                is(format("%s?offset=%s&limit=%d", USER_URI, event3.getId(), secondPageReq.getSanitizedLimit())));
     }
 
     @Test
     public void testFindByDomainOnePageWithTimeIntervalFrom() {
-        RequestParameters requestParameters = new RequestParameters();
-        requestParameters.setFrom(LOWER_BOUND);
-
-        AuditEventsDTO events = auditEventService.findByDomain(DOMAIN, requestParameters);
+        AuditEventsDTO events = auditEventService.findByDomain(DOMAIN, requestParamLB);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event2), EntityDTOIdMatcher.hasSameIdAs(event3)));
         assertThat(events.getPaging().getNextUri(),
-                is(ADMIN_URI +"?offset=" + event3.getId() + "&limit=" + requestParameters.getSanitizedLimit()));
+                is(format("%s?offset=%s&limit=%d", ADMIN_URI, event3.getId(), requestParamLB.getSanitizedLimit())));
     }
 
     @Test
     public void testFindByDomainOnePageWithTimeIntervalTo() {
-        RequestParameters requestParameters = new RequestParameters();
-        requestParameters.setTo(UPPER_BOUND);
-
-        AuditEventsDTO events = auditEventService.findByDomain(DOMAIN, requestParameters);
+        AuditEventsDTO events = auditEventService.findByDomain(DOMAIN, requestParamUB);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2)));
         assertThat(events.getPaging().getNextUri(),
-                is(ADMIN_URI + "?to=" + UPPER_BOUND + "&offset=" + event2.getId() + "&limit=" + requestParameters.getSanitizedLimit()));
+                is(format("%s?to=%s&offset=%s&limit=%d", ADMIN_URI, UPPER_BOUND, event2.getId(), requestParamUB.getSanitizedLimit())));
     }
 
     @Test
     public void testFindByDomainOnePageWithTimeIntervalFromAndTo() {
-        RequestParameters requestParameters = new RequestParameters();
-        requestParameters.setFrom(LOWER_BOUND);
-        requestParameters.setTo(UPPER_BOUND);
-
-        AuditEventsDTO events = auditEventService.findByDomain(DOMAIN, requestParameters);
+        AuditEventsDTO events = auditEventService.findByDomain(DOMAIN, requestParamLBUB);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, contains(EntityDTOIdMatcher.hasSameIdAs(event2)));
         assertThat(events.getPaging().getNextUri(),
-                is(ADMIN_URI + "?to=" + UPPER_BOUND + "&offset=" + event2.getId() + "&limit=" + requestParameters.getSanitizedLimit()));
+                is(format("%s?to=%s&offset=%s&limit=%d", ADMIN_URI, UPPER_BOUND, event2.getId(), requestParamLBUB.getSanitizedLimit())));
     }
 
     @Test
     public void testFindByDomainAndUserOnePageWithTimeIntervalFrom() {
-        RequestParameters requestParameters = new RequestParameters();
-        requestParameters.setFrom(LOWER_BOUND);
-
-        AuditEventsDTO events = auditEventService.findByDomainAndUser(DOMAIN, USER_ID, requestParameters);
+        AuditEventsDTO events = auditEventService.findByDomainAndUser(DOMAIN, USER_ID, requestParamLB);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event2), EntityDTOIdMatcher.hasSameIdAs(event3)));
         assertThat(events.getPaging().getNextUri(),
-                is(USER_URI + "?offset=" + event3.getId() + "&limit=" + requestParameters.getSanitizedLimit()));
+                is(format("%s?offset=%s&limit=%d", USER_URI, event3.getId(), requestParamLB.getSanitizedLimit())));
     }
 
     @Test
     public void testFindByDomainAndUserOnePageWithTimeIntervalTo() {
-        RequestParameters requestParameters = new RequestParameters();
-        requestParameters.setTo(UPPER_BOUND);
-
-        AuditEventsDTO events = auditEventService.findByDomainAndUser(DOMAIN, USER_ID, requestParameters);
+        AuditEventsDTO events = auditEventService.findByDomainAndUser(DOMAIN, USER_ID, requestParamUB);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2)));
         assertThat(events.getPaging().getNextUri(),
-                is(USER_URI + "?to=" + UPPER_BOUND + "&offset=" + event2.getId() + "&limit=" + requestParameters.getSanitizedLimit()));
+                is(format("%s?to=%s&offset=%s&limit=%d", USER_URI, UPPER_BOUND, event2.getId(), requestParamUB.getSanitizedLimit())));
     }
 
     @Test
     public void testFindByDomainAndUserOnePageWithTimeIntervalFromAndTo() {
-        RequestParameters requestParameters = new RequestParameters();
-        requestParameters.setFrom(LOWER_BOUND);
-        requestParameters.setTo(UPPER_BOUND);
-
-        AuditEventsDTO events = auditEventService.findByDomainAndUser(DOMAIN, USER_ID, requestParameters);
+        AuditEventsDTO events = auditEventService.findByDomainAndUser(DOMAIN, USER_ID, requestParamLBUB);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, contains(EntityDTOIdMatcher.hasSameIdAs(event2)));
         assertThat(events.getPaging().getNextUri(),
-                is(USER_URI + "?to=" + UPPER_BOUND + "&offset=" + event2.getId() + "&limit=" + requestParameters.getSanitizedLimit()));
+                is(format("%s?to=%s&offset=%s&limit=%d", USER_URI, UPPER_BOUND, event2.getId(), requestParamLBUB.getSanitizedLimit())));
     }
 
     private void mockEvents() {

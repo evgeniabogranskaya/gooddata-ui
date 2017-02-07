@@ -4,6 +4,8 @@
 package com.gooddata.cfal.restapi.dto;
 
 import com.gooddata.collections.PageRequest;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
@@ -46,27 +48,26 @@ public class RequestParameters extends PageRequest {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        if (!super.equals(o))
-            return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
 
-        final RequestParameters that = (RequestParameters) o;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        if (from != null ? !from.equals(that.from) : that.from != null)
-            return false;
-        return to != null ? to.equals(that.to) : that.to == null;
+        RequestParameters that = (RequestParameters) o;
 
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(from, that.from)
+                .append(to, that.to)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (from != null ? from.hashCode() : 0);
-        result = 31 * result + (to != null ? to.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder(17, 37)
+                .appendSuper(super.hashCode())
+                .append(from)
+                .append(to)
+                .toHashCode();
     }
 }
