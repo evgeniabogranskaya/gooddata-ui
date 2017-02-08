@@ -16,10 +16,43 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+        <currentYear>${maven.build.timestamp}</currentYear>
     </properties>
 
     <modules>
         <module>cfal-restapi</module>
     </modules>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>3.0 </version>
+                <configuration>
+                    <header>license_header.txt</header>
+                    <failIfMissing>true</failIfMissing>
+                    <failIfUnknown>true</failIfUnknown>
+                    <skipExistingHeaders>true</skipExistingHeaders>
+                    <properties>
+                        <inceptionYear>2007</inceptionYear>
+                        <currentYear>${currentYear}</currentYear>
+                    </properties>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <!-- add missing license: mvn license:format -->
+            </plugin>
+        </plugins>
+    </build>
 </project>
