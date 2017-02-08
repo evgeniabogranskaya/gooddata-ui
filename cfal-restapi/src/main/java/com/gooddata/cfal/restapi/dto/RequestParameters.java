@@ -3,11 +3,14 @@
  */
 package com.gooddata.cfal.restapi.dto;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import com.gooddata.collections.PageRequest;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
 
 /**
  * Class to encapsulate time filtering and paging parameters
@@ -45,6 +48,33 @@ public class RequestParameters extends PageRequest {
 
     public ObjectId getOffsetAsObjectId() {
         return getOffset() == null ? null : new ObjectId(getOffset());
+    }
+
+    /**
+     * Copy <code>requestParameters</code>
+     *
+     * @param requestParameters RequestParameters object (not null) to create copy of
+     * @return new instance of RequestParameters object, which fields has same value as fields of <code>requestParameters</code>
+     */
+    public static RequestParameters copy(final RequestParameters requestParameters) {
+        notNull(requestParameters, "requestParameters cannot be null");
+
+        final RequestParameters copy = new RequestParameters();
+        BeanUtils.copyProperties(requestParameters, copy);
+
+        return copy;
+    }
+
+    /**
+     * Copy this request parameters and increment request parameter limit.
+     * If Limit is negative, than sanitized limit is taken and incremented.
+     *
+     * @return new instance of RequestParameters with incremented limit
+     */
+    public RequestParameters withIncrementedLimit() {
+        final RequestParameters copy = RequestParameters.copy(this);
+        copy.setLimit(this.getSanitizedLimit() + 1);
+        return copy;
     }
 
     @Override

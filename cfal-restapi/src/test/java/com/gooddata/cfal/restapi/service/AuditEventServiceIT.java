@@ -9,6 +9,7 @@ import static com.gooddata.cfal.restapi.util.DateUtils.convertDateTimeToObjectId
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static com.gooddata.cfal.restapi.util.EntityDTOIdMatcher.hasSameIdAs;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -68,8 +69,7 @@ public class AuditEventServiceIT {
 
         assertThat(events, is(notNullValue()));
         assertThat(events, Matchers.containsInAnyOrder(hasSameIdAs(event1), hasSameIdAs(event2), hasSameIdAs(event3)));
-        assertThat(events.getPaging().getNextUri(),
-                is(ADMIN_URI + "?offset=" + event3.getId() + "&limit=" + requestParameters.getSanitizedLimit()));
+        assertThat(events.getPaging().getNextUri(), is(nullValue()));
     }
 
     @Test
@@ -90,8 +90,7 @@ public class AuditEventServiceIT {
 
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage, Matchers.contains(hasSameIdAs(event3)));
-        assertThat(secondPage.getPaging().getNextUri(),
-                is(ADMIN_URI + "?offset=" + event3.getId() + "&limit=" + secondPageReq.getSanitizedLimit()));
+        assertThat(secondPage.getPaging().getNextUri(), is(nullValue()));
     }
 
     @Test
@@ -101,8 +100,7 @@ public class AuditEventServiceIT {
 
         assertThat(events, is(notNullValue()));
         assertThat(events, Matchers.containsInAnyOrder(hasSameIdAs(event1), hasSameIdAs(event3)));
-        assertThat(events.getPaging().getNextUri(),
-                is(USER_URI + "?offset=" + event3.getId() + "&limit=" + pageReq.getSanitizedLimit()));
+        assertThat(events.getPaging().getNextUri(), is(nullValue()));
     }
 
     @Test
@@ -123,8 +121,7 @@ public class AuditEventServiceIT {
 
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage, Matchers.contains(hasSameIdAs(event3)));
-        assertThat(secondPage.getPaging().getNextUri(),
-                is(USER_URI + "?offset=" + event3.getId() + "&limit=" + secondPageReq.getSanitizedLimit()));
+        assertThat(secondPage.getPaging().getNextUri(), is(nullValue()));
     }
 
     @Test
@@ -140,8 +137,7 @@ public class AuditEventServiceIT {
 
         assertThat(events, is(notNullValue()));
         assertThat(events, Matchers.contains(hasSameIdAs(event1)));
-        assertThat(events.getPaging().getNextUri(),
-                is(USER_URI + "?to=" + to + "&offset=" + event1.getId() + "&limit=" + requestParameters.getSanitizedLimit()));
+        assertThat(events.getPaging().getNextUri(), is(Matchers.nullValue()));
     }
 
     @Test
@@ -155,8 +151,7 @@ public class AuditEventServiceIT {
 
         assertThat(events, is(notNullValue()));
         assertThat(events, Matchers.contains(hasSameIdAs(event1), hasSameIdAs(event3)));
-        assertThat(events.getPaging().getNextUri(),
-                is(USER_URI + "?offset=" + event3.getId() + "&limit=" + requestParameters.getSanitizedLimit()));
+        assertThat(events.getPaging().getNextUri(), is(nullValue()));
     }
 
     @Test
@@ -170,8 +165,7 @@ public class AuditEventServiceIT {
 
         assertThat(events, is(notNullValue()));
         assertThat(events, Matchers.contains(hasSameIdAs(event1)));
-        assertThat(events.getPaging().getNextUri(),
-                is(USER_URI + "?to=" + to + "&offset=" + event1.getId() + "&limit=" + requestParameters.getSanitizedLimit()));
+        assertThat(events.getPaging().getNextUri(), is(nullValue()));
     }
 
     @Test

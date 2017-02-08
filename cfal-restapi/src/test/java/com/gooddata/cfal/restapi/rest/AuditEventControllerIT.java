@@ -40,7 +40,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
@@ -130,7 +129,7 @@ public class AuditEventControllerIT {
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage.getStatusCode(), is(HttpStatus.OK));
         assertThat(firstPage.getBody(), containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2)));
-        String secondPageUri = firstPage.getBody().getNextPage().getPageUri(UriComponentsBuilder.newInstance()).toString();
+        String secondPageUri = firstPage.getBody().getPaging().getNextUri();
         assertThat(secondPageUri, notNullValue());
 
         ResponseEntity<AuditEventsDTO> secondPage = testRestTemplate.exchange(secondPageUri, HttpMethod.GET, requestWithGdcHeader(), AuditEventsDTO.class);
@@ -139,7 +138,7 @@ public class AuditEventControllerIT {
         assertThat(secondPage.getStatusCode(), is(HttpStatus.OK));
         assertThat(secondPage.getBody(), containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event3), EntityDTOIdMatcher.hasSameIdAs(event4)));
 
-        String thirdPageUri = secondPage.getBody().getNextPage().getPageUri(UriComponentsBuilder.newInstance()).toString();
+        String thirdPageUri = secondPage.getBody().getPaging().getNextUri();
         assertThat(thirdPageUri, notNullValue());
 
         ResponseEntity<AuditEventsDTO> thirdPage = testRestTemplate.exchange(thirdPageUri, HttpMethod.GET, requestWithGdcHeader(), AuditEventsDTO.class);
@@ -148,13 +147,8 @@ public class AuditEventControllerIT {
         assertThat(thirdPage.getStatusCode(), is(HttpStatus.OK));
         assertThat(thirdPage.getBody(), Matchers.contains(EntityDTOIdMatcher.hasSameIdAs(event5)));
 
-        String fourthPageUri = thirdPage.getBody().getNextPage().getPageUri(UriComponentsBuilder.newInstance()).toString();
-        assertThat(fourthPageUri, notNullValue());
-
-        ResponseEntity<AuditEventsDTO> fourthPage = testRestTemplate.exchange(fourthPageUri, HttpMethod.GET, requestWithGdcHeader(), AuditEventsDTO.class);
-        assertThat(fourthPage.getBody(), is(Matchers.notNullValue()));
-        assertThat(fourthPage.getBody(), hasSize(0));
-        assertThat(fourthPage.getBody().getPaging().getNextUri(), is(nullValue()));
+        String fourthPageUri = thirdPage.getBody().getPaging().getNextUri();
+        assertThat(fourthPageUri, nullValue());
     }
 
     @Test
@@ -200,7 +194,7 @@ public class AuditEventControllerIT {
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage.getStatusCode(), is(HttpStatus.OK));
         assertThat(firstPage.getBody(), Matchers.contains(EntityDTOIdMatcher.hasSameIdAs(event1)));
-        String secondPageUri = firstPage.getBody().getNextPage().getPageUri(UriComponentsBuilder.newInstance()).toString();
+        String secondPageUri = firstPage.getBody().getPaging().getNextUri();
         assertThat(secondPageUri, notNullValue());
 
         ResponseEntity<AuditEventsDTO> secondPage = testRestTemplate.exchange(secondPageUri, HttpMethod.GET, requestWithGdcHeader(), AuditEventsDTO.class);
@@ -209,7 +203,7 @@ public class AuditEventControllerIT {
         assertThat(secondPage.getStatusCode(), is(HttpStatus.OK));
         assertThat(secondPage.getBody(), Matchers.contains(EntityDTOIdMatcher.hasSameIdAs(event3)));
 
-        String thirdPageUri = secondPage.getBody().getNextPage().getPageUri(UriComponentsBuilder.newInstance()).toString();
+        String thirdPageUri = secondPage.getBody().getPaging().getNextUri();
         assertThat(thirdPageUri, notNullValue());
 
         ResponseEntity<AuditEventsDTO> thirdPage = testRestTemplate.exchange(thirdPageUri, HttpMethod.GET, requestWithGdcHeader(), AuditEventsDTO.class);
@@ -218,8 +212,8 @@ public class AuditEventControllerIT {
         assertThat(thirdPage.getStatusCode(), is(HttpStatus.OK));
         assertThat(thirdPage.getBody(), Matchers.contains(EntityDTOIdMatcher.hasSameIdAs(event4)));
 
-        String fourthPageUri = thirdPage.getBody().getNextPage().getPageUri(UriComponentsBuilder.newInstance()).toString();
-        assertThat(fourthPageUri, notNullValue());
+        String fourthPageUri = thirdPage.getBody().getPaging().getNextUri();
+        assertThat(fourthPageUri, nullValue());
     }
 
     @Test
