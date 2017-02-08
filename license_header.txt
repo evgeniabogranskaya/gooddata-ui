@@ -1,0 +1,1 @@
+Copyright (C) ${inceptionYear}-${currentYear}, GoodData(R) Corporation. All rights reserved.
