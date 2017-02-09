@@ -30,6 +30,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import static com.gooddata.cfal.restapi.config.WebConfig.COMPONENT_NAME;
+import static com.gooddata.cfal.restapi.exception.RequestParametersValidator.INVALID_OFFSET_MSG;
+import static com.gooddata.cfal.restapi.exception.RequestParametersValidator.INVALID_TIME_INTERVAL_MSG;
+import static com.gooddata.cfal.restapi.exception.RequestParametersValidator.NOT_POSITIVE_LIMIT_MSG;
+import static com.gooddata.cfal.restapi.exception.RequestParametersValidator.OFFSET_AND_FROM_SPECIFIED_MSG;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static java.lang.String.format;
 import static org.hamcrest.core.Is.is;
@@ -61,13 +65,7 @@ public class AuditEventControllerTest {
 
     private static final ObjectId OFFSET = new ObjectId();
 
-    private static final String INVALID_TIME_INTERVAL_MESSAGE = "\"to\" must be after \"before\"";
-
-    private static final String OFFSET_AND_FROM_SPECIFIED_MESSAGE = "offset and time interval param \"from\" cannot be specified at once";
-
     private static final String TYPE_MISMATCH_MESSAGE = "Value \"%s\" is not valid for parameter \"%s\"";
-
-    private static final String INVALID_OFFSET_MESSAGE = "Invalid offset \"%s\"";
 
     private static final String USER_NOT_SPECIFIED_MESSAGE = "User ID is not specified";
 
@@ -148,14 +146,12 @@ public class AuditEventControllerTest {
 
     @Test
     public void testListAuditEventsInvalidOffset() throws Exception {
-        String errorMessage = format(INVALID_OFFSET_MESSAGE, BAD_OFFSET);
-
         mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
                 .param("offset", BAD_OFFSET)
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(errorMessage)))
+                .andExpect(jsonPath("$.error.message", is(INVALID_OFFSET_MSG)))
                 .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
@@ -188,14 +184,12 @@ public class AuditEventControllerTest {
 
     @Test
     public void testListAuditEventsForUserInvalidOffset() throws Exception {
-        String errorMessage = format(INVALID_OFFSET_MESSAGE, BAD_OFFSET);
-
         mockMvc.perform(get(AuditEventDTO.USER_URI)
                 .param("offset", BAD_OFFSET)
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(errorMessage)))
+                .andExpect(jsonPath("$.error.message", is(INVALID_OFFSET_MSG)))
                 .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
@@ -329,7 +323,7 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(OFFSET_AND_FROM_SPECIFIED_MESSAGE)))
+                .andExpect(jsonPath("$.error.message", is(OFFSET_AND_FROM_SPECIFIED_MSG)))
                 .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
@@ -341,7 +335,7 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(OFFSET_AND_FROM_SPECIFIED_MESSAGE)))
+                .andExpect(jsonPath("$.error.message", is(OFFSET_AND_FROM_SPECIFIED_MSG)))
                 .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
@@ -353,7 +347,7 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(INVALID_TIME_INTERVAL_MESSAGE)))
+                .andExpect(jsonPath("$.error.message", is(INVALID_TIME_INTERVAL_MSG)))
                 .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
@@ -365,7 +359,59 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, USER_ID))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(INVALID_TIME_INTERVAL_MESSAGE)))
+                .andExpect(jsonPath("$.error.message", is(INVALID_TIME_INTERVAL_MSG)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
+    }
+
+    @Test
+    public void testListAuditEventsForUserWithNegativeLimit() throws Exception {
+        Integer wrongValue = -1;
+
+        mockMvc.perform(get(AuditEventDTO.USER_URI)
+                .param("limit", wrongValue.toString())
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(NOT_POSITIVE_LIMIT_MSG)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
+    }
+
+    @Test
+    public void testListAuditEventsForUserWithZeroLimit() throws Exception {
+        Integer wrongValue = 0;
+
+        mockMvc.perform(get(AuditEventDTO.USER_URI)
+                .param("limit", wrongValue.toString())
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(NOT_POSITIVE_LIMIT_MSG)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
+    }
+
+    @Test
+    public void testListAuditEventsWithNegativeLimit() throws Exception {
+        Integer wrongValue = -1;
+
+        mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
+                .param("limit", wrongValue.toString())
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(NOT_POSITIVE_LIMIT_MSG)))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
+    }
+
+    @Test
+    public void testListAuditEventsWithZeroLimit() throws Exception {
+        Integer wrongValue = 0;
+
+        mockMvc.perform(get(AuditEventDTO.ADMIN_URI)
+                .param("limit", wrongValue.toString())
+                .header(X_PUBLIC_USER_ID, USER_ID))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
+                .andExpect(jsonPath("$.error.message", is(NOT_POSITIVE_LIMIT_MSG)))
                 .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 }
