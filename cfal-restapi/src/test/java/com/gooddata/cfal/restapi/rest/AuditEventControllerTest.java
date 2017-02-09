@@ -67,10 +67,6 @@ public class AuditEventControllerTest {
 
     private static final String TYPE_MISMATCH_MESSAGE = "Value \"%s\" is not valid for parameter \"%s\"";
 
-    private static final String USER_NOT_SPECIFIED_MESSAGE = "User ID is not specified";
-
-    private static final String USER_NOT_ADMIN_MESSAGE = "User is not admin";
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -111,7 +107,7 @@ public class AuditEventControllerTest {
     public void setUp() {
         doReturn(DOMAIN).when(userDomainService).findDomainForUser(USER_ID);
         doReturn(DOMAIN).when(userDomainService).findDomainForUser(NOT_ADMIN_USER_ID);
-        doThrow(new UserNotDomainAdminException(USER_NOT_ADMIN_MESSAGE)).when(userDomainService).authorizeAdmin(NOT_ADMIN_USER_ID, DOMAIN);
+        doThrow(new UserNotDomainAdminException("")).when(userDomainService).authorizeAdmin(NOT_ADMIN_USER_ID, DOMAIN);
 
         RequestParameters pageRequestWithBadOffset = new RequestParameters();
         pageRequestWithBadOffset.setOffset(BAD_OFFSET);
@@ -140,7 +136,6 @@ public class AuditEventControllerTest {
         mockMvc.perform(get(AuditEventDTO.ADMIN_URI))
                .andExpect(status().isBadRequest())
                .andExpect(jsonPath("$.error.errorClass", is(UserNotSpecifiedException.class.getName())))
-               .andExpect(jsonPath("$.error.message", is(USER_NOT_SPECIFIED_MESSAGE)))
                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
@@ -161,7 +156,6 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, NOT_ADMIN_USER_ID))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error.errorClass", is(UserNotDomainAdminException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(USER_NOT_ADMIN_MESSAGE)))
                 .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
@@ -178,7 +172,6 @@ public class AuditEventControllerTest {
         mockMvc.perform(get(AuditEventDTO.USER_URI))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.errorClass", is(UserNotSpecifiedException.class.getName())))
-                .andExpect(jsonPath("$.error.message", is(USER_NOT_SPECIFIED_MESSAGE)))
                 .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
