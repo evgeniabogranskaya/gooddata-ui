@@ -14,7 +14,7 @@ mvn test
 
 ### Mocked tests
 ```
-mvn verify -P integration-test
+mvn verify
 ```
 
 ### Manual tests
