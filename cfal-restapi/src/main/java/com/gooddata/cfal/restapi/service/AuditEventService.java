@@ -47,9 +47,13 @@ public class AuditEventService {
         logger.info("action=find_by_domain status=start domain={} offset={} limit={} from={} to={}",
                 domain, requestParameters.getOffset(), requestParameters.getLimit(), requestParameters.getFrom(), requestParameters.getTo());
 
-        final List<AuditEvent> list = auditLogEventRepository.findByDomain(domain, requestParameters);
+        //Limit is incremented to check if list returned from database is last page or not.
+        final RequestParameters parametersForRepository = requestParameters.withIncrementedLimit();
 
-        final AuditEventsDTO auditEventDTOs = createAuditEventsDTO(list, ADMIN_URI, requestParameters);
+        //find up to (requestParameters.getSanitizedLimit + 1) records, which match requestParameters. +1 to check if list is last page.
+        final List<AuditEvent> list = auditLogEventRepository.findByDomain(domain, parametersForRepository);
+
+        final AuditEventsDTO auditEventDTOs = createAuditEventsDTO(ADMIN_URI, list, requestParameters);
 
         logger.info("action=find_by_domain status=finished domain={} offset={} limit={} from={} to={} entries_on_page={}",
                 domain, requestParameters.getOffset(), requestParameters.getLimit(), requestParameters.getFrom(), requestParameters.getTo(), auditEventDTOs.size());
@@ -73,9 +77,13 @@ public class AuditEventService {
         logger.info("action=find_by_domain_and_user status=start domain={} user_id={} offset={} limit={} from={} to={}",
                 domain, userId, requestParameters.getOffset(), requestParameters.getLimit(), requestParameters.getFrom(), requestParameters.getTo());
 
-        final List<AuditEvent> list = auditLogEventRepository.findByDomainAndUser(domain, userId, requestParameters);
+        //Limit is incremented to check if list returned from database is last page or not.
+        final RequestParameters parametersForRepository = requestParameters.withIncrementedLimit();
 
-        final AuditEventsDTO auditEventDTOs = createAuditEventsDTO(list, USER_URI, requestParameters);
+        //find up to (requestParameters.getSanitizedLimit + 1) records, which match requestParameters. +1 to check if list is last page.
+        final List<AuditEvent> list = auditLogEventRepository.findByDomainAndUser(domain, userId, parametersForRepository);
+
+        final AuditEventsDTO auditEventDTOs = createAuditEventsDTO(USER_URI, list, requestParameters);
 
         logger.info("action=find_by_domain_and_user status=finished domain={} user_id={} offset={} limit={} from={} to={} entries_on_page={}",
                 domain, userId, requestParameters.getOffset(), requestParameters.getLimit(), requestParameters.getFrom(), requestParameters.getTo(), auditEventDTOs.size());

@@ -23,21 +23,28 @@ public class ConversionUtils {
     /**
      * Create AuditEventsDTO
      *
-     * @param list of audit events
-     * @param baseUri for next link construction
+     * @param baseUri for next link construction and self link
+     * @param list of audit events, if list is empty then next uri is not generated in Paging,
+     *             if there are more elements than requestParameters.getSanitizedLimit,
+     *             then these elements will not be part of result list and Paging will be generated
      * @param requestParameters for next link construction
      * @return AuditEventsDTO
      */
-    public static AuditEventsDTO createAuditEventsDTO(final List<AuditEvent> list, final String baseUri, final RequestParameters requestParameters) {
+    public static AuditEventsDTO createAuditEventsDTO(final String baseUri, final List<AuditEvent> list, final RequestParameters requestParameters) {
         notNull(list, "list cannot be null");
         notNull(baseUri, "baseUri cannot be null");
         notNull(requestParameters, "requestParameters cannot be null");
 
-        final String offset = getOffset(list);
+        //indicator whether there is next page, if false next uri is not generated in Paging
+        boolean hasNextPage = list.size() > requestParameters.getSanitizedLimit();
+
+        final List<AuditEvent> auditEventsOnPage = list.size() <= requestParameters.getSanitizedLimit()? list : list.subList(0, requestParameters.getSanitizedLimit());
+
+        final String offset = getOffset(auditEventsOnPage, hasNextPage);
 
         Paging paging = createPaging(baseUri, requestParameters, offset);
 
-        final List<AuditEventDTO> listDTOs = list
+        final List<AuditEventDTO> listDTOs = auditEventsOnPage
                 .stream()
                 .map(ConversionUtils::createAuditEventDTO)
                 .collect(toList());
@@ -59,9 +66,14 @@ public class ConversionUtils {
     }
 
     /**
-     * Get new offset based on list or if list is empty returns null
+     * Get new offset based on list or if list is empty return null.
+     * If <code>hasNextPage</code> is false, then return null.
      */
-    private static String getOffset(final List<AuditEvent> list) {
+    private static String getOffset(final List<AuditEvent> list, boolean hasNextPage) {
+        if(!hasNextPage){
+            return null;
+        }
+
         if (!list.isEmpty()) {
             return list.get(list.size() - 1).getId().toString(); //last element's ID is offset for next page
         }

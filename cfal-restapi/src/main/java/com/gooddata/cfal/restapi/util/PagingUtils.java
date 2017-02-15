@@ -29,7 +29,7 @@ public class PagingUtils {
         }
 
         final UriComponentsBuilder uriWithTimeIntervalParams = constructUriWithTimeIntervalParam(baseUri, requestParameters);
-        return new Paging(new PageRequest(offsetOfNextPage, requestParameters.getSanitizedLimit()).getPageUri(uriWithTimeIntervalParams).toString());
+        return new Paging(offsetOfNextPage, new PageRequest(offsetOfNextPage, requestParameters.getSanitizedLimit()).getPageUri(uriWithTimeIntervalParams).toString());
     }
 
     private static UriComponentsBuilder constructUriWithTimeIntervalParam(final String baseUri, final RequestParameters requestParameters) {
