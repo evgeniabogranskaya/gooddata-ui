@@ -14,17 +14,17 @@
         "event": {
           "id": "456",
           "domain": "default",
-          "userId": "user456",
+          "userId": "user123",
           "realTimeOccurrence":"1993-03-09T00:00:00.000Z",
           "timestamp":"1993-03-09T00:00:00.000Z"
         }
       }
     ],
     "paging": {
-      "next": "/gdc/domains/default/events?offset=456&limit=100"
+      "next": "/gdc/account/profile/ADMIN/events?offset=456&limit=100"
     },
     "links": {
-      "self": "/gdc/domains/default/events"
+      "self": "/gdc/account/profile/ADMIN/events"
     }
   }
 }

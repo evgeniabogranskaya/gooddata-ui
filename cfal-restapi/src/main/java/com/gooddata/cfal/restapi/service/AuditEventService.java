@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI;
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI;
+import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI_TEMPLATE;
+import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI_TEMPLATE;
 import static com.gooddata.cfal.restapi.util.ConversionUtils.createAuditEventsDTO;
 import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
@@ -53,7 +53,9 @@ public class AuditEventService {
         //find up to (requestParameters.getSanitizedLimit + 1) records, which match requestParameters. +1 to check if list is last page.
         final List<AuditEvent> list = auditLogEventRepository.findByDomain(domain, parametersForRepository);
 
-        final AuditEventsDTO auditEventDTOs = createAuditEventsDTO(ADMIN_URI, list, requestParameters);
+        final String baseUri = ADMIN_URI_TEMPLATE.expand(domain).toString();
+
+        final AuditEventsDTO auditEventDTOs = createAuditEventsDTO(baseUri, list, requestParameters);
 
         logger.info("action=find_by_domain status=finished domain={} offset={} limit={} from={} to={} entries_on_page={}",
                 domain, requestParameters.getOffset(), requestParameters.getLimit(), requestParameters.getFrom(), requestParameters.getTo(), auditEventDTOs.size());
@@ -83,7 +85,9 @@ public class AuditEventService {
         //find up to (requestParameters.getSanitizedLimit + 1) records, which match requestParameters. +1 to check if list is last page.
         final List<AuditEvent> list = auditLogEventRepository.findByDomainAndUser(domain, userId, parametersForRepository);
 
-        final AuditEventsDTO auditEventDTOs = createAuditEventsDTO(USER_URI, list, requestParameters);
+        final String baseUri = USER_URI_TEMPLATE.expand(userId).toString();
+
+        final AuditEventsDTO auditEventDTOs = createAuditEventsDTO(baseUri, list, requestParameters);
 
         logger.info("action=find_by_domain_and_user status=finished domain={} user_id={} offset={} limit={} from={} to={} entries_on_page={}",
                 domain, userId, requestParameters.getOffset(), requestParameters.getLimit(), requestParameters.getFrom(), requestParameters.getTo(), auditEventDTOs.size());

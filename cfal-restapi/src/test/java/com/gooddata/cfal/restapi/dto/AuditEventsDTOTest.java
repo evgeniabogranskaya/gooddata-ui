@@ -16,7 +16,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI;
+import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI_TEMPLATE;
+import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI_TEMPLATE;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -27,15 +28,25 @@ import static org.hamcrest.Matchers.hasSize;
 @JsonTest
 public class AuditEventsDTOTest {
 
-    private static final AuditEventDTO EVENT_1 = new AuditEventDTO("123", "default", "user123", date("1993-03-09"), date("1993-03-09"));
-    private static final AuditEventDTO EVENT_2 = new AuditEventDTO("456", "default", "user456", date("1993-03-09"), date("1993-03-09"));
-    private static final String NEXT_URI = "/gdc/audit/admin/events?offset=456&limit=100";
+    private static final String USER_ID1 = "user123";
+    private static final String USER_ID2 = "user456";
+    private static final String DOMAIN = "default";
+
+    private static final AuditEventDTO EVENT_1 = new AuditEventDTO("123", DOMAIN, USER_ID1, date("1993-03-09"), date("1993-03-09"));
+    private static final AuditEventDTO EVENT_2 = new AuditEventDTO("456", DOMAIN, USER_ID2, date("1993-03-09"), date("1993-03-09"));
+
+    private static final String ADMIN_URI = ADMIN_URI_TEMPLATE.expand(DOMAIN).toString();
+    private static final String USER_URI = USER_URI_TEMPLATE.expand(USER_ID1).toString();
+    private static final String ADMIN_NEXT_URI = ADMIN_URI + "?offset=456&limit=2";
+    private static final String USER_NEXT_URI = USER_URI + "?offset=456&limit=1";
+
+
     @Autowired
     private JacksonTester<AuditEventsDTO> json;
 
     private static final AuditEventsDTO EVENTS = new AuditEventsDTO(
             Arrays.asList(EVENT_1, EVENT_2),
-            new Paging(NEXT_URI),
+            new Paging(ADMIN_NEXT_URI),
             new HashMap<String, String>() {{
                 put("self", ADMIN_URI);
             }});
@@ -47,6 +58,14 @@ public class AuditEventsDTOTest {
                 put("self", ADMIN_URI);
             }});
 
+    private static final AuditEventsDTO USER_EVENTS = new AuditEventsDTO(
+            Collections.singletonList(EVENT_1),
+            new Paging(USER_NEXT_URI),
+            new HashMap<String, String>() {{
+                put("self", USER_URI);
+            }}
+    );
+
     @Test
     public void testSerialize() throws Exception {
         json.write(EVENTS).assertThat().isEqualToJson("auditEvents.json");
@@ -57,7 +76,7 @@ public class AuditEventsDTOTest {
         String content = IOUtils.toString(getClass().getResourceAsStream("auditEvents.json"));
 
         final AuditEventsDTO deserialized = json.parse(content).getObject();
-        assertThat(deserialized.getPaging().getNextUri(), is(NEXT_URI));
+        assertThat(deserialized.getPaging().getNextUri(), is(ADMIN_NEXT_URI));
         assertThat(deserialized, hasSize(2));
         assertThat(deserialized.get(0).getId(), is(EVENT_1.getId()));
         assertThat(deserialized.get(1).getId(), is(EVENT_2.getId()));
@@ -74,5 +93,20 @@ public class AuditEventsDTOTest {
         final AuditEventsDTO deserialized = json.parse(content).getObject();
         assertThat(deserialized.getPaging().getNextUri(), nullValue());
         assertThat(deserialized, hasSize(0));
+    }
+
+    @Test
+    public void testSerializeUserEvents() throws Exception {
+        json.write(USER_EVENTS).assertThat().isEqualToJson("userAuditEvents.json");
+    }
+
+    @Test
+    public void testDeserializeUserEvents() throws Exception {
+        String content = IOUtils.toString(getClass().getResourceAsStream("userAuditEvents.json"));
+
+        final AuditEventsDTO deserialized = json.parse(content).getObject();
+        assertThat(deserialized.getPaging().getNextUri(), is(USER_NEXT_URI));
+        assertThat(deserialized, hasSize(1));
+        assertThat(deserialized.get(0).getId(), is(EVENT_1.getId()));
     }
 }

@@ -3,8 +3,8 @@
  */
 package com.gooddata.cfal.restapi.service;
 
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI;
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI;
+import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI_TEMPLATE;
+import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI_TEMPLATE;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -104,12 +104,13 @@ public class AuditEventServiceTest {
 
     @Test
     public void testFindByDomainMultiplePages() {
+        String uri = ADMIN_URI_TEMPLATE.expand(DOMAIN).toString();
         AuditEventsDTO firstPage = auditEventService.findByDomain(DOMAIN, requestParamWithCustomLimit);
 
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage, containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2)));
         assertThat(firstPage.getPaging().getNextUri(),
-                is(format("%s?offset=%s&limit=%d", ADMIN_URI, event2.getId(), requestParamWithCustomLimit.getSanitizedLimit())));
+                is(format("%s?offset=%s&limit=%d", uri, event2.getId(), requestParamWithCustomLimit.getSanitizedLimit())));
 
         AuditEventsDTO secondPage = auditEventService.findByDomain(DOMAIN, requestParamWithCustomLimitAndOffset);
 
@@ -129,12 +130,13 @@ public class AuditEventServiceTest {
 
     @Test
     public void testFindByDomainAndUserMultiplePages() {
+        String uri = USER_URI_TEMPLATE.expand(USER_ID).toString();
         AuditEventsDTO firstPage = auditEventService.findByDomainAndUser(DOMAIN, USER_ID, requestParamWithCustomLimit);
 
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage, containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2)));
         assertThat(firstPage.getPaging().getNextUri(),
-                is(format("%s?offset=%s&limit=%d", USER_URI, event2.getId(), requestParamWithCustomLimit.getSanitizedLimit())));
+                is(format("%s?offset=%s&limit=%d", uri, event2.getId(), requestParamWithCustomLimit.getSanitizedLimit())));
 
         AuditEventsDTO secondPage = auditEventService.findByDomainAndUser(DOMAIN, USER_ID, requestParamWithCustomLimitAndOffset);
 

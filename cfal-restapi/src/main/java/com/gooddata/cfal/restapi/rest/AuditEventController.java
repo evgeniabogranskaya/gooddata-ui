@@ -7,6 +7,7 @@ import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
 import com.gooddata.cfal.restapi.exception.RequestParametersValidator;
+import com.gooddata.cfal.restapi.exception.UserNotAuthorizedException;
 import com.gooddata.cfal.restapi.exception.UserNotSpecifiedException;
 import com.gooddata.cfal.restapi.service.AuditEventService;
 import com.gooddata.cfal.restapi.service.UserDomainService;
@@ -15,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,24 +41,31 @@ public class AuditEventController {
     }
 
     @RequestMapping(path = AuditEventDTO.ADMIN_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public AuditEventsDTO listAuditEvents(@Valid @ModelAttribute RequestParameters requestParameters) {
-
+    public AuditEventsDTO listAuditEvents(@PathVariable String domainId, @Valid @ModelAttribute RequestParameters requestParameters) {
 
         final String userId = getUserIdFromContext();
 
-        final String domainForUser = userDomainService.findDomainForUser(userId);
+        userDomainService.authorizeAdmin(userId, domainId);
 
-        userDomainService.authorizeAdmin(userId, domainForUser);
-
-        return auditEventService.findByDomain(domainForUser, requestParameters);
+        return auditEventService.findByDomain(domainId, requestParameters);
     }
 
     @RequestMapping(path = AuditEventDTO.USER_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public AuditEventsDTO listAuditEventsForUser(@Valid @ModelAttribute RequestParameters requestParameters) {
+    public AuditEventsDTO listAuditEventsForUser(@PathVariable String userId, @Valid @ModelAttribute RequestParameters requestParameters) {
 
-        final String userId = getUserIdFromContext();
+        final String loggedUserId = getUserIdFromContext();
 
         final String domainForUser = userDomainService.findDomainForUser(userId);
+
+        if (userId.equals(loggedUserId)) {
+            return auditEventService.findByDomainAndUser(domainForUser, userId, requestParameters);
+        }
+
+        final String domainForLoggedUser = userDomainService.findDomainForUser(loggedUserId);
+
+        if (!domainForUser.equals(domainForLoggedUser) || !userDomainService.isUserDomainAdmin(loggedUserId, domainForLoggedUser)) {
+            throw new UserNotAuthorizedException("user with ID" + loggedUserId + " is not authorized to access this resource");
+        }
 
         return auditEventService.findByDomainAndUser(domainForUser, userId, requestParameters);
     }

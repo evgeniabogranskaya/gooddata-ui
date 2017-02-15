@@ -21,10 +21,10 @@
       }
     ],
     "paging": {
-      "next": "/gdc/audit/admin/events?offset=456&limit=100"
+      "next": "/gdc/account/profile/NOT_ADMIN/events?offset=456&limit=100"
     },
     "links": {
-      "self": "/gdc/audit/events"
+      "self": "/gdc/account/profile/NOT_ADMIN/events"
     }
   }
 }

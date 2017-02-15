@@ -1,0 +1,21 @@
+{
+  "events": {
+    "items": [
+      {
+        "event": {
+          "id": "123",
+          "domain": "default",
+          "userId": "user123",
+          "realTimeOccurrence":"1993-03-09T00:00:00.000Z",
+          "timestamp":"1993-03-09T00:00:00.000Z"
+        }
+      }
+    ],
+    "paging": {
+      "next": "/gdc/account/profile/user123/events?offset=456&limit=1"
+    },
+    "links": {
+      "self": "/gdc/account/profile/user123/events"
+    }
+  }
+}

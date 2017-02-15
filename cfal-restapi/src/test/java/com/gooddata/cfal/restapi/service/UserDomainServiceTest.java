@@ -89,4 +89,19 @@ public class UserDomainServiceTest {
     public void testAuthorizeAdminForNonExistentDomain() {
         userDomainService.authorizeAdmin(USER_ID, NON_EXISTENT_DOMAIN);
     }
+
+    @Test
+    public void testIsUserDomainAdminSuccess() {
+        assertThat(userDomainService.isUserDomainAdmin(USER_ID, DOMAIN), is(true));
+    }
+
+    @Test
+    public void testIsUserDomainAdminFail() {
+        assertThat(userDomainService.isUserDomainAdmin(NOT_ADMIN_USER_ID, DOMAIN), is(false));
+    }
+
+    @Test(expected = DomainNotFoundException.class)
+    public void testIsUserDomainAdminNonExistentDomain() {
+        userDomainService.isUserDomainAdmin(USER_ID, NON_EXISTENT_DOMAIN);
+    }
 }
