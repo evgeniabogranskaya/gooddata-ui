@@ -30,7 +30,15 @@ curl localhost:8080/cfal-restapi/gdc/audit/admin/events -H "X-GDC-PUBLIC-USER-ID
 
 
 ## Deploy a PI
-Use [EL 7 PI deploy job](https://ci.intgdc.com/job/Deploy%20a%20developer%20instance%20via%20foreman%20(el7)/build?delay=0sec), set `HARDWARE_TYPE` to (at least) `c2r10e200` and `HIERA_OVERRIDES` to 
+Use [EL 7 PI deploy job](https://ci.intgdc.com/job/Deploy%20a%20developer%20instance%20via%20foreman%20(el7)/build?delay=0sec)
+
+parameter | value
+----------|-------
+`HARDWARE_TYPE` | `c2r10e200` (at least)
+`TYPE`          | `rat`
+`EXTRA`         | `rat_cfal=1`
+
+`HIERA_OVERRIDES`:
 ```
 fluentd::enabled: true
 
@@ -41,7 +49,7 @@ fluentd::plugins::out_forward_mongo::servers:
 ## Update the PI
 
 ```
-mvn package
+mvn verify
 rsync -av --del --rsync-path="sudo rsync" cfal-restapi/target/cfal-restapi/ $INSTANCE:/usr/share/tomcat/webapps/cfal-restapi/
 ```
 
