@@ -28,6 +28,19 @@ curl localhost:8080/cfal-restapi/gdc/account/profile/015ba7e9b00ff2f1d1af252cf5b
 curl localhost:8080/cfal-restapi/gdc/domains/default/events -H "X-GDC-PUBLIC-USER-ID: 876ec68f5630b38de65852ed5d6236ff"
 ```
 
+### Mutation tests
+
+These tests measure coverage by slightly changing existing source code and watching for tests failures.
+
+More information about whole theory behind it: http://pitest.org/
+
+These tests are being executed in `verify` phase automatically. Expected number of killed mutants is 70% (it's set in the `pom.xml`).
+You can check reports in `target/pit-reports/{date_time_of_execution}` directory.
+
+However if you want to skip these tests, you can do it by simply using `-P !mutation-tests`, so for example:
+```
+mvn clean verify -P '!mutation-tests'
+```
 
 ## Deploy a PI
 Use [EL 7 PI deploy job](https://ci.intgdc.com/job/Deploy%20a%20developer%20instance%20via%20foreman%20(el7)/build?delay=0sec)
