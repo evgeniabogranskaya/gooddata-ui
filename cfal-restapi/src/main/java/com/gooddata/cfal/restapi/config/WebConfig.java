@@ -17,7 +17,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.DOMAIN_AUDIT_URI;
+import static com.gooddata.cfal.restapi.dto.AuditEventDTO.GDC_URI;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public FilterRegistrationBean gdcCallContextFilterRegistration() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new GdcCallContextFilter());
-        registration.addUrlPatterns(DOMAIN_AUDIT_URI + "/*");
+        registration.addUrlPatterns(GDC_URI + "/*");
         registration.setName("GDC_FILTER");
         registration.setOrder(1);
         return registration;
@@ -48,7 +48,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public FilterRegistrationBean gdcRequestIdHandlingFilterRegistration() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new LoggingContextSetupFilter());
-        registration.addUrlPatterns(DOMAIN_AUDIT_URI + "/*");
+        registration.addUrlPatterns(GDC_URI + "/*");
         registration.setName("GDC_LOGGING_CONTEXT_FILTER");
         registration.setOrder(2);
         return registration;

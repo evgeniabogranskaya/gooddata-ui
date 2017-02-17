@@ -3,8 +3,8 @@
  */
 package com.gooddata.cfal.restapi.service;
 
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI;
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI;
+import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI_TEMPLATE;
+import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI_TEMPLATE;
 import static com.gooddata.cfal.restapi.util.DateUtils.convertDateTimeToObjectId;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static com.gooddata.cfal.restapi.util.EntityDTOIdMatcher.hasSameIdAs;
@@ -74,6 +74,7 @@ public class AuditEventServiceIT {
 
     @Test
     public void testFindByDomainMultiplePages() {
+        String uri = ADMIN_URI_TEMPLATE.expand(DOMAIN).toString();
         RequestParameters firstPageReq = new RequestParameters();
         firstPageReq.setLimit(2);
         AuditEventsDTO firstPage = auditEventService.findByDomain(DOMAIN, firstPageReq);
@@ -81,7 +82,7 @@ public class AuditEventServiceIT {
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage, Matchers.containsInAnyOrder(hasSameIdAs(event1), hasSameIdAs(event2)));
         assertThat(firstPage.getPaging().getNextUri(),
-                is(ADMIN_URI + "?offset=" + event2.getId() + "&limit=" + firstPageReq.getSanitizedLimit()));
+                is(uri + "?offset=" + event2.getId() + "&limit=" + firstPageReq.getSanitizedLimit()));
 
         RequestParameters secondPageReq = new RequestParameters();
         secondPageReq.setLimit(2);
@@ -105,6 +106,7 @@ public class AuditEventServiceIT {
 
     @Test
     public void testFindByDomainAndUserMultiplePages() {
+        String uri = USER_URI_TEMPLATE.expand(USER1).toString();
         RequestParameters firstPageReq = new RequestParameters();
         firstPageReq.setLimit(1);
         AuditEventsDTO firstPage = auditEventService.findByDomainAndUser(DOMAIN, USER1, firstPageReq);
@@ -112,7 +114,7 @@ public class AuditEventServiceIT {
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage, Matchers.contains(hasSameIdAs(event1)));
         assertThat(firstPage.getPaging().getNextUri(),
-                is(USER_URI + "?offset=" + event1.getId() + "&limit=" + firstPageReq.getSanitizedLimit()));
+                is(uri + "?offset=" + event1.getId() + "&limit=" + firstPageReq.getSanitizedLimit()));
 
         RequestParameters secondPageReq = new RequestParameters();
         secondPageReq.setLimit(1);
