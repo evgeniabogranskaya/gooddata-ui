@@ -139,7 +139,7 @@
         <dependency>
             <groupId>com.gooddata</groupId>
             <artifactId>gdc-c4</artifactId>
-            <version>2.2.0</version>
+            <version>3.0.3</version>
         </dependency>
         <dependency>
             <groupId>com.gooddata.commons</groupId>
