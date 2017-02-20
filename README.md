@@ -44,6 +44,8 @@ fluentd::enabled: true
 
 fluentd::plugins::out_forward_mongo::servers:
   hosts: ["localhost"]
+
+cfg_cfal_enabled: true
 ```
 
 ## Update the PI
