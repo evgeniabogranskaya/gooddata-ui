@@ -56,16 +56,16 @@ public class AuditEventRepositoryIT {
 
     @Before
     public void setUp() {
-        mongoTemplate.remove(new Query(), auditLogEventRepository.getMongoCollectionPrefix() + DOMAIN1);
-        mongoTemplate.remove(new Query(), auditLogEventRepository.getMongoCollectionPrefix() + DOMAIN2);
+        mongoTemplate.remove(new Query(), auditLogEventRepository.getMongoCollectionName(DOMAIN1));
+        mongoTemplate.remove(new Query(), auditLogEventRepository.getMongoCollectionName(DOMAIN2));
 
         event1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN1, USER1, date("1993-03-09"));
         event2 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN1, USER2, date("2001-03-09"));
         event3 = new AuditEvent(convertDateTimeToObjectId(date("2010-03-09")), DOMAIN1, USER1, date("2010-03-09"));
 
-        mongoTemplate.save(event1, auditLogEventRepository.getMongoCollectionPrefix() + DOMAIN1);
-        mongoTemplate.save(event2, auditLogEventRepository.getMongoCollectionPrefix() + DOMAIN1);
-        mongoTemplate.save(event3, auditLogEventRepository.getMongoCollectionPrefix() + DOMAIN1);
+        mongoTemplate.save(event1, auditLogEventRepository.getMongoCollectionName(DOMAIN1));
+        mongoTemplate.save(event2, auditLogEventRepository.getMongoCollectionName(DOMAIN1));
+        mongoTemplate.save(event3, auditLogEventRepository.getMongoCollectionName(DOMAIN1));
     }
 
     @Test
@@ -314,7 +314,7 @@ public class AuditEventRepositoryIT {
         DateTime expectedDate = date("1993-03-09");
         TestEntity objectToSave = new TestEntity(expectedDate.toString());
 
-        mongoTemplate.save(objectToSave, auditLogEventRepository.getMongoCollectionPrefix() + DOMAIN2);
+        mongoTemplate.save(objectToSave, auditLogEventRepository.getMongoCollectionName(DOMAIN2));
 
         List<AuditEvent> result = auditLogEventRepository.findByDomain(DOMAIN2, new RequestParameters());
 

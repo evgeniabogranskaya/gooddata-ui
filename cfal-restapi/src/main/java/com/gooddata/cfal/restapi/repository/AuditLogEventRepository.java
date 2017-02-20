@@ -139,14 +139,10 @@ public class AuditLogEventRepository {
         return (idCriteria == null)? Criteria.where("id") : idCriteria;
     }
 
-    String getMongoCollectionPrefix() {
-        return mongoCollectionPrefix;
-    }
-
     /**
      * Get mongo collection name from domain and mongo collection prefix
      */
-    private String getMongoCollectionName(final String domain) {
+    String getMongoCollectionName(final String domain) {
         return mongoCollectionPrefix + domain;
     }
 }
