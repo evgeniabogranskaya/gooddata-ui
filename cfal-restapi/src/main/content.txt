@@ -9,6 +9,7 @@ cfal-restapi/WEB-INF/lib/httpcore-4.4.5.jar
 cfal-restapi/WEB-INF/lib/jackson-annotations-2.8.4.jar
 cfal-restapi/WEB-INF/lib/jackson-core-2.8.4.jar
 cfal-restapi/WEB-INF/lib/jackson-databind-2.8.4.jar
+cfal-restapi/WEB-INF/lib/jboss-logging-3.3.0.Final.jar
 cfal-restapi/WEB-INF/lib/jcl-over-slf4j-1.7.21.jar
 cfal-restapi/WEB-INF/lib/joda-time-2.9.5.jar
 cfal-restapi/WEB-INF/lib/jul-to-slf4j-1.7.21.jar
