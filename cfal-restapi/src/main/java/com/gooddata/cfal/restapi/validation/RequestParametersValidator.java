@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2007-2017, GoodData(R) Corporation. All rights reserved.
  */
-package com.gooddata.cfal.restapi.exception;
+package com.gooddata.cfal.restapi.validation;
 
 import com.gooddata.cfal.restapi.dto.RequestParameters;
 import org.bson.types.ObjectId;
@@ -15,7 +15,21 @@ import org.springframework.validation.Validator;
 @Component
 public class RequestParametersValidator implements Validator {
 
-    private static String ERROR_CODE = "requestParameters.invalid";
+    public static String OFFSET_FIELD = "offset";
+
+    public static String FROM_FIELD = "from";
+
+    public static String LIMIT_FIELD = "limit";
+
+
+    public static String ERROR_CODE_INVALID_OFFSET = "requestParameters.invalid_offset";
+
+    public static String ERROR_CODE_OFFSET_FROM_SPECIFIED = "requestParameters.offset_from_specified";
+
+    public static String ERROR_CODE_INVALID_TIME_INTERVAL = "requestParameters.invalid_time_interval";
+
+    public static String ERROR_CODE_NOT_POSITIVE_LIMIT = "requestParameters.not_positive_limit";
+
 
     public static String INVALID_OFFSET_MSG = "invalid offset";
 
@@ -36,22 +50,22 @@ public class RequestParametersValidator implements Validator {
         final RequestParameters requestParameters = (RequestParameters) o;
         if(requestParameters.getOffset() != null) {
             if (!ObjectId.isValid(requestParameters.getOffset())) {
-                errors.rejectValue("offset", ERROR_CODE, INVALID_OFFSET_MSG);
+                errors.rejectValue(OFFSET_FIELD, ERROR_CODE_INVALID_OFFSET, INVALID_OFFSET_MSG);
             }
         }
 
         if (requestParameters.getOffset() != null && requestParameters.getFrom() != null) {
-            errors.rejectValue("offset", ERROR_CODE, OFFSET_AND_FROM_SPECIFIED_MSG);
+            errors.rejectValue(OFFSET_FIELD, ERROR_CODE_OFFSET_FROM_SPECIFIED, OFFSET_AND_FROM_SPECIFIED_MSG);
         }
 
         if (requestParameters.getFrom() != null && requestParameters.getTo() != null) {
             if (!requestParameters.getFrom().isBefore(requestParameters.getTo())) {
-                errors.rejectValue("from", ERROR_CODE, INVALID_TIME_INTERVAL_MSG);
+                errors.rejectValue(FROM_FIELD, ERROR_CODE_INVALID_TIME_INTERVAL, INVALID_TIME_INTERVAL_MSG);
             }
         }
 
         if(requestParameters.getLimit() <= 0 ) {
-            errors.rejectValue("limit", ERROR_CODE, NOT_POSITIVE_LIMIT_MSG);
+            errors.rejectValue(LIMIT_FIELD, ERROR_CODE_NOT_POSITIVE_LIMIT, NOT_POSITIVE_LIMIT_MSG);
         }
     }
 }
