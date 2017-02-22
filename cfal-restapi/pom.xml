@@ -226,6 +226,12 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>cz.geek</groupId>
+            <artifactId>geek-util</artifactId>
+            <version>0.0.7</version>
+            <scope>test</scope>
+        </dependency>
 
         <!--Remove unwanted dependencies-->
         <dependency>

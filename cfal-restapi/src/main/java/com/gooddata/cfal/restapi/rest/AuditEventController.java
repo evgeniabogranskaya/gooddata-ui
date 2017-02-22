@@ -6,7 +6,7 @@ package com.gooddata.cfal.restapi.rest;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
-import com.gooddata.cfal.restapi.exception.RequestParametersValidator;
+import com.gooddata.cfal.restapi.validation.RequestParametersValidator;
 import com.gooddata.cfal.restapi.exception.UserNotAuthorizedException;
 import com.gooddata.cfal.restapi.exception.UserNotSpecifiedException;
 import com.gooddata.cfal.restapi.service.AuditEventService;
