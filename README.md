@@ -17,6 +17,17 @@ mvn test
 mvn verify
 ```
 
+### Acceptance Tests
+```
+mvn -am -pl cfal-test -P at verify
+```
+
+parameter | default             | example
+----------|---------------------|--------
+`host`    | `localhost`         | `-Dhost=mcl-cfal.na.intgdc.com`
+`user`    | `bear@gooddata.com` | `-Duser=bear@gooddata.com`
+`pass`    | `jindrisska`        | `-Dpass=jindrisska`
+
 ### Manual tests
 
 ```
