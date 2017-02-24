@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -28,6 +29,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.codec.Base64;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -36,6 +38,7 @@ import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI_TEMPLATE;
 import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI_TEMPLATE;
 import static com.gooddata.cfal.restapi.util.DateUtils.convertDateTimeToObjectId;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
@@ -58,6 +61,12 @@ public class AuditEventControllerIT {
     private static final DateTime TIME_2000 = date("2000-03-09");
     private static final DateTime TIME_1990 = date("1990-01-01");
     private static final DateTime TIME_1995 = date("1995-01-01");
+
+    @Value("${security.user.name}")
+    private String name;
+
+    @Value("${security.user.password}")
+    private String password;
 
     @MockBean
     private UserService userService;
@@ -357,9 +366,47 @@ public class AuditEventControllerIT {
         assertThat(result.getBody(), contains(EntityDTOIdMatcher.hasSameIdAs(event2), EntityDTOIdMatcher.hasSameIdAs(event5)));
     }
 
+    @Test
+    public void testInfoEndpointAvailableWithoutAuth() {
+        ResponseEntity<String> result = testRestTemplate.exchange("/info", HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class);
+
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getStatusCode(), is(HttpStatus.OK));
+    }
+
+    @Test
+    public void testHealthEndpointIsAvailableWithAuth() throws Exception {
+        ResponseEntity<String> result = testRestTemplate.exchange("/health", HttpMethod.GET, requestWithBasicAuth(), String.class);
+
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getStatusCode(), is(not(HttpStatus.UNAUTHORIZED)));
+    }
+
+    @Test
+    public void testEnvEndpointIsNotAvailableWithoutAuth() {
+        ResponseEntity<String> result = testRestTemplate.exchange("/env", HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class);
+
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+    }
+
+    @Test
+    public void testEnvEndpointIsAvailableWithAuth() throws Exception {
+        ResponseEntity<String> result = testRestTemplate.exchange("/env", HttpMethod.GET, requestWithBasicAuth(), String.class);
+
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getStatusCode(), is(not(HttpStatus.UNAUTHORIZED)));
+    }
+
     private HttpEntity<AuditEventsDTO> requestWithGdcHeader(final String userId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-GDC-PUBLIC-USER-ID", userId);
+        return new HttpEntity<>(headers);
+    }
+
+    private HttpEntity<Object> requestWithBasicAuth() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Basic " + new String(Base64.encode((name + ":" + password).getBytes())));
         return new HttpEntity<>(headers);
     }
 
