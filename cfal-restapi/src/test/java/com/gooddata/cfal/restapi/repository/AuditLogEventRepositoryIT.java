@@ -3,21 +3,14 @@
  */
 package com.gooddata.cfal.restapi.repository;
 
-import static com.gooddata.cfal.restapi.util.DateUtils.convertDateTimeToObjectId;
-import static com.gooddata.cfal.restapi.util.DateUtils.date;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
 import com.gooddata.cfal.restapi.dto.RequestParameters;
 import com.gooddata.cfal.restapi.model.AuditEvent;
 import com.gooddata.cfal.restapi.util.EntityIdMatcher;
+import com.mongodb.DBObject;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.types.ObjectId;
+import org.hamcrest.FeatureMatcher;
+import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -33,10 +26,23 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
+import static com.gooddata.cfal.restapi.util.DateUtils.convertDateTimeToObjectId;
+import static com.gooddata.cfal.restapi.util.DateUtils.date;
+import static java.util.concurrent.TimeUnit.DAYS;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@TestPropertySource(locations="classpath:application-test.properties")
-public class AuditEventRepositoryIT {
+@TestPropertySource(locations = "classpath:application-test.properties")
+public class AuditLogEventRepositoryIT {
 
     private static final String DOMAIN1 = RandomStringUtils.randomAlphabetic(10);
     private static final String DOMAIN2 = RandomStringUtils.randomAlphabetic(10);
@@ -321,6 +327,33 @@ public class AuditEventRepositoryIT {
         assertThat(result, hasSize(1));
         assertThat(result.get(0).getId(), is(equalTo(objectToSave.getId())));
         assertThat(result.get(0).getRealTimeOccurrence(), is(equalTo(expectedDate)));
+    }
+
+    @Test
+    public void testCreateTtlIndexes() {
+        DateTime expectedDate = date("1993-03-09");
+        TestEntity objectToSave = new TestEntity(expectedDate.toString());
+
+        final String mongoCollectionName = auditLogEventRepository.getMongoCollectionName(DOMAIN2);
+        mongoTemplate.save(objectToSave, mongoCollectionName);
+        auditLogEventRepository.createTtlIndexes();
+
+        final List<DBObject> indexInfo = mongoTemplate.getCollection(mongoCollectionName).getIndexInfo();
+        // there should be at least one (new) index
+        assertThat(indexInfo, hasSize(greaterThanOrEqualTo(1)));
+        // make sure there's an index with 'expireAfterSeconds' set to 7-days on top of 'realTimeOccurrence' key
+        assertThat(indexInfo, hasItem(Matchers
+                .both(dbObjectMatch("expireAfterSeconds", is(DAYS.toSeconds(7))))
+                .and(dbObjectMatch("key", dbObjectMatch("realTimeOccurrence", is(1))))));
+    }
+
+    private <T> FeatureMatcher<DBObject, T> dbObjectMatch(String feature, Matcher<T> matcher) {
+        return new FeatureMatcher<DBObject, T>(matcher, feature, feature) {
+            @Override
+            protected T featureValueOf(DBObject dbObject) {
+                return (T) dbObject.get(feature);
+            }
+        };
     }
 
     /**
