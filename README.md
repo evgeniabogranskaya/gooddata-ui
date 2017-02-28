@@ -53,6 +53,19 @@ However if you want to skip these tests, you can do it by simply using `-P !muta
 mvn clean verify -P '!mutation-tests'
 ```
 
+## REST API Security
+
+Actuator endpoints (except `/info`) are secured by basic-auth.
+
+   user   |     password        |
+----------|---------------------|
+  `cfal`  |      `cfal`         |
+  
+### Example call of health endpoint
+`
+curl localhost:8080/cfal-restapi/health -u cfal:cfal
+`
+
 ## Deploy a PI
 Use [EL 7 PI deploy job](https://ci.intgdc.com/job/Deploy%20a%20developer%20instance%20via%20foreman%20(el7)/build?delay=0sec)
 
