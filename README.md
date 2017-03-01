@@ -1,5 +1,17 @@
 # Customer Facing Audit Log
 
+## Developer's machine recommended setup
+
+To ease you a first struggle with this app, these are recommended options you should have in `~/.spring-boot-devtools.properties`.
+
+These will enable output to CONSOLE (instead of SYSLOG) and disable Graphite monitoring (so you won't have console filled with)
+Graphite logger complaining about Graphite endpoints inaccessibility.
+
+```
+gdc.logging.appender=CONSOLE
+monitoring.graphite.reporting-enabled=false
+```
+
 ## Build
 ```
 mvn package

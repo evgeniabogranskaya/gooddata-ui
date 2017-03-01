@@ -3,8 +3,10 @@
  */
 package com.gooddata.cfal.restapi.config;
 
+import com.codahale.metrics.MetricRegistry;
 import com.gooddata.cfal.restapi.exception.AuditlogExceptionTranslatorAdvice;
 import com.gooddata.cfal.restapi.util.StringToUTCDateTimeConverter;
+import com.gooddata.commons.monitoring.rest.RequestMonitoringInterceptor;
 import com.gooddata.commons.web.filter.LoggingContextSetupFilter;
 import com.gooddata.context.GdcCallContextFilter;
 import com.gooddata.exception.servlet.HttpExceptionTranslator;
@@ -62,7 +64,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public HttpExceptionTranslator httpExceptionTranslator() {
         final HttpExceptionTranslator httpExceptionTranslator = new HttpExceptionTranslator();
         httpExceptionTranslator.setComponent(COMPONENT_NAME);
-        httpExceptionTranslator.setExceptionsToHTTPstatusMapping(new HashMap<Integer, java.util.List<Class<? extends Exception>>>(){{
+        httpExceptionTranslator.setExceptionsToHTTPstatusMapping(new HashMap<Integer, java.util.List<Class<? extends Exception>>>() {{
             //map BindException and MethodArgumentTypeMismatchException (these exceptions are thrown due to type conversion error) to bad request status, because by default it is 5xx
             put(HttpStatus.SC_BAD_REQUEST, Arrays.asList(BindException.class, MethodArgumentTypeMismatchException.class));
         }});
@@ -77,4 +79,13 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public void addFormatters(final FormatterRegistry registry) {
         registry.addConverter(new StringToUTCDateTimeConverter());
     }
+
+    /**
+     * Add interceptor for logging HTTP requests
+     */
+    @Bean
+    public RequestMonitoringInterceptor requestMonitoringInterceptor(final MetricRegistry metricRegistry) {
+        return new RequestMonitoringInterceptor(metricRegistry);
+    }
+
 }
