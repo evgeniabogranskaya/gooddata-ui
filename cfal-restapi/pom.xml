@@ -13,11 +13,59 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <gdc.boot.version>1.1.1</gdc.boot.version>
+        <monitoring.version>3.2.1</monitoring.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.gooddata</groupId>
             <artifactId>cfal-dto</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <!-- Monitoring dependencies -->
+        <dependency>
+            <groupId>com.gooddata.commons.monitoring</groupId>
+            <artifactId>monitoring-jmx</artifactId>
+            <version>${monitoring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gooddata.commons.monitoring</groupId>
+            <artifactId>monitoring-metrics</artifactId>
+            <version>${monitoring.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.gooddata.selftest</groupId>
+                    <artifactId>gdc-selftest</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.gooddata.commons.monitoring</groupId>
+            <artifactId>monitoring-rest</artifactId>
+            <version>${monitoring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
+        <!-- GDC Spring Boot deps -->
+        <dependency>
+            <groupId>com.gooddata.boot</groupId>
+            <artifactId>gdc-spring-boot-starter</artifactId>
+            <version>${gdc.boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gooddata.boot</groupId>
+            <artifactId>gdc-spring-boot-actuator</artifactId>
+            <version>${gdc.boot.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

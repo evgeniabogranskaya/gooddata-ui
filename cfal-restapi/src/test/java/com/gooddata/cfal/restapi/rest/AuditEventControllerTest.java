@@ -3,6 +3,7 @@
  */
 package com.gooddata.cfal.restapi.rest;
 
+import com.gooddata.cfal.restapi.config.MonitoringTestConfig;
 import com.gooddata.cfal.restapi.config.WebConfig;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
@@ -53,7 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(AuditEventController.class)
-@Import(WebConfig.class)
+@Import({MonitoringTestConfig.class, WebConfig.class})
 public class AuditEventControllerTest {
 
     private static final String X_PUBLIC_USER_ID = "X-GDC-PUBLIC-USER-ID";
@@ -150,9 +151,9 @@ public class AuditEventControllerTest {
     @Test
     public void testListAuditEventsUserNotSpecified() throws Exception {
         mockMvc.perform(get(adminUri()))
-               .andExpect(status().isBadRequest())
-               .andExpect(jsonPath("$.error.errorClass", is(UserNotSpecifiedException.class.getName())))
-               .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.errorClass", is(UserNotSpecifiedException.class.getName())))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test
@@ -427,10 +428,10 @@ public class AuditEventControllerTest {
     @Test
     public void testUserAccessingUserApiOfDifferentUser() throws Exception {
         mockMvc.perform(get(userUri(ADMIN_USER_ID))
-               .header(X_PUBLIC_USER_ID, NOT_ADMIN_USER_ID))
-               .andExpect(status().isUnauthorized())
-               .andExpect(jsonPath("$.error.errorClass", is(UserNotAuthorizedException.class.getName())))
-               .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
+                .header(X_PUBLIC_USER_ID, NOT_ADMIN_USER_ID))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.errorClass", is(UserNotAuthorizedException.class.getName())))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
     @Test

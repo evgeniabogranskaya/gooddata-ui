@@ -45,3 +45,5 @@ cfal-restapi/WEB-INF/lib/spring-security-core-4.2.1.RELEASE.jar
 cfal-restapi/WEB-INF/lib/spring-security-config-4.2.1.RELEASE.jar
 cfal-restapi/WEB-INF/lib/spring-security-web-4.2.1.RELEASE.jar
 cfal-restapi/WEB-INF/lib/aopalliance-1.0.jar
+cfal-restapi/WEB-INF/lib/metrics-core-3.1.2.jar
+cfal-restapi/WEB-INF/lib/metrics-graphite-3.1.2.jar
