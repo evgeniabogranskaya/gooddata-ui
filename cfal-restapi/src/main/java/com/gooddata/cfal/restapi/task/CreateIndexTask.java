@@ -6,6 +6,8 @@ package com.gooddata.cfal.restapi.task;
 import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
@@ -16,6 +18,7 @@ import static org.apache.commons.lang3.Validate.notNull;
  * Task for index creation
  */
 @Component
+@ManagedResource
 public class CreateIndexTask {
 
     private static final Logger logger = LoggerFactory.getLogger(CreateIndexTask.class);
@@ -36,6 +39,7 @@ public class CreateIndexTask {
      * See {@link AuditLogEventRepository#createTtlIndexes} for more information about indexes being created.
      */
     @Scheduled(cron = "0 0 0 * * *")
+    @ManagedOperation(description="Create TTL indexes on CFAL mongo collections")
     public void createTtlIndexes() {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
