@@ -27,8 +27,8 @@ import static org.apache.commons.lang3.Validate.notNull;
 public class AuditEventDTO {
 
     public static final String GDC_URI = "/gdc";
-    public static final String USER_URI = GDC_URI + "/account/profile/{userId}/events";
-    public static final String ADMIN_URI = GDC_URI + "/domains/{domainId}/events";
+    public static final String USER_URI = GDC_URI + "/account/profile/{userId}/auditEvents";
+    public static final String ADMIN_URI = GDC_URI + "/domains/{domainId}/auditEvents";
 
     public static final UriTemplate ADMIN_URI_TEMPLATE = new UriTemplate(ADMIN_URI);
     public static final UriTemplate USER_URI_TEMPLATE = new UriTemplate(USER_URI);

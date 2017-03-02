@@ -34,9 +34,9 @@ parameter | default             | example
 echo '{"domain": "default", "test":2, "userId": "876ec68f5630b38de65852ed5d6236ff", "realTimeOccurrence":"2017-02-06T15:53:02.030Z"}' >> /mnt/log/cfal/test.log
 echo '{"domain": "default", "test":3, "userId": "015ba7e9b00ff2f1d1af252cf5bd29fb", "realTimeOccurrence":"2017-02-06T15:53:02.030Z"}' >> /mnt/log/cfal/test.log
 
-curl localhost:8080/cfal-restapi/gdc/account/profile/015ba7e9b00ff2f1d1af252cf5bd29fb/events -H "X-GDC-PUBLIC-USER-ID: 015ba7e9b00ff2f1d1af252cf5bd29fb"
-curl localhost:8080/cfal-restapi/gdc/account/profile/015ba7e9b00ff2f1d1af252cf5bd29fb/events -H "X-GDC-PUBLIC-USER-ID: 876ec68f5630b38de65852ed5d6236ff"
-curl localhost:8080/cfal-restapi/gdc/domains/default/events -H "X-GDC-PUBLIC-USER-ID: 876ec68f5630b38de65852ed5d6236ff"
+curl localhost:8080/cfal-restapi/gdc/account/profile/015ba7e9b00ff2f1d1af252cf5bd29fb/auditEvents -H "X-GDC-PUBLIC-USER-ID: 015ba7e9b00ff2f1d1af252cf5bd29fb"
+curl localhost:8080/cfal-restapi/gdc/account/profile/015ba7e9b00ff2f1d1af252cf5bd29fb/auditEvents -H "X-GDC-PUBLIC-USER-ID: 876ec68f5630b38de65852ed5d6236ff"
+curl localhost:8080/cfal-restapi/gdc/domains/default/auditEvents -H "X-GDC-PUBLIC-USER-ID: 876ec68f5630b38de65852ed5d6236ff"
 ```
 
 ### Mutation tests

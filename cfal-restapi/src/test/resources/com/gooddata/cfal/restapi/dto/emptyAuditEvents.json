@@ -5,7 +5,7 @@
     "paging": {
     },
     "links": {
-      "self": "/gdc/domains/default/events"
+      "self": "/gdc/domains/default/auditEvents"
     }
   }
 }

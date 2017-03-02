@@ -21,10 +21,10 @@
       }
     ],
     "paging": {
-      "next": "/gdc/domains/default/events?offset=456&limit=2"
+      "next": "/gdc/domains/default/auditEvents?offset=456&limit=2"
     },
     "links": {
-      "self": "/gdc/domains/default/events"
+      "self": "/gdc/domains/default/auditEvents"
     }
   }
 }

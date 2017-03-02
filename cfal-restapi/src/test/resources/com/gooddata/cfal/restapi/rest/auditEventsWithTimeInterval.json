@@ -21,10 +21,10 @@
       }
     ],
     "paging": {
-      "next": "/gdc/domains/default/events?to=2005-01-01T00:00:00.000Z&offset=456&limit=100"
+      "next": "/gdc/domains/default/auditEvents?to=2005-01-01T00:00:00.000Z&offset=456&limit=100"
     },
     "links": {
-      "self": "/gdc/domains/default/events"
+      "self": "/gdc/domains/default/auditEvents"
     }
   }
 }
