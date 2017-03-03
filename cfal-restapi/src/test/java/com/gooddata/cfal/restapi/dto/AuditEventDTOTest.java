@@ -38,7 +38,7 @@ public class AuditEventDTOTest {
         assertThat(deserializedObject, notNullValue());
         assertThat(deserializedObject.getDomain(), is(event.getDomain()));
         assertThat(deserializedObject.getId(), is(event.getId()));
-        assertThat(deserializedObject.getRealTimeOccurrence(), is(event.getRealTimeOccurrence()));
+        assertThat(deserializedObject.getOccurred(), is(event.getOccurred()));
         assertThat(deserializedObject.getRecorded(), is(event.getRecorded()));
         assertThat(deserializedObject.getUserId(), is(event.getUserId()));
     }

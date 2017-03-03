@@ -38,7 +38,7 @@ public class ConversionUtilsTest {
         assertThat(auditEventDTO.getId(), is(ID.toString()));
         assertThat(auditEventDTO.getDomain(), is(DOMAIN));
         assertThat(auditEventDTO.getUserId(), is(USER_ID));
-        assertThat(auditEventDTO.getRealTimeOccurrence(), is(TIME));
+        assertThat(auditEventDTO.getOccurred(), is(TIME));
         assertThat(auditEventDTO.getRecorded(), is(new DateTime(ID.getDate(), DateTimeZone.UTC)));
     }
 

@@ -6,7 +6,7 @@
           "id": "123",
           "domain": "default",
           "userId": "user123",
-          "realTimeOccurrence":"1993-03-09T00:00:00.000Z",
+          "occurred":"1993-03-09T00:00:00.000Z",
           "recorded":"1993-03-09T00:00:00.000Z"
         }
       }
