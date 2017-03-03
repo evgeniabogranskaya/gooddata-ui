@@ -7,7 +7,7 @@
           "domain": "default",
           "userId": "user123",
           "realTimeOccurrence":"1993-03-09T00:00:00.000Z",
-          "timestamp":"1993-03-09T00:00:00.000Z"
+          "recorded":"1993-03-09T00:00:00.000Z"
         }
       },
       {
@@ -16,7 +16,7 @@
           "domain": "default",
           "userId": "user456",
           "realTimeOccurrence":"1995-03-09T00:00:00.000Z",
-          "timestamp":"1995-03-09T00:00:00.000Z"
+          "recorded":"1995-03-09T00:00:00.000Z"
         }
       }
     ],

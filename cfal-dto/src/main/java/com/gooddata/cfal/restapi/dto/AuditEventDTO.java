@@ -43,19 +43,19 @@ public class AuditEventDTO {
 
     private final DateTime realTimeOccurrence; //time event happened at component
 
-    private final DateTime timestamp; //time of insertion to mongo
+    private final DateTime recorded; //time of insertion to mongo
 
     @JsonCreator
     public AuditEventDTO(@JsonProperty("id") String id,
                          @JsonProperty("domain") String domain,
                          @JsonProperty("userId") String userId,
                          @JsonProperty("realTimeOccurrence") @JsonDeserialize(using = ISODateTimeDeserializer.class) DateTime realTimeOccurrence,
-                         @JsonProperty("timestamp") @JsonDeserialize(using = ISODateTimeDeserializer.class) DateTime timestamp) {
+                         @JsonProperty("recorded") @JsonDeserialize(using = ISODateTimeDeserializer.class) DateTime recorded) {
         this.id = notEmpty(id, "id can't be empty");
         this.domain = notEmpty(domain, "domain can't be empty");
         this.userId = notEmpty(userId, "userId can't be empty");
         this.realTimeOccurrence = notNull(realTimeOccurrence, "realTimeOccurrence can't be null");
-        this.timestamp = notNull(timestamp, "timestamp can't be null");
+        this.recorded = notNull(recorded, "recorded can't be null");
     }
 
     public String getId() {
@@ -76,8 +76,8 @@ public class AuditEventDTO {
     }
 
     @JsonSerialize(using = ISODateTimeSerializer.class)
-    public DateTime getTimestamp() {
-        return timestamp;
+    public DateTime getRecorded() {
+        return recorded;
     }
 
 }

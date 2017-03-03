@@ -39,7 +39,7 @@ public class ConversionUtilsTest {
         assertThat(auditEventDTO.getDomain(), is(DOMAIN));
         assertThat(auditEventDTO.getUserId(), is(USER_ID));
         assertThat(auditEventDTO.getRealTimeOccurrence(), is(TIME));
-        assertThat(auditEventDTO.getTimestamp(), is(new DateTime(ID.getDate(), DateTimeZone.UTC)));
+        assertThat(auditEventDTO.getRecorded(), is(new DateTime(ID.getDate(), DateTimeZone.UTC)));
     }
 
     @Test(expected = NullPointerException.class)
