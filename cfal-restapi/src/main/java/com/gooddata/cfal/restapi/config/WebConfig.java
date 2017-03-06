@@ -11,12 +11,14 @@ import com.gooddata.commons.web.filter.LoggingContextSetupFilter;
 import com.gooddata.context.GdcCallContextFilter;
 import com.gooddata.exception.servlet.HttpExceptionTranslator;
 import org.apache.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.BindException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import static com.gooddata.cfal.restapi.dto.AuditEventDTO.GDC_URI;
@@ -29,6 +31,9 @@ import java.util.HashMap;
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     public static final String COMPONENT_NAME = "auditlog";
+
+    @Autowired
+    private RequestMonitoringInterceptor requestMonitoringInterceptor;
 
     /**
      * register GdcCallContextFilter as Filter
@@ -72,6 +77,14 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     /**
+     * Add interceptor for logging HTTP requests
+     */
+    @Bean
+    public RequestMonitoringInterceptor requestMonitoringInterceptor(final MetricRegistry metricRegistry) {
+        return new RequestMonitoringInterceptor(metricRegistry);
+    }
+
+    /**
      * register custom String to DateTime converter
      * @see StringToUTCDateTimeConverter
      */
@@ -81,11 +94,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     /**
-     * Add interceptor for logging HTTP requests
+     * register interceptors
      */
-    @Bean
-    public RequestMonitoringInterceptor requestMonitoringInterceptor(final MetricRegistry metricRegistry) {
-        return new RequestMonitoringInterceptor(metricRegistry);
+    @Override
+    public void addInterceptors(final InterceptorRegistry registry) {
+        registry.addInterceptor(requestMonitoringInterceptor);
     }
-
 }
