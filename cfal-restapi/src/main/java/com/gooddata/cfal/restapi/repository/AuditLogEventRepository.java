@@ -127,7 +127,7 @@ public class AuditLogEventRepository {
         final Index index = new Index()
                 .background()
                 .expire(recordTtlDays, TimeUnit.DAYS)
-                .on("realTimeOccurrence", Sort.Direction.ASC);
+                .on("occurred", Sort.Direction.ASC);
 
         try {
             mongoTemplate.indexOps(collectionName).ensureIndex(index);

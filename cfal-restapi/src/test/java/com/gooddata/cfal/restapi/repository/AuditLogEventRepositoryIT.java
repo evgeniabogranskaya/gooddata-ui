@@ -329,7 +329,7 @@ public class AuditLogEventRepositoryIT {
 
         assertThat(result, hasSize(1));
         assertThat(result.get(0).getId(), is(equalTo(objectToSave.getId())));
-        assertThat(result.get(0).getRealTimeOccurrence(), is(equalTo(expectedDate)));
+        assertThat(result.get(0).getOccurred(), is(equalTo(expectedDate)));
     }
 
     @Test
@@ -344,10 +344,10 @@ public class AuditLogEventRepositoryIT {
         final List<DBObject> indexInfo = mongoTemplate.getCollection(mongoCollectionName).getIndexInfo();
         // there should be at least one (new) index
         assertThat(indexInfo, hasSize(greaterThanOrEqualTo(1)));
-        // make sure there's an index with 'expireAfterSeconds' set to 7-days on top of 'realTimeOccurrence' key
+        // make sure there's an index with 'expireAfterSeconds' set to 7-days on top of 'occurred' key
         assertThat(indexInfo, hasItem(Matchers
                 .both(dbObjectMatch("expireAfterSeconds", is(DAYS.toSeconds(7))))
-                .and(dbObjectMatch("key", dbObjectMatch("realTimeOccurrence", is(1))))));
+                .and(dbObjectMatch("key", dbObjectMatch("occurred", is(1))))));
     }
 
     private <T> FeatureMatcher<DBObject, T> dbObjectMatch(String feature, Matcher<T> matcher) {
@@ -367,18 +367,18 @@ public class AuditLogEventRepositoryIT {
         @Id
         private ObjectId id;
 
-        private String realTimeOccurrence;
+        private String occurred;
 
-        public TestEntity(final String realTimeOccurrence) {
-            this.realTimeOccurrence = realTimeOccurrence;
+        public TestEntity(final String occurred) {
+            this.occurred = occurred;
         }
 
         public ObjectId getId() {
             return id;
         }
 
-        public String getRealTimeOccurrence() {
-            return realTimeOccurrence;
+        public String getOccurred() {
+            return occurred;
         }
     }
 }

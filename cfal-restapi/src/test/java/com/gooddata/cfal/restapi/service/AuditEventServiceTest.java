@@ -216,9 +216,9 @@ public class AuditEventServiceTest {
         when(event2.getUserId()).thenReturn(USER_ID);
         when(event3.getUserId()).thenReturn(USER_ID);
 
-        when(event1.getRealTimeOccurrence()).thenReturn(date("1993-03-09"));
-        when(event2.getRealTimeOccurrence()).thenReturn(date("1998-01-01"));
-        when(event3.getRealTimeOccurrence()).thenReturn(date("2016-01-01"));
+        when(event1.getOccurred()).thenReturn(date("1993-03-09"));
+        when(event2.getOccurred()).thenReturn(date("1998-01-01"));
+        when(event3.getOccurred()).thenReturn(date("2016-01-01"));
     }
 
     private void prepareRequestParams() {
