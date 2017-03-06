@@ -12,10 +12,10 @@
       }
     ],
     "paging": {
-      "next": "/gdc/account/profile/user123/events?offset=456&limit=1"
+      "next": "/gdc/account/profile/user123/auditEvents?offset=456&limit=1"
     },
     "links": {
-      "self": "/gdc/account/profile/user123/events"
+      "self": "/gdc/account/profile/user123/auditEvents"
     }
   }
 }
