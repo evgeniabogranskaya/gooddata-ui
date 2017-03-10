@@ -60,7 +60,7 @@ public class ConversionUtils {
 
         return new AuditEventDTO(auditEvent.getId().toString(),
                 auditEvent.getDomain(),
-                auditEvent.getUserId(),
+                auditEvent.getUserLogin(),
                 auditEvent.getOccurred(),
                 new DateTime(auditEvent.getId().getDate(), DateTimeZone.UTC));
     }

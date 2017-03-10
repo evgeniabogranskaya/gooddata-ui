@@ -39,7 +39,7 @@ public class AuditEventDTO {
 
     private final String domain;
 
-    private final String userId;
+    private final String userLogin;
 
     private final DateTime occurred; //time event happened at component
 
@@ -48,12 +48,12 @@ public class AuditEventDTO {
     @JsonCreator
     public AuditEventDTO(@JsonProperty("id") String id,
                          @JsonProperty("domain") String domain,
-                         @JsonProperty("userId") String userId,
+                         @JsonProperty("userLogin") String userLogin,
                          @JsonProperty("occurred") @JsonDeserialize(using = ISODateTimeDeserializer.class) DateTime occurred,
                          @JsonProperty("recorded") @JsonDeserialize(using = ISODateTimeDeserializer.class) DateTime recorded) {
         this.id = notEmpty(id, "id can't be empty");
         this.domain = notEmpty(domain, "domain can't be empty");
-        this.userId = notEmpty(userId, "userId can't be empty");
+        this.userLogin = notEmpty(userLogin, "userLogin can't be empty");
         this.occurred = notNull(occurred, "occurred can't be null");
         this.recorded = notNull(recorded, "recorded can't be null");
     }
@@ -66,8 +66,8 @@ public class AuditEventDTO {
         return domain;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserLogin() {
+        return userLogin;
     }
 
     @JsonSerialize(using = ISODateTimeSerializer.class)

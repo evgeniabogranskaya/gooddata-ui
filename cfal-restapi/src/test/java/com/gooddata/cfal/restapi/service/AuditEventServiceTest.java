@@ -19,6 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.gooddata.cfal.restapi.dto.RequestParameters;
+import com.gooddata.cfal.restapi.dto.UserInfo;
 import com.gooddata.cfal.restapi.util.EntityDTOIdMatcher;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.model.AuditEvent;
@@ -36,12 +37,15 @@ import java.util.Collections;
 public class AuditEventServiceTest {
 
     private static final String DOMAIN = "domain";
-    private static final String USER_ID = "user";
+    private static final String USER_ID = "123";
+    private static final String USER_LOGIN = "bear@gooddata.com";
 
     private static final Integer CUSTOM_LIMIT = 2;
 
     private static final DateTime LOWER_BOUND = date("1995-01-01");
     private static final DateTime UPPER_BOUND = date("2000-01-01");
+
+    private static final UserInfo USER_INFO = new UserInfo(USER_ID, USER_LOGIN, DOMAIN);
 
     private RequestParameters requestParamLBUB;
     private RequestParameters requestParamLB;
@@ -53,6 +57,9 @@ public class AuditEventServiceTest {
     @Mock
     private AuditLogEventRepository auditLogEventRepository;
 
+    @Mock
+    private UserDomainService userDomainService;
+
     private AuditEventService auditEventService;
 
     private AuditEvent event1;
@@ -63,7 +70,7 @@ public class AuditEventServiceTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        auditEventService = new AuditEventService(auditLogEventRepository);
+        auditEventService = new AuditEventService(auditLogEventRepository, userDomainService);
 
         mockEvents();
 
@@ -80,17 +87,17 @@ public class AuditEventServiceTest {
         when(auditLogEventRepository.findByDomain(DOMAIN, repositoryRequestParamWithCustomLimit)).thenReturn(asList(event1, event2, event3));
         when(auditLogEventRepository.findByDomain(DOMAIN, repositoryRequestParamWithCustomLimitAndOffset)).thenReturn(singletonList(event3));
 
-        when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, repositoryRequestParam)).thenReturn(asList(event1, event2, event3));
-        when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, repositoryRequestParamWithCustomLimit)).thenReturn(asList(event1, event2, event3));
-        when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, repositoryRequestParamWithCustomLimitAndOffset)).thenReturn(singletonList(event3));
+        when(auditLogEventRepository.findByUser(USER_INFO, repositoryRequestParam)).thenReturn(asList(event1, event2, event3));
+        when(auditLogEventRepository.findByUser(USER_INFO, repositoryRequestParamWithCustomLimit)).thenReturn(asList(event1, event2, event3));
+        when(auditLogEventRepository.findByUser(USER_INFO, repositoryRequestParamWithCustomLimitAndOffset)).thenReturn(singletonList(event3));
 
         when(auditLogEventRepository.findByDomain(DOMAIN, repositoryRequestParamLB)).thenReturn(asList(event2, event3));
         when(auditLogEventRepository.findByDomain(DOMAIN, repositoryRequestParamUB)).thenReturn(asList(event1, event2));
         when(auditLogEventRepository.findByDomain(DOMAIN, repositoryRequestParamLBUB)).thenReturn(Collections.singletonList(event2));
 
-        when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, repositoryRequestParamLB)).thenReturn(asList(event2, event3));
-        when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, repositoryRequestParamUB)).thenReturn(asList(event1, event2));
-        when(auditLogEventRepository.findByDomainAndUser(DOMAIN, USER_ID, repositoryRequestParamLBUB)).thenReturn(singletonList(event2));
+        when(auditLogEventRepository.findByUser(USER_INFO, repositoryRequestParamLB)).thenReturn(asList(event2, event3));
+        when(auditLogEventRepository.findByUser(USER_INFO, repositoryRequestParamUB)).thenReturn(asList(event1, event2));
+        when(auditLogEventRepository.findByUser(USER_INFO, repositoryRequestParamLBUB)).thenReturn(singletonList(event2));
     }
 
     @Test
@@ -121,7 +128,7 @@ public class AuditEventServiceTest {
 
     @Test
     public void testFindByDomainAndUserOnePage() {
-        AuditEventsDTO events = auditEventService.findByDomainAndUser(DOMAIN, USER_ID, requestParam);
+        AuditEventsDTO events = auditEventService.findByUser(USER_INFO, requestParam);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2), EntityDTOIdMatcher.hasSameIdAs(event3)));
@@ -131,14 +138,14 @@ public class AuditEventServiceTest {
     @Test
     public void testFindByDomainAndUserMultiplePages() {
         String uri = USER_URI_TEMPLATE.expand(USER_ID).toString();
-        AuditEventsDTO firstPage = auditEventService.findByDomainAndUser(DOMAIN, USER_ID, requestParamWithCustomLimit);
+        AuditEventsDTO firstPage = auditEventService.findByUser(USER_INFO, requestParamWithCustomLimit);
 
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage, containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2)));
         assertThat(firstPage.getPaging().getNextUri(),
                 is(format("%s?offset=%s&limit=%d", uri, event2.getId(), requestParamWithCustomLimit.getSanitizedLimit())));
 
-        AuditEventsDTO secondPage = auditEventService.findByDomainAndUser(DOMAIN, USER_ID, requestParamWithCustomLimitAndOffset);
+        AuditEventsDTO secondPage = auditEventService.findByUser(USER_INFO, requestParamWithCustomLimitAndOffset);
 
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage, Matchers.contains(EntityDTOIdMatcher.hasSameIdAs(event3)));
@@ -174,7 +181,7 @@ public class AuditEventServiceTest {
 
     @Test
     public void testFindByDomainAndUserOnePageWithTimeIntervalFrom() {
-        AuditEventsDTO events = auditEventService.findByDomainAndUser(DOMAIN, USER_ID, requestParamLB);
+        AuditEventsDTO events = auditEventService.findByUser(USER_INFO, requestParamLB);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event2), EntityDTOIdMatcher.hasSameIdAs(event3)));
@@ -183,7 +190,7 @@ public class AuditEventServiceTest {
 
     @Test
     public void testFindByDomainAndUserOnePageWithTimeIntervalTo() {
-        AuditEventsDTO events = auditEventService.findByDomainAndUser(DOMAIN, USER_ID, requestParamUB);
+        AuditEventsDTO events = auditEventService.findByUser(USER_INFO, requestParamUB);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2)));
@@ -192,7 +199,7 @@ public class AuditEventServiceTest {
 
     @Test
     public void testFindByDomainAndUserOnePageWithTimeIntervalFromAndTo() {
-        AuditEventsDTO events = auditEventService.findByDomainAndUser(DOMAIN, USER_ID, requestParamLBUB);
+        AuditEventsDTO events = auditEventService.findByUser(USER_INFO, requestParamLBUB);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, contains(EntityDTOIdMatcher.hasSameIdAs(event2)));
@@ -212,9 +219,9 @@ public class AuditEventServiceTest {
         when(event2.getDomain()).thenReturn(DOMAIN);
         when(event3.getDomain()).thenReturn(DOMAIN);
 
-        when(event1.getUserId()).thenReturn(USER_ID);
-        when(event2.getUserId()).thenReturn(USER_ID);
-        when(event3.getUserId()).thenReturn(USER_ID);
+        when(event1.getUserLogin()).thenReturn(USER_ID);
+        when(event2.getUserLogin()).thenReturn(USER_ID);
+        when(event3.getUserLogin()).thenReturn(USER_ID);
 
         when(event1.getOccurred()).thenReturn(date("1993-03-09"));
         when(event2.getOccurred()).thenReturn(date("1998-01-01"));

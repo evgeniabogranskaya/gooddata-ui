@@ -28,16 +28,16 @@ public class ConversionUtilsTest {
 
     private static final ObjectId ID = new ObjectId();
     private static final String DOMAIN = "domain";
-    private static final String USER_ID = "userId";
+    private static final String USER_LOGIN = "bear@goddata.com";
     private static final DateTime TIME = new DateTime();
 
     @Test
     public void testCreateAuditEventDTO() {
-        AuditEventDTO auditEventDTO = ConversionUtils.createAuditEventDTO(new AuditEvent(ID, DOMAIN, USER_ID, TIME));
+        AuditEventDTO auditEventDTO = ConversionUtils.createAuditEventDTO(new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME));
 
         assertThat(auditEventDTO.getId(), is(ID.toString()));
         assertThat(auditEventDTO.getDomain(), is(DOMAIN));
-        assertThat(auditEventDTO.getUserId(), is(USER_ID));
+        assertThat(auditEventDTO.getUserLogin(), is(USER_LOGIN));
         assertThat(auditEventDTO.getOccurred(), is(TIME));
         assertThat(auditEventDTO.getRecorded(), is(new DateTime(ID.getDate(), DateTimeZone.UTC)));
     }
@@ -51,7 +51,7 @@ public class ConversionUtilsTest {
     public void testCreateAuditEventsDTO() {
         RequestParameters requestParameters = new RequestParameters();
         AuditEventsDTO auditEventsDTO = ConversionUtils.createAuditEventsDTO(
-                BASE_URI, Collections.singletonList(new AuditEvent(ID, DOMAIN, USER_ID, TIME)), requestParameters);
+                BASE_URI, Collections.singletonList(new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME)), requestParameters);
 
         assertThat(auditEventsDTO, hasSize(1));
         assertThat(auditEventsDTO.getPaging().getNextUri(), is(nullValue()));
@@ -62,7 +62,7 @@ public class ConversionUtilsTest {
         RequestParameters requestParameters = new RequestParameters();
         requestParameters.setTo(TIME);
         AuditEventsDTO auditEventsDTO = ConversionUtils.createAuditEventsDTO(
-                BASE_URI, Collections.singletonList(new AuditEvent(ID, DOMAIN, USER_ID, TIME)), requestParameters);
+                BASE_URI, Collections.singletonList(new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME)), requestParameters);
 
         assertThat(auditEventsDTO, hasSize(1));
         assertThat(auditEventsDTO.getPaging().getNextUri(), is(nullValue()));
@@ -92,7 +92,7 @@ public class ConversionUtilsTest {
 
     @Test
     public void testCreateAuditEventsDTOListHasMoreElementsThanLimit() {
-        AuditEvent event = new AuditEvent(ID, DOMAIN, USER_ID, TIME);
+        AuditEvent event = new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME);
 
         RequestParameters requestParameters = new RequestParameters();
         requestParameters.setLimit(3);
@@ -105,7 +105,7 @@ public class ConversionUtilsTest {
 
     @Test
     public void testCreateAuditEventsDTOListHasExactlyElementsOfLimit() {
-        AuditEvent event = new AuditEvent(ID, DOMAIN, USER_ID, TIME);
+        AuditEvent event = new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME);
 
         RequestParameters requestParameters = new RequestParameters();
         requestParameters.setLimit(3);

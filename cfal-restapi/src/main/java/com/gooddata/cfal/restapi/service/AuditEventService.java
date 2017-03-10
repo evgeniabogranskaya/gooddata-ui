@@ -5,6 +5,7 @@ package com.gooddata.cfal.restapi.service;
 
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
+import com.gooddata.cfal.restapi.dto.UserInfo;
 import com.gooddata.cfal.restapi.model.AuditEvent;
 import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import org.slf4j.Logger;
@@ -28,9 +29,11 @@ public class AuditEventService {
     private static final Logger logger = LoggerFactory.getLogger(AuditEventService.class);
 
     private final AuditLogEventRepository auditLogEventRepository;
+    private final UserDomainService userDomainService;
 
-    public AuditEventService(final AuditLogEventRepository auditLogEventRepository) {
+    public AuditEventService(final AuditLogEventRepository auditLogEventRepository, final UserDomainService userDomainService) {
         this.auditLogEventRepository = notNull(auditLogEventRepository, "auditEventRepository cannot be null");
+        this.userDomainService = notNull(userDomainService, "userDomainService cannot be null");
     }
 
     /**
@@ -66,31 +69,28 @@ public class AuditEventService {
     /**
      * Finds all events for domain and user within given time interval, result is paged list
      *
-     * @param domain  to find events for
-     * @param userId  to find events for
-     * @param requestParameters specifies time range for finding events and paging parameters
-     * @return paged list
+     * @param userInfo  to find events for
+     *@param requestParameters specifies time range for finding events and paging parameters  @return paged list
      */
-    public AuditEventsDTO findByDomainAndUser(final String domain, final String userId, final RequestParameters requestParameters) {
-        notEmpty(domain, "domain cannot be empty");
-        notEmpty(userId, "userId cannot be empty");
+    public AuditEventsDTO findByUser(final UserInfo userInfo, final RequestParameters requestParameters) {
+        notNull(userInfo, "userInfo cannot be null");
         notNull(requestParameters, "requestParameters cannot be null");
 
-        logger.info("action=find_by_domain_and_user status=start domain={} user_id={} offset={} limit={} from={} to={}",
-                domain, userId, requestParameters.getOffset(), requestParameters.getLimit(), requestParameters.getFrom(), requestParameters.getTo());
+        logger.info("action=find_by_domain_and_user status=start domain={} user_id={} user_login={} offset={} limit={} from={} to={}",
+                userInfo.getDomainId(), userInfo.getUserId(), userInfo.getUserLogin(), requestParameters.getOffset(), requestParameters.getLimit(), requestParameters.getFrom(), requestParameters.getTo());
 
         //Limit is incremented to check if list returned from database is last page or not.
         final RequestParameters parametersForRepository = requestParameters.withIncrementedLimit();
 
         //find up to (requestParameters.getSanitizedLimit + 1) records, which match requestParameters. +1 to check if list is last page.
-        final List<AuditEvent> list = auditLogEventRepository.findByDomainAndUser(domain, userId, parametersForRepository);
+        final List<AuditEvent> list = auditLogEventRepository.findByUser(userInfo, parametersForRepository);
 
-        final String baseUri = USER_URI_TEMPLATE.expand(userId).toString();
+        final String baseUri = USER_URI_TEMPLATE.expand(userInfo.getUserId()).toString();
 
         final AuditEventsDTO auditEventDTOs = createAuditEventsDTO(baseUri, list, requestParameters);
 
-        logger.info("action=find_by_domain_and_user status=finished domain={} user_id={} offset={} limit={} from={} to={} entries_on_page={}",
-                domain, userId, requestParameters.getOffset(), requestParameters.getLimit(), requestParameters.getFrom(), requestParameters.getTo(), auditEventDTOs.size());
+        logger.info("action=find_by_domain_and_user status=finished domain={} user_id={} user_login={} offset={} limit={} from={} to={} entries_on_page={}",
+                userInfo.getDomainId(), userInfo.getUserId(), userInfo.getUserLogin(), requestParameters.getOffset(), requestParameters.getLimit(), requestParameters.getFrom(), requestParameters.getTo(), auditEventDTOs.size());
 
         return auditEventDTOs;
     }
