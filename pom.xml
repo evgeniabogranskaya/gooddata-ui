@@ -24,6 +24,7 @@
 
     <modules>
         <module>cfal-dto</module>
+        <module>cfal-sdk</module>
         <module>cfal-restapi</module>
         <module>cfal-test</module>
     </modules>
@@ -89,4 +90,40 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>skipInstallDeploy</id>
+            <activation>
+                <file>
+                    <exists>${basedir}/.skipdeploy</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- skip install and deploy phases as they are unnecessary for this artifact-->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-install</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-deploy</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
