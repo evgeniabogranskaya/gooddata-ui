@@ -5,7 +5,7 @@
         "event": {
           "id": "123",
           "domain": "default",
-          "userId": "user123",
+          "userLogin": "bear@gooddata.com",
           "occurred":"1993-03-09T00:00:00.000Z",
           "recorded":"1993-03-09T00:00:00.000Z"
         }
@@ -14,7 +14,7 @@
         "event": {
           "id": "456",
           "domain": "default",
-          "userId": "user456",
+          "userLogin": "jane@gooddata.com",
           "occurred":"1995-03-09T00:00:00.000Z",
           "recorded":"1995-03-09T00:00:00.000Z"
         }

@@ -23,7 +23,7 @@ public class AuditEventDTOTest {
     @Autowired
     private JacksonTester<AuditEventDTO> json;
 
-    private final AuditEventDTO event = new AuditEventDTO("123", "default", "user123", date("1993-03-09"), date("1993-03-09"));
+    private final AuditEventDTO event = new AuditEventDTO("123", "default", "bear@gooddata.com", date("1993-03-09"), date("1993-03-09"));
 
     @Test
     public void testSerialize() throws Exception {
@@ -40,7 +40,7 @@ public class AuditEventDTOTest {
         assertThat(deserializedObject.getId(), is(event.getId()));
         assertThat(deserializedObject.getOccurred(), is(event.getOccurred()));
         assertThat(deserializedObject.getRecorded(), is(event.getRecorded()));
-        assertThat(deserializedObject.getUserId(), is(event.getUserId()));
+        assertThat(deserializedObject.getUserLogin(), is(event.getUserLogin()));
     }
 
 }

@@ -9,6 +9,7 @@ import com.gooddata.c4.domain.DomainService;
 import com.gooddata.c4.user.C4User;
 import com.gooddata.c4.user.C4UserNotFoundException;
 import com.gooddata.c4.user.UserService;
+import com.gooddata.cfal.restapi.dto.UserInfo;
 import com.gooddata.cfal.restapi.exception.DomainNotFoundException;
 import com.gooddata.cfal.restapi.exception.UserNotDomainAdminException;
 import com.gooddata.cfal.restapi.exception.UserNotFoundException;
@@ -36,23 +37,24 @@ public class UserDomainService {
     }
 
     /**
-     * Finds ID of domain for user
+     * Get info about user
      *
      * @param userId ID of user
      * @return ID of domain for user
      */
-    public String findDomainForUser(final String userId) {
+    public UserInfo getUserInfo(final String userId) {
         notEmpty(userId, "userId cannot be empty");
 
-        logger.info("action=find_domain_for_user status=start user_id={}", userId);
+        logger.info("action=get_user_info status=start user_id={}", userId);
 
         try {
             final C4User user = userService.getUser(userId);
             final String domain = C4Domain.DOMAIN_URI_TEMPLATE.match(user.getDomainUri()).get("id");
 
-            logger.info("action=find_domain_for_user status=finished user_id={} domain={}", userId, domain);
+            final UserInfo userInfo = new UserInfo(userId, user.getLogin(), domain);
+            logger.info("action=get_user_info status=finished user_id={}", userId);
 
-            return domain;
+            return userInfo;
         } catch (C4UserNotFoundException ex) {
             throw new UserNotFoundException("user with ID " + userId + " not found", ex);
         }

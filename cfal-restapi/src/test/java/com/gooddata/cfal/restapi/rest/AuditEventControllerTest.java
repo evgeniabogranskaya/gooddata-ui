@@ -8,6 +8,7 @@ import com.gooddata.cfal.restapi.config.WebConfig;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
+import com.gooddata.cfal.restapi.dto.UserInfo;
 import com.gooddata.cfal.restapi.exception.UserNotAuthorizedException;
 import com.gooddata.cfal.restapi.exception.UserNotDomainAdminException;
 import com.gooddata.cfal.restapi.exception.UserNotSpecifiedException;
@@ -63,6 +64,10 @@ public class AuditEventControllerTest {
 
     private static final String NOT_ADMIN_USER_ID = "NOT_ADMIN";
 
+    private static final String USER1_LOGIN = "bear@gooddata.com";
+
+    private static final String USER2_LOGIN = "jane@gooddata.com";
+
     private static final String BAD_OFFSET = "badOffset";
 
     private static final String DOMAIN = "default";
@@ -84,32 +89,32 @@ public class AuditEventControllerTest {
     private static final DateTime UPPER_BOUND = date("2005-01-01");
 
     private final AuditEventsDTO domainEvents = new AuditEventsDTO(
-            Arrays.asList(new AuditEventDTO("123", "default", "user123", date("1993-03-09"), date("1993-03-09")),
-                    new AuditEventDTO("456", "default", "user456", date("1993-03-09"), date("1993-03-09"))),
+            Arrays.asList(new AuditEventDTO("123", "default", USER1_LOGIN, date("1993-03-09"), date("1993-03-09")),
+                    new AuditEventDTO("456", "default", USER2_LOGIN, date("1993-03-09"), date("1993-03-09"))),
             new Paging(adminUri() + "?offset=456&limit=" + RequestParameters.DEFAULT_LIMIT),
             new HashMap<String, String>() {{
                 put("self", adminUri());
             }});
 
     private final AuditEventsDTO eventsForAdminUser = new AuditEventsDTO(
-            Arrays.asList(new AuditEventDTO("123", "default", "user123", date("1993-03-09"), date("1993-03-09")),
-                    new AuditEventDTO("456", "default", "user123", date("1993-03-09"), date("1993-03-09"))),
+            Arrays.asList(new AuditEventDTO("123", "default", USER1_LOGIN, date("1993-03-09"), date("1993-03-09")),
+                    new AuditEventDTO("456", "default", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"))),
             new Paging(userUri(ADMIN_USER_ID) + "?offset=456&limit=" + RequestParameters.DEFAULT_LIMIT),
             new HashMap<String, String>() {{
                 put("self", userUri(ADMIN_USER_ID));
             }});
 
     private final AuditEventsDTO eventsForUser = new AuditEventsDTO(
-            Arrays.asList(new AuditEventDTO("123", "default", "user123", date("1993-03-09"), date("1993-03-09")),
-                    new AuditEventDTO("456", "default", "user123", date("1993-03-09"), date("1993-03-09"))),
+            Arrays.asList(new AuditEventDTO("123", "default", USER1_LOGIN, date("1993-03-09"), date("1993-03-09")),
+                    new AuditEventDTO("456", "default", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"))),
             new Paging(userUri(NOT_ADMIN_USER_ID) + "?offset=456&limit=" + RequestParameters.DEFAULT_LIMIT),
             new HashMap<String, String>() {{
                 put("self", userUri(NOT_ADMIN_USER_ID));
             }});
 
     private final AuditEventsDTO domainEventsWithTimeInterval = new AuditEventsDTO(
-            Arrays.asList(new AuditEventDTO("123", "default", "user123", date("1993-03-09"), date("1993-03-09")),
-                    new AuditEventDTO("456", "default", "user456", date("1995-03-09"), date("1995-03-09"))),
+            Arrays.asList(new AuditEventDTO("123", "default", USER1_LOGIN, date("1993-03-09"), date("1993-03-09")),
+                    new AuditEventDTO("456", "default", USER2_LOGIN, date("1995-03-09"), date("1995-03-09"))),
             new Paging(adminUri() + "?to=" + UPPER_BOUND + "&offset=456&limit=100"),
             new HashMap<String, String>() {{
                 put("self", adminUri());
@@ -117,8 +122,11 @@ public class AuditEventControllerTest {
 
     @Before
     public void setUp() {
-        doReturn(DOMAIN).when(userDomainService).findDomainForUser(ADMIN_USER_ID);
-        doReturn(DOMAIN).when(userDomainService).findDomainForUser(NOT_ADMIN_USER_ID);
+        final UserInfo adminUserInfo = new UserInfo(ADMIN_USER_ID, USER1_LOGIN, DOMAIN);
+        final UserInfo notAdminUserInfo = new UserInfo(NOT_ADMIN_USER_ID, USER1_LOGIN, DOMAIN);
+
+        doReturn(adminUserInfo).when(userDomainService).getUserInfo(ADMIN_USER_ID);
+        doReturn(notAdminUserInfo).when(userDomainService).getUserInfo(NOT_ADMIN_USER_ID);
 
         doReturn(false).when(userDomainService).isUserDomainAdmin(NOT_ADMIN_USER_ID, DOMAIN);
         doReturn(true).when(userDomainService).isUserDomainAdmin(ADMIN_USER_ID, DOMAIN);
@@ -132,8 +140,8 @@ public class AuditEventControllerTest {
 
         when(auditEventService.findByDomain(eq(DOMAIN), eq(pageRequestDefault))).thenReturn(domainEvents);
 
-        when(auditEventService.findByDomainAndUser(eq(DOMAIN), eq(ADMIN_USER_ID), eq(pageRequestDefault))).thenReturn(eventsForAdminUser);
-        when(auditEventService.findByDomainAndUser(eq(DOMAIN), eq(NOT_ADMIN_USER_ID), eq(pageRequestDefault))).thenReturn(eventsForUser);
+        when(auditEventService.findByUser(eq(adminUserInfo), eq(pageRequestDefault))).thenReturn(eventsForAdminUser);
+        when(auditEventService.findByUser(eq(notAdminUserInfo), eq(pageRequestDefault))).thenReturn(eventsForUser);
 
         RequestParameters boundedRequestParameters = new RequestParameters();
         boundedRequestParameters.setFrom(LOWER_BOUND);

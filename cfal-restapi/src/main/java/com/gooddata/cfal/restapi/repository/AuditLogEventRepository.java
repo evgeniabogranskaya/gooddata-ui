@@ -4,6 +4,7 @@
 package com.gooddata.cfal.restapi.repository;
 
 import com.gooddata.cfal.restapi.dto.RequestParameters;
+import com.gooddata.cfal.restapi.dto.UserInfo;
 import com.gooddata.cfal.restapi.model.AuditEvent;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
@@ -64,23 +65,20 @@ public class AuditLogEventRepository {
     }
 
     /**
-     * Finds all events for domain for given userId and in given time interval. If <code>offset</code> is not null, than returns events younger (greater ID) than <code>offset</code>.
+     * Finds all events for given user and in given time interval. If <code>offset</code> is not null, than returns events younger (greater ID) than <code>offset</code>.
      * Result list (page) has size equal to <code>limit</code>.
      *
-     * @param domain            domain to find events for
-     * @param userId            user to find events for
+     * @param userInfo identifies user
      * @param requestParameters parameters for filtering events
      * @return list starting from <code>offset</code> and limited on given time range
      */
-    public List<AuditEvent> findByDomainAndUser(final String domain,
-                                                final String userId,
-                                                final RequestParameters requestParameters) {
-        notEmpty(domain, "domain cannot be empty");
-        notEmpty(userId, "userId cannot be empty");
+    public List<AuditEvent> findByUser(final UserInfo userInfo,
+                                       final RequestParameters requestParameters) {
+        notNull(userInfo, "userInfo cannot be empty");
         notNull(requestParameters, "requestParameters cannot be null");
 
-        final Query query = createQuery(requestParameters).addCriteria(Criteria.where("userId").is(userId));
-        return mongoTemplate.find(query, AuditEvent.class, getMongoCollectionName(domain));
+        final Query query = createQuery(requestParameters).addCriteria(Criteria.where("userLogin").is(userInfo.getUserLogin()));
+        return mongoTemplate.find(query, AuditEvent.class, getMongoCollectionName(userInfo.getDomainId()));
     }
 
     /**

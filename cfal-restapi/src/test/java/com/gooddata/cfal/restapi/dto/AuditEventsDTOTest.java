@@ -28,15 +28,18 @@ import static org.hamcrest.Matchers.hasSize;
 @JsonTest
 public class AuditEventsDTOTest {
 
-    private static final String USER_ID1 = "user123";
-    private static final String USER_ID2 = "user456";
+    private static final String USER1_ID = "user123";
+
+    private static final String USER1_LOGIN = "bear@gooddata.com";
+    private static final String USER2_LOGIN = "jane@gooddata.com";
+
     private static final String DOMAIN = "default";
 
-    private static final AuditEventDTO EVENT_1 = new AuditEventDTO("123", DOMAIN, USER_ID1, date("1993-03-09"), date("1993-03-09"));
-    private static final AuditEventDTO EVENT_2 = new AuditEventDTO("456", DOMAIN, USER_ID2, date("1993-03-09"), date("1993-03-09"));
+    private static final AuditEventDTO EVENT_1 = new AuditEventDTO("123", DOMAIN, USER1_LOGIN, date("1993-03-09"), date("1993-03-09"));
+    private static final AuditEventDTO EVENT_2 = new AuditEventDTO("456", DOMAIN, USER2_LOGIN, date("1993-03-09"), date("1993-03-09"));
 
     private static final String ADMIN_URI = ADMIN_URI_TEMPLATE.expand(DOMAIN).toString();
-    private static final String USER_URI = USER_URI_TEMPLATE.expand(USER_ID1).toString();
+    private static final String USER_URI = USER_URI_TEMPLATE.expand(USER1_ID).toString();
     private static final String ADMIN_NEXT_URI = ADMIN_URI + "?offset=456&limit=2";
     private static final String USER_NEXT_URI = USER_URI + "?offset=456&limit=1";
 

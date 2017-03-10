@@ -6,6 +6,7 @@ package com.gooddata.cfal.restapi.rest;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
+import com.gooddata.cfal.restapi.dto.UserInfo;
 import com.gooddata.cfal.restapi.validation.RequestParametersValidator;
 import com.gooddata.cfal.restapi.exception.UserNotAuthorizedException;
 import com.gooddata.cfal.restapi.exception.UserNotSpecifiedException;
@@ -55,19 +56,19 @@ public class AuditEventController {
 
         final String loggedUserId = getUserIdFromContext();
 
-        final String domainForUser = userDomainService.findDomainForUser(userId);
+        final UserInfo userInfo = userDomainService.getUserInfo(userId);
 
         if (userId.equals(loggedUserId)) {
-            return auditEventService.findByDomainAndUser(domainForUser, userId, requestParameters);
+            return auditEventService.findByUser(userInfo, requestParameters);
         }
 
-        final String domainForLoggedUser = userDomainService.findDomainForUser(loggedUserId);
+        final UserInfo loggedUserInfo = userDomainService.getUserInfo(loggedUserId);
 
-        if (!domainForUser.equals(domainForLoggedUser) || !userDomainService.isUserDomainAdmin(loggedUserId, domainForLoggedUser)) {
+        if (!userInfo.getDomainId().equals(loggedUserInfo.getDomainId()) || !userDomainService.isUserDomainAdmin(loggedUserId, loggedUserInfo.getDomainId())) {
             throw new UserNotAuthorizedException("user with ID" + loggedUserId + " is not authorized to access this resource");
         }
 
-        return auditEventService.findByDomainAndUser(domainForUser, userId, requestParameters);
+        return auditEventService.findByUser(userInfo, requestParameters);
     }
 
     /**

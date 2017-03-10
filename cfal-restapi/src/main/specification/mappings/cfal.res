@@ -44,7 +44,7 @@
 #  AuditEvent = <event: {
 #       id : STRING,
 #       domain: STRING,
-#       userId: STRING,
+#       userLogin: STRING,
 #       occurred: DATETIMEISO,
 #       recorded: DATETIMEISO
 #  }>
