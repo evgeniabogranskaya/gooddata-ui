@@ -89,7 +89,7 @@ public class AuditLogEventRepository {
     public void save(final AuditEvent auditEvent) {
         notNull(auditEvent, "auditEvent cannot be null");
 
-        mongoTemplate.save(auditEvent, getMongoCollectionName(auditEvent.getDomain()));
+        mongoTemplate.save(auditEvent, getMongoCollectionName(auditEvent.getDomainId()));
     }
 
     /**

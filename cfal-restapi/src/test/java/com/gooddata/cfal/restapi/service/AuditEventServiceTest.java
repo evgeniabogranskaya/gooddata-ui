@@ -215,9 +215,9 @@ public class AuditEventServiceTest {
         when(event2.getId()).thenReturn(new ObjectId());
         when(event3.getId()).thenReturn(new ObjectId());
 
-        when(event1.getDomain()).thenReturn(DOMAIN);
-        when(event2.getDomain()).thenReturn(DOMAIN);
-        when(event3.getDomain()).thenReturn(DOMAIN);
+        when(event1.getDomainId()).thenReturn(DOMAIN);
+        when(event2.getDomainId()).thenReturn(DOMAIN);
+        when(event3.getDomainId()).thenReturn(DOMAIN);
 
         when(event1.getUserLogin()).thenReturn(USER_ID);
         when(event2.getUserLogin()).thenReturn(USER_ID);
