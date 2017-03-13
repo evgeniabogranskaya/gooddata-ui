@@ -117,6 +117,19 @@ public class AuditLogEventRepository {
     }
 
     /**
+     * Creates User-login-indexes from all CFAL-related collections
+     * <p>
+     * {@see #createUserLoginIndex}
+     */
+    public void createUserLoginIndexes() {
+        mongoTemplate
+                .getCollectionNames()
+                .stream()
+                .filter(n -> n.startsWith(mongoCollectionPrefix))
+                .forEach(this::createUserLoginIndex);
+    }
+
+    /**
      * Creates a TTL-index on given collection. Index is set to delete all records older than 7 days
      *
      * @param collectionName collection for which you want to create TTL-index
@@ -126,6 +139,23 @@ public class AuditLogEventRepository {
                 .background()
                 .expire(recordTtlDays, TimeUnit.DAYS)
                 .on("occurred", Sort.Direction.ASC);
+
+        try {
+            mongoTemplate.indexOps(collectionName).ensureIndex(index);
+        } catch (Exception e) {
+            logger.warn("Unable to create index for a collection=" + collectionName, e);
+        }
+    }
+
+    /**
+     * Creates a User-login-index on given collection. Index is defined on top of 'userLogin' attribute.
+     *
+     * @param collectionName collection for which you want to create User-login-index
+     */
+    private void createUserLoginIndex(final String collectionName) {
+        final Index index = new Index()
+                .background()
+                .on("userLogin", Sort.Direction.ASC);
 
         try {
             mongoTemplate.indexOps(collectionName).ensureIndex(index);

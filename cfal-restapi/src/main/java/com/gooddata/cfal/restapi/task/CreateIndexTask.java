@@ -54,4 +54,21 @@ public class CreateIndexTask {
             logger.warn("action=create_ttl_indexes action=error time=" + stopWatch.getTotalTimeMillis(), e);
         }
     }
+
+    @Scheduled(cron = "0 0 * * * *")
+    @ManagedOperation(description="Create User-login indexes on CFAL mongo collections")
+    public void createUserLoginIndexes() {
+        final StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+
+        try {
+            logger.info("action=create_user_login_indexes action=start");
+            repository.createUserLoginIndexes();
+            stopWatch.stop();
+            logger.info("action=create_user_login_indexes action=finished time=" + stopWatch.getTotalTimeMillis());
+        } catch (Exception e) {
+            stopWatch.stop();
+            logger.warn("action=create_user_login_indexes action=error time=" + stopWatch.getTotalTimeMillis(), e);
+        }
+    }
 }

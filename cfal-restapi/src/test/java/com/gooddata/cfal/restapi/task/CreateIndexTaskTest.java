@@ -30,17 +30,32 @@ public class CreateIndexTaskTest {
     }
 
     @Test
-    public void createIndexesGotCalled() throws Exception {
+    public void createTtlIndexesGotCalled() throws Exception {
         instance.createTtlIndexes();
 
         verify(repository).createTtlIndexes();
     }
 
     @Test
-    public void createIndexesThrowsException() throws Exception {
+    public void createTtlIndexesThrowsException() throws Exception {
         doThrow(new RuntimeException("")).when(repository).createTtlIndexes();
         instance.createTtlIndexes();
 
         verify(repository).createTtlIndexes();
+    }
+
+    @Test
+    public void createUserLoginIndexesGotCalled() throws Exception {
+        instance.createUserLoginIndexes();
+
+        verify(repository).createUserLoginIndexes();
+    }
+
+    @Test
+    public void createUserLoginIndexesThrowsException() throws Exception {
+        doThrow(new RuntimeException("")).when(repository).createUserLoginIndexes();
+        instance.createUserLoginIndexes();
+
+        verify(repository).createUserLoginIndexes();
     }
 }

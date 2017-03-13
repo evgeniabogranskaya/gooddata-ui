@@ -339,8 +339,7 @@ public class AuditLogEventRepositoryIT {
 
     @Test
     public void testCreateTtlIndexes() {
-        DateTime expectedDate = date("1993-03-09");
-        TestEntity objectToSave = new TestEntity(expectedDate.toString());
+        TestEntity objectToSave = new TestEntity(date("1993-03-09").toString());
 
         final String mongoCollectionName = auditLogEventRepository.getMongoCollectionName(DOMAIN2);
         mongoTemplate.save(objectToSave, mongoCollectionName);
@@ -353,6 +352,21 @@ public class AuditLogEventRepositoryIT {
         assertThat(indexInfo, hasItem(Matchers
                 .both(dbObjectMatch("expireAfterSeconds", is(DAYS.toSeconds(7))))
                 .and(dbObjectMatch("key", dbObjectMatch("occurred", is(1))))));
+    }
+
+    @Test
+    public void testCreateUserLoginIndexes() {
+        TestEntity objectToSave = new TestEntity(date("1993-03-09").toString());
+
+        final String mongoCollectionName = auditLogEventRepository.getMongoCollectionName(DOMAIN2);
+        mongoTemplate.save(objectToSave, mongoCollectionName);
+        auditLogEventRepository.createUserLoginIndexes();
+
+        final List<DBObject> indexInfo = mongoTemplate.getCollection(mongoCollectionName).getIndexInfo();
+        // there should be at least one (new) index
+        assertThat(indexInfo, hasSize(greaterThanOrEqualTo(1)));
+        // make sure there's an index with 'expireAfterSeconds' set to 7-days on top of 'occurred' key
+        assertThat(indexInfo, hasItem(dbObjectMatch("key", dbObjectMatch("userLogin", is(1)))));
     }
 
     private <T> FeatureMatcher<DBObject, T> dbObjectMatch(String feature, Matcher<T> matcher) {
