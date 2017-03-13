@@ -96,7 +96,55 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <!--Copy dependecies to target/dependencies directory, so we can check'em using content-check plugin-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeScope>runtime</includeScope>
+                            <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>net.kozelka.maven</groupId>
+                <artifactId>contentcheck-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <!--should fail if some required dependency is missing since this can lead to serious problems,
+                                such as broken logging or NoClassDefFoundError-s
+                            -->
+                            <failOnMissing>true</failOnMissing>
+                            <directory>${project.build.directory}/dependencies</directory>
+                            <checkFilesPattern>**/*.jar</checkFilesPattern>
+                            <vendorId>com.gooddata</vendorId>
+                            <ignoreVendorArchives>true</ignoreVendorArchives>
+                            <skipPOMPackaging>true</skipPOMPackaging>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
