@@ -43,7 +43,6 @@
 #  (start code)
 #  AuditEvent = <event: {
 #       id : STRING,
-#       domain: STRING,
 #       userLogin: STRING,
 #       occurred: DATETIMEISO,
 #       recorded: DATETIMEISO

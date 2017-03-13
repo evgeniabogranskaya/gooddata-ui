@@ -37,8 +37,6 @@ public class AuditEventDTO {
 
     private final String id;
 
-    private final String domain;
-
     private final String userLogin;
 
     private final DateTime occurred; //time event happened at component
@@ -47,12 +45,10 @@ public class AuditEventDTO {
 
     @JsonCreator
     public AuditEventDTO(@JsonProperty("id") String id,
-                         @JsonProperty("domain") String domain,
                          @JsonProperty("userLogin") String userLogin,
                          @JsonProperty("occurred") @JsonDeserialize(using = ISODateTimeDeserializer.class) DateTime occurred,
                          @JsonProperty("recorded") @JsonDeserialize(using = ISODateTimeDeserializer.class) DateTime recorded) {
         this.id = notEmpty(id, "id can't be empty");
-        this.domain = notEmpty(domain, "domain can't be empty");
         this.userLogin = notEmpty(userLogin, "userLogin can't be empty");
         this.occurred = notNull(occurred, "occurred can't be null");
         this.recorded = notNull(recorded, "recorded can't be null");
@@ -60,10 +56,6 @@ public class AuditEventDTO {
 
     public String getId() {
         return id;
-    }
-
-    public String getDomain() {
-        return domain;
     }
 
     public String getUserLogin() {

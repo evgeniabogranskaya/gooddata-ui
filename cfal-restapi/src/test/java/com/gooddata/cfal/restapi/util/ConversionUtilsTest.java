@@ -36,7 +36,6 @@ public class ConversionUtilsTest {
         AuditEventDTO auditEventDTO = ConversionUtils.createAuditEventDTO(new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME));
 
         assertThat(auditEventDTO.getId(), is(ID.toString()));
-        assertThat(auditEventDTO.getDomain(), is(DOMAIN));
         assertThat(auditEventDTO.getUserLogin(), is(USER_LOGIN));
         assertThat(auditEventDTO.getOccurred(), is(TIME));
         assertThat(auditEventDTO.getRecorded(), is(new DateTime(ID.getDate(), DateTimeZone.UTC)));

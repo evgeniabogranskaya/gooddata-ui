@@ -1,7 +1,6 @@
 {
   "event": {
     "id": "123",
-    "domain": "default",
     "userLogin": "bear@gooddata.com",
     "occurred":"1993-03-09T00:00:00.000Z",
     "recorded":"1993-03-09T00:00:00.000Z"
