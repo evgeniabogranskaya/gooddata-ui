@@ -38,7 +38,7 @@ public class CreateIndexTask {
      * <p>
      * See {@link AuditLogEventRepository#createTtlIndexes} for more information about indexes being created.
      */
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "${gdc.cfal.mongo.task.ttl-index.cron}")
     @ManagedOperation(description="Create TTL indexes on CFAL mongo collections")
     public void createTtlIndexes() {
         final StopWatch stopWatch = new StopWatch();
@@ -52,6 +52,23 @@ public class CreateIndexTask {
         } catch (Exception e) {
             stopWatch.stop();
             logger.warn("action=create_ttl_indexes action=error time=" + stopWatch.getTotalTimeMillis(), e);
+        }
+    }
+
+    @Scheduled(cron = "${gdc.cfal.mongo.task.user-login-index.cron}")
+    @ManagedOperation(description="Create User-login indexes on CFAL mongo collections")
+    public void createUserLoginIndexes() {
+        final StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+
+        try {
+            logger.info("action=create_user_login_indexes action=start");
+            repository.createUserLoginIndexes();
+            stopWatch.stop();
+            logger.info("action=create_user_login_indexes action=finished time=" + stopWatch.getTotalTimeMillis());
+        } catch (Exception e) {
+            stopWatch.stop();
+            logger.warn("action=create_user_login_indexes action=error time=" + stopWatch.getTotalTimeMillis(), e);
         }
     }
 }
