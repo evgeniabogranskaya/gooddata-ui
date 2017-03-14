@@ -7,16 +7,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.never;
 
 public class AbstractAuditLogServiceTest {
 
     private static final String COMPONENT = "component";
     private AbstractAuditLogService instance;
+    private AbstractAuditLogService spyInstance;
+    private AuditLogEvent auditEvent;
 
     @Before
     public void setUp() throws Exception {
@@ -25,6 +26,9 @@ public class AbstractAuditLogServiceTest {
             protected void logEvent(String eventData) {
             }
         };
+
+        spyInstance = Mockito.spy(instance);
+        auditEvent = new AuditLogEvent(AuditLogEventType.STANDARD_LOGIN, "login", "userIp", "domain", true);
     }
 
     @Test(expected = NullPointerException.class)
@@ -49,24 +53,28 @@ public class AbstractAuditLogServiceTest {
 
     @Test
     public void componentIsSet() throws Exception {
-        final AuditLogEvent event = new AuditLogEvent(AuditLogEventType.STANDARD_LOGIN, "login",
-                "userIp", "domain", true);
-        instance.logEvent(event);
-        assertThat(event.getComponent(), is(COMPONENT));
+        instance.logEvent(auditEvent);
+        assertThat(auditEvent.getComponent(), is(COMPONENT));
     }
 
     @Test
     public void logMethodIsCalled() throws Exception {
-        final AuditLogEvent event = new AuditLogEvent(AuditLogEventType.STANDARD_LOGIN, "login",
-                "userIp", "domain", true);
+        spyInstance.logEvent(auditEvent);
+        Mockito.verify(spyInstance).logEvent(anyString());
+    }
 
-        final AbstractAuditLogService instance = Mockito.spy(new AbstractAuditLogService(COMPONENT) {
-            @Override
-            protected void logEvent(String eventData) {
-            }
-        });
+    @Test
+    public void logMethodIsNotCalledWhenLoggingIsDisabled() throws Exception {
+        spyInstance.setLoggingEnabled(false);
+        spyInstance.logEvent(auditEvent);
+        Mockito.verify(spyInstance, never()).logEvent(anyString());
+    }
 
-        instance.logEvent(event);
-        Mockito.verify(instance).logEvent(anyString());
+    @Test
+    public void testSetLoggingEnabled() throws Exception {
+        instance.setLoggingEnabled(true);
+        assertThat(instance.isLoggingEnabled(), is(true));
+        instance.setLoggingEnabled(false);
+        assertThat(instance.isLoggingEnabled(), is(false));
     }
 }
