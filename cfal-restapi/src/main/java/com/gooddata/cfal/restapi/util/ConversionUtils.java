@@ -59,7 +59,6 @@ public class ConversionUtils {
         notNull(auditEvent, "auditEvent cannot be null");
 
         return new AuditEventDTO(auditEvent.getId().toString(),
-                auditEvent.getDomain(),
                 auditEvent.getUserLogin(),
                 auditEvent.getOccurred(),
                 new DateTime(auditEvent.getId().getDate(), DateTimeZone.UTC));

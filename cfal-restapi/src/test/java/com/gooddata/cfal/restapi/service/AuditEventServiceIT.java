@@ -108,7 +108,7 @@ public class AuditEventServiceIT {
     }
 
     @Test
-    public void testFindByDomainAndUser() {
+    public void testFindByUser() {
         RequestParameters pageReq = new RequestParameters();
         AuditEventsDTO events = auditEventService.findByUser(USER1_INFO, pageReq);
 
@@ -118,7 +118,7 @@ public class AuditEventServiceIT {
     }
 
     @Test
-    public void testFindByDomainAndUserMultiplePages() {
+    public void testFindByUserMultiplePages() {
         String uri = USER_URI_TEMPLATE.expand(USER1_ID).toString();
         RequestParameters firstPageReq = new RequestParameters();
         firstPageReq.setLimit(1);
@@ -140,7 +140,7 @@ public class AuditEventServiceIT {
     }
 
     @Test
-    public void testFindByDomainAndUserWithTimeIntervalFromAndTo() {
+    public void testFindByUserWithTimeIntervalFromAndTo() {
         DateTime from = date("1990-01-01");
         DateTime to = date("2005-01-01");
 
@@ -156,7 +156,7 @@ public class AuditEventServiceIT {
     }
 
     @Test
-    public void testFindByDomainAndUserWithTimeIntervalFrom() {
+    public void testFindByUserWithTimeIntervalFrom() {
         DateTime from = date("1990-01-01");
 
         RequestParameters requestParameters = new RequestParameters();
@@ -170,7 +170,7 @@ public class AuditEventServiceIT {
     }
 
     @Test
-    public void testFindByDomainAndUserWithTimeIntervalTo() {
+    public void testFindByUserWithTimeIntervalTo() {
         DateTime to = date("2005-01-01");
 
         RequestParameters requestParameters = new RequestParameters();
@@ -197,7 +197,7 @@ public class AuditEventServiceIT {
     }
 
     @Test
-    public void testFindByDomainAndUserInvalidTimeInterval() {
+    public void testFindByUserInvalidTimeInterval() {
         RequestParameters requestParameters = new RequestParameters();
         requestParameters.setLimit(10);
         requestParameters.setFrom(date("2005-01-01"));

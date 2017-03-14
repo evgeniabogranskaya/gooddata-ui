@@ -127,7 +127,7 @@ public class AuditEventServiceTest {
     }
 
     @Test
-    public void testFindByDomainAndUserOnePage() {
+    public void testFindByUserOnePage() {
         AuditEventsDTO events = auditEventService.findByUser(USER_INFO, requestParam);
 
         assertThat(events, is(notNullValue()));
@@ -136,7 +136,7 @@ public class AuditEventServiceTest {
     }
 
     @Test
-    public void testFindByDomainAndUserMultiplePages() {
+    public void testFindByUserMultiplePages() {
         String uri = USER_URI_TEMPLATE.expand(USER_ID).toString();
         AuditEventsDTO firstPage = auditEventService.findByUser(USER_INFO, requestParamWithCustomLimit);
 
@@ -180,7 +180,7 @@ public class AuditEventServiceTest {
     }
 
     @Test
-    public void testFindByDomainAndUserOnePageWithTimeIntervalFrom() {
+    public void testFindByUserOnePageWithTimeIntervalFrom() {
         AuditEventsDTO events = auditEventService.findByUser(USER_INFO, requestParamLB);
 
         assertThat(events, is(notNullValue()));
@@ -189,7 +189,7 @@ public class AuditEventServiceTest {
     }
 
     @Test
-    public void testFindByDomainAndUserOnePageWithTimeIntervalTo() {
+    public void testFindByUserOnePageWithTimeIntervalTo() {
         AuditEventsDTO events = auditEventService.findByUser(USER_INFO, requestParamUB);
 
         assertThat(events, is(notNullValue()));
@@ -198,7 +198,7 @@ public class AuditEventServiceTest {
     }
 
     @Test
-    public void testFindByDomainAndUserOnePageWithTimeIntervalFromAndTo() {
+    public void testFindByUserOnePageWithTimeIntervalFromAndTo() {
         AuditEventsDTO events = auditEventService.findByUser(USER_INFO, requestParamLBUB);
 
         assertThat(events, is(notNullValue()));
@@ -215,9 +215,9 @@ public class AuditEventServiceTest {
         when(event2.getId()).thenReturn(new ObjectId());
         when(event3.getId()).thenReturn(new ObjectId());
 
-        when(event1.getDomain()).thenReturn(DOMAIN);
-        when(event2.getDomain()).thenReturn(DOMAIN);
-        when(event3.getDomain()).thenReturn(DOMAIN);
+        when(event1.getDomainId()).thenReturn(DOMAIN);
+        when(event2.getDomainId()).thenReturn(DOMAIN);
+        when(event3.getDomainId()).thenReturn(DOMAIN);
 
         when(event1.getUserLogin()).thenReturn(USER_ID);
         when(event2.getUserLogin()).thenReturn(USER_ID);

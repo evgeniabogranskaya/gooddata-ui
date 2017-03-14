@@ -15,14 +15,14 @@ public class AuditEvent {
     @Id
     private ObjectId id;
 
-    private String domain;
+    private String domainId;
 
     private String userLogin;
 
     private DateTime occurred; //time event happened at component
 
-    public AuditEvent(final String domain, final String userLogin, final DateTime occurred) {
-        this.domain = domain;
+    public AuditEvent(final String domainId, final String userLogin, final DateTime occurred) {
+        this.domainId = domainId;
         this.userLogin = userLogin;
         this.occurred = occurred;
     }
@@ -30,9 +30,9 @@ public class AuditEvent {
     /**
      * Constructor for testing purposes
      */
-    public AuditEvent(final ObjectId id, final String domain, final String userLogin, final DateTime occurred) {
+    public AuditEvent(final ObjectId id, final String domainId, final String userLogin, final DateTime occurred) {
         this.id = id;
-        this.domain = domain;
+        this.domainId = domainId;
         this.userLogin = userLogin;
         this.occurred = occurred;
     }
@@ -44,8 +44,8 @@ public class AuditEvent {
         return id;
     }
 
-    public String getDomain() {
-        return domain;
+    public String getDomainId() {
+        return domainId;
     }
 
     public String getUserLogin() {

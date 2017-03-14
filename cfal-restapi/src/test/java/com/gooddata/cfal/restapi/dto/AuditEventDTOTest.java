@@ -23,7 +23,7 @@ public class AuditEventDTOTest {
     @Autowired
     private JacksonTester<AuditEventDTO> json;
 
-    private final AuditEventDTO event = new AuditEventDTO("123", "default", "bear@gooddata.com", date("1993-03-09"), date("1993-03-09"));
+    private final AuditEventDTO event = new AuditEventDTO("123", "bear@gooddata.com", date("1993-03-09"), date("1993-03-09"));
 
     @Test
     public void testSerialize() throws Exception {
@@ -36,7 +36,6 @@ public class AuditEventDTOTest {
 
         final AuditEventDTO deserializedObject = json.parse(content).getObject();
         assertThat(deserializedObject, notNullValue());
-        assertThat(deserializedObject.getDomain(), is(event.getDomain()));
         assertThat(deserializedObject.getId(), is(event.getId()));
         assertThat(deserializedObject.getOccurred(), is(event.getOccurred()));
         assertThat(deserializedObject.getRecorded(), is(event.getRecorded()));

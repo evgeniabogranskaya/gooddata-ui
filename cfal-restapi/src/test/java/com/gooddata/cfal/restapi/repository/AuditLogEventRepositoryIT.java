@@ -146,7 +146,7 @@ public class AuditLogEventRepositoryIT {
     }
 
     @Test
-    public void testFindByDomainAndUser() {
+    public void testFindByUser() {
         RequestParameters requestParameters = new RequestParameters();
         requestParameters.setLimit(10);
 
@@ -162,7 +162,7 @@ public class AuditLogEventRepositoryIT {
     }
 
     @Test
-    public void testFindByDomainAndUserWithOffset() {
+    public void testFindByUserWithOffset() {
         RequestParameters requestParameters1 = new RequestParameters();
         requestParameters1.setLimit(10);
         requestParameters1.setOffset(event1.getId().toString());
@@ -183,7 +183,7 @@ public class AuditLogEventRepositoryIT {
     }
 
     @Test
-    public void testFindByDomainAndUserMultiplePages() {
+    public void testFindByUserMultiplePages() {
         RequestParameters requestParametersFirstPage = new RequestParameters();
         requestParametersFirstPage.setLimit(1);
 
@@ -263,7 +263,7 @@ public class AuditLogEventRepositoryIT {
     }
 
     @Test
-    public void testFindByDomainAndUserInvalidTimeInterval() {
+    public void testFindByUserInvalidTimeInterval() {
         RequestParameters requestParameters = new RequestParameters();
         requestParameters.setLimit(10);
         requestParameters.setFrom(date("2005-01-01"));
@@ -300,7 +300,7 @@ public class AuditLogEventRepositoryIT {
     }
 
     @Test
-    public void testFindByDomainAndUserEventsAreOrdered() {
+    public void testFindByUserEventsAreOrdered() {
         AuditEvent auditEvent1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN2, USER1_LOGIN, new DateTime());
         AuditEvent auditEvent2 = new AuditEvent(convertDateTimeToObjectId(date("1994-03-09")), DOMAIN2, USER1_LOGIN, new DateTime());
         AuditEvent auditEvent3 = new AuditEvent(convertDateTimeToObjectId(date("2000-03-09")), DOMAIN2, USER1_LOGIN, new DateTime());

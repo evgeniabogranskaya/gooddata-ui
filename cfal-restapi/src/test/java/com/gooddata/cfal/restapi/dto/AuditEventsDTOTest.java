@@ -35,8 +35,8 @@ public class AuditEventsDTOTest {
 
     private static final String DOMAIN = "default";
 
-    private static final AuditEventDTO EVENT_1 = new AuditEventDTO("123", DOMAIN, USER1_LOGIN, date("1993-03-09"), date("1993-03-09"));
-    private static final AuditEventDTO EVENT_2 = new AuditEventDTO("456", DOMAIN, USER2_LOGIN, date("1993-03-09"), date("1993-03-09"));
+    private static final AuditEventDTO EVENT_1 = new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"));
+    private static final AuditEventDTO EVENT_2 = new AuditEventDTO("456", USER2_LOGIN, date("1993-03-09"), date("1993-03-09"));
 
     private static final String ADMIN_URI = ADMIN_URI_TEMPLATE.expand(DOMAIN).toString();
     private static final String USER_URI = USER_URI_TEMPLATE.expand(USER1_ID).toString();
