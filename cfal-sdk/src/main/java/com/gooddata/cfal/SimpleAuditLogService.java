@@ -3,8 +3,7 @@
  */
 package com.gooddata.cfal;
 
-import org.springframework.beans.factory.DisposableBean;
-
+import javax.annotation.PreDestroy;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -15,7 +14,7 @@ import static org.apache.commons.lang3.Validate.notNull;
 /**
  * Single threaded blocking audit log writing service.
  */
-public class SimpleAuditLogService extends AbstractAuditLogService implements DisposableBean {
+public class SimpleAuditLogService extends AbstractAuditLogService {
 
     private static final File DEFAULT_DIR = new File("/mnt/log/cfal");
 
@@ -50,7 +49,7 @@ public class SimpleAuditLogService extends AbstractAuditLogService implements Di
         }
     }
 
-    @Override
+    @PreDestroy
     public void destroy() throws Exception {
         writer.close();
     }
