@@ -43,15 +43,27 @@ public class AuditEventDTO {
 
     private final DateTime recorded; //time of insertion to mongo
 
+    private final String userIp;
+
+    private final boolean success;
+
+    private final String type;
+
     @JsonCreator
     public AuditEventDTO(@JsonProperty("id") String id,
                          @JsonProperty("userLogin") String userLogin,
                          @JsonProperty("occurred") @JsonDeserialize(using = ISODateTimeDeserializer.class) DateTime occurred,
-                         @JsonProperty("recorded") @JsonDeserialize(using = ISODateTimeDeserializer.class) DateTime recorded) {
+                         @JsonProperty("recorded") @JsonDeserialize(using = ISODateTimeDeserializer.class) DateTime recorded,
+                         @JsonProperty("userIp") String userIp,
+                         @JsonProperty("success") boolean success,
+                         @JsonProperty("type") String type) {
         this.id = notEmpty(id, "id can't be empty");
         this.userLogin = notEmpty(userLogin, "userLogin can't be empty");
         this.occurred = notNull(occurred, "occurred can't be null");
         this.recorded = notNull(recorded, "recorded can't be null");
+        this.userIp = notEmpty(userIp, "userIp can't be empty");
+        this.success = success;
+        this.type = notEmpty(type, "type can't be empty");
     }
 
     public String getId() {
@@ -72,4 +84,15 @@ public class AuditEventDTO {
         return recorded;
     }
 
+    public String getUserIp() {
+        return userIp;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public String getType() {
+        return type;
+    }
 }

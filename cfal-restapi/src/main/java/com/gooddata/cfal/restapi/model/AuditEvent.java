@@ -21,20 +21,32 @@ public class AuditEvent {
 
     private DateTime occurred; //time event happened at component
 
-    public AuditEvent(final String domainId, final String userLogin, final DateTime occurred) {
+    private String userIp;
+
+    private boolean success;
+
+    private String type;
+
+    public AuditEvent(final String domainId, final String userLogin, final DateTime occurred, final String userIp, final boolean success, final String type) {
         this.domainId = domainId;
         this.userLogin = userLogin;
         this.occurred = occurred;
+        this.userIp = userIp;
+        this.success = success;
+        this.type = type;
     }
 
     /**
      * Constructor for testing purposes
      */
-    public AuditEvent(final ObjectId id, final String domainId, final String userLogin, final DateTime occurred) {
+    public AuditEvent(final ObjectId id, final String domainId, final String userLogin, final DateTime occurred, final String userIp, final boolean success, final String type) {
         this.id = id;
         this.domainId = domainId;
         this.userLogin = userLogin;
         this.occurred = occurred;
+        this.userIp = userIp;
+        this.success = success;
+        this.type = type;
     }
 
     AuditEvent() {
@@ -54,5 +66,17 @@ public class AuditEvent {
 
     public DateTime getOccurred() {
         return occurred;
+    }
+
+    public String getUserIp() {
+        return userIp;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public String getType() {
+        return type;
     }
 }
