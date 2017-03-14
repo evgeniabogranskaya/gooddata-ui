@@ -39,6 +39,9 @@ public class AuditEventServiceTest {
     private static final String DOMAIN = "domain";
     private static final String USER_ID = "123";
     private static final String USER_LOGIN = "bear@gooddata.com";
+    private static final String IP = "127.0.0.1";
+    private static final boolean SUCCESS = true;
+    private static final String TYPE = "login";
 
     private static final Integer CUSTOM_LIMIT = 2;
 
@@ -226,6 +229,18 @@ public class AuditEventServiceTest {
         when(event1.getOccurred()).thenReturn(date("1993-03-09"));
         when(event2.getOccurred()).thenReturn(date("1998-01-01"));
         when(event3.getOccurred()).thenReturn(date("2016-01-01"));
+
+        when(event1.getUserIp()).thenReturn(IP);
+        when(event2.getUserIp()).thenReturn(IP);
+        when(event3.getUserIp()).thenReturn(IP);
+
+        when(event1.isSuccess()).thenReturn(SUCCESS);
+        when(event2.isSuccess()).thenReturn(SUCCESS);
+        when(event3.isSuccess()).thenReturn(SUCCESS);
+
+        when(event1.getType()).thenReturn(TYPE);
+        when(event2.getType()).thenReturn(TYPE);
+        when(event3.getType()).thenReturn(TYPE);
     }
 
     private void prepareRequestParams() {
