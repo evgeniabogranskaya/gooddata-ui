@@ -10,13 +10,13 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import static org.apache.commons.lang3.Validate.notEmpty;
+import static org.apache.commons.lang3.Validate.notNull;
 
 /**
- * Common parent handling event formatting and adding component name to the event
- * <p>
- * Whole audit logging can be disabled using JMX or <code>gdc.audit-log.enabled</code> property
+ * Common parent for Audit Log Services.
+ * Enhances Audit Events with the component name.
+ * Provides ability to disable logging using JMX or <code>gdc.audit-log.enabled</code> property.
  */
-
 @ManagedResource
 abstract class AbstractAuditLogService implements AuditLogService {
 
@@ -36,12 +36,12 @@ abstract class AbstractAuditLogService implements AuditLogService {
         if (!loggingEnabled) {
             return;
         }
+        notNull(event, "event");
         event.setComponent(component);
-        final String json = JsonFormatter.format(event);
-        logEvent(json);
+        doLogEvent(event);
     }
 
-    protected abstract void logEvent(String eventData);
+    protected abstract void doLogEvent(final AuditLogEvent event);
 
     public boolean isLoggingEnabled() {
         return loggingEnabled;

@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 
 public class AbstractAuditLogServiceTest {
@@ -23,7 +23,7 @@ public class AbstractAuditLogServiceTest {
     public void setUp() throws Exception {
         instance = new AbstractAuditLogService(COMPONENT) {
             @Override
-            protected void logEvent(String eventData) {
+            protected void doLogEvent(AuditLogEvent event) {
             }
         };
 
@@ -35,8 +35,7 @@ public class AbstractAuditLogServiceTest {
     public void nullContructor() throws Exception {
         new AbstractAuditLogService(null) {
             @Override
-            protected void logEvent(String eventData) {
-
+            protected void doLogEvent(AuditLogEvent event) {
             }
         };
     }
@@ -45,8 +44,7 @@ public class AbstractAuditLogServiceTest {
     public void emptyContructor() throws Exception {
         new AbstractAuditLogService("") {
             @Override
-            protected void logEvent(String eventData) {
-
+            protected void doLogEvent(AuditLogEvent event) {
             }
         };
     }
@@ -60,14 +58,14 @@ public class AbstractAuditLogServiceTest {
     @Test
     public void logMethodIsCalled() throws Exception {
         spyInstance.logEvent(auditEvent);
-        Mockito.verify(spyInstance).logEvent(anyString());
+        Mockito.verify(spyInstance).logEvent(any());
     }
 
     @Test
     public void logMethodIsNotCalledWhenLoggingIsDisabled() throws Exception {
         spyInstance.setLoggingEnabled(false);
         spyInstance.logEvent(auditEvent);
-        Mockito.verify(spyInstance, never()).logEvent(anyString());
+        Mockito.verify(spyInstance, never()).doLogEvent(any());
     }
 
     @Test
