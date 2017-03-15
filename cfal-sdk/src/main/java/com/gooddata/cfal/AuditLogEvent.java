@@ -76,7 +76,6 @@ public class AuditLogEvent {
         return userIp;
     }
 
-    @JsonProperty("domain")
     public String getDomainId() {
         return domainId;
     }
