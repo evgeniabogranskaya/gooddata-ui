@@ -133,8 +133,7 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEvents() {
-        String uri = adminUri();
-        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(adminUri(), HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
@@ -145,7 +144,8 @@ public class AuditEventControllerIT {
     public void testListAuditEventsMultiplePages() {
         RequestParameters requestParameters = new RequestParameters();
         requestParameters.setLimit(2);
-        String firstPageUri = requestParameters.getPageUri(UriComponentsBuilder.fromUriString(adminUri())).toString();
+
+        String firstPageUri = createUriWithParams(requestParameters, adminUri());
 
         ResponseEntity<AuditEventsDTO> firstPage = testRestTemplate.exchange(firstPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
 
@@ -190,7 +190,8 @@ public class AuditEventControllerIT {
         RequestParameters requestParameters = new RequestParameters();
         requestParameters.setLimit(2);
         requestParameters.setOffset("incorrect offset");
-        String uri = requestParameters.getPageUri(UriComponentsBuilder.fromUriString(adminUri())).toString();
+
+        String uri = createUriWithParams(requestParameters, adminUri());
 
         ResponseEntity<ErrorStructure> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), ErrorStructure.class);
 
@@ -210,7 +211,8 @@ public class AuditEventControllerIT {
     public void testListAuditEventsForUserMultiplePages() {
         RequestParameters requestParameters = new RequestParameters();
         requestParameters.setLimit(1);
-        String firstPageUri = requestParameters.getPageUri(UriComponentsBuilder.fromUriString(userUri(USER1_ID))).toString();
+
+        String firstPageUri = createUriWithParams(requestParameters, userUri(USER1_ID));
 
         ResponseEntity<AuditEventsDTO> firstPage = testRestTemplate.exchange(firstPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
 
@@ -241,10 +243,10 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsWithTimeIntervalFrom() {
-        String uri = UriComponentsBuilder.fromUriString(adminUri())
-                                         .query("from=" + TIME_2000)
-                                         .build()
-                                         .toString();
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setFrom(TIME_2000);
+
+        String uri = createUriWithParams(requestParameters, adminUri());
 
         ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
 
@@ -255,10 +257,10 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsWithTimeIntervalTo() {
-        String uri = UriComponentsBuilder.fromUriString(adminUri())
-                                         .query("to=" + TIME_2000)
-                                         .build()
-                                         .toString();
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setTo(TIME_2000);
+
+        String uri = createUriWithParams(requestParameters, adminUri());
 
         ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
 
@@ -269,11 +271,11 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsWithTimeIntervalFromAndTo() {
-        String uri = UriComponentsBuilder.fromUriString(adminUri())
-                                         .query("from=" + TIME_1995)
-                                         .query("to=" + TIME_2000)
-                                         .build()
-                                         .toString();
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setFrom(TIME_1995);
+        requestParameters.setTo(TIME_2000);
+
+        String uri = createUriWithParams(requestParameters, adminUri());
 
         ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
 
@@ -284,10 +286,10 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsForUserWithTimeIntervalFrom() {
-        String uri = UriComponentsBuilder.fromUriString(userUri(USER1_ID))
-                                         .query("from=" + TIME_1995)
-                                         .build()
-                                         .toString();
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setFrom(TIME_1995);
+
+        String uri = createUriWithParams(requestParameters, userUri(USER1_ID));
 
         ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
 
@@ -298,10 +300,10 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsForUserWithTimeIntervalTo() {
-        String uri = UriComponentsBuilder.fromUriString(userUri(USER1_ID))
-                                         .query("to=" + TIME_1995)
-                                         .build()
-                                         .toString();
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setTo(TIME_1995);
+
+        String uri = createUriWithParams(requestParameters, userUri(USER1_ID));
 
         ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
 
@@ -312,11 +314,11 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsForUserWithTimeIntervalFromAndTo() {
-        String uri = UriComponentsBuilder.fromUriString(userUri(USER1_ID))
-                                         .query("from=" + TIME_1990)
-                                         .query("to=" + TIME_2000)
-                                         .build()
-                                         .toString();
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setFrom(TIME_1990);
+        requestParameters.setTo(TIME_2000);
+
+        String uri = createUriWithParams(requestParameters, userUri(USER1_ID));
 
         ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
 
@@ -327,15 +329,12 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsMultiplePagesWithTimeIntervalFromAndTo() {
-        String uri = UriComponentsBuilder.fromUriString(adminUri())
-                                         .query("from=" + TIME_1990)
-                                         .query("to=" + TIME_2000)
-                                         .build()
-                                         .toString();
-
         RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setFrom(TIME_1990);
+        requestParameters.setTo(TIME_2000);
         requestParameters.setLimit(2);
-        String firstPageUri = requestParameters.getPageUri(UriComponentsBuilder.fromUriString(uri)).toString();
+
+        String firstPageUri = createUriWithParams(requestParameters, adminUri());
 
         ResponseEntity<AuditEventsDTO> firstPage = testRestTemplate.exchange(firstPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
 
@@ -429,5 +428,9 @@ public class AuditEventControllerIT {
 
     private String userUri(final String userId) {
         return USER_URI_TEMPLATE.expand(userId).toString();
+    }
+
+    private String createUriWithParams(final RequestParameters requestParameters, final String uri) {
+        return requestParameters.updateWithPageParams(UriComponentsBuilder.fromUriString(uri)).build().toUriString();
     }
 }

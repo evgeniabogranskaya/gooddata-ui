@@ -8,7 +8,9 @@ import static org.hamcrest.core.Is.is;
 
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Test;
+import org.springframework.web.util.UriComponentsBuilder;
 
 public class RequestParametersTest {
 
@@ -49,5 +51,40 @@ public class RequestParametersTest {
         assertThat(result.getTo(), is(TO));
         assertThat(result.getSanitizedLimit(), is(LIMIT+1));
         assertThat(result.getOffset(), is(OFFSET));
+    }
+
+    @Test
+    public void testUpdateWithAllRequestParameters() {
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setFrom(FROM);
+        requestParameters.setTo(TO);
+        requestParameters.setLimit(LIMIT);
+        requestParameters.setOffset(OFFSET);
+
+        UriComponentsBuilder result = requestParameters.updateWithPageParams(UriComponentsBuilder.newInstance());
+
+        assertThat(result.build().toUriString(), is("?offset=" + OFFSET + "&limit=" + LIMIT + "&from=" + FROM.toDateTime(DateTimeZone.UTC) + "&to=" + TO.toDateTime(DateTimeZone.UTC)));
+    }
+
+    @Test
+    public void testUpdateWithOnlyPagingRequestParameters() {
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setLimit(LIMIT);
+        requestParameters.setOffset(OFFSET);
+
+        UriComponentsBuilder result = requestParameters.updateWithPageParams(UriComponentsBuilder.newInstance());
+
+        assertThat(result.build().toUriString(), is("?offset=" + OFFSET + "&limit=" + LIMIT));
+    }
+
+    @Test
+    public void testUpdateWithOnlyTimeIntervalRequestParameters() {
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setFrom(FROM);
+        requestParameters.setTo(TO);
+
+        UriComponentsBuilder result = requestParameters.updateWithPageParams(UriComponentsBuilder.newInstance());
+
+        assertThat(result.build().toUriString(), is("?limit=" + RequestParameters.DEFAULT_LIMIT + "&from=" + FROM.toDateTime(DateTimeZone.UTC) + "&to=" + TO.toDateTime(DateTimeZone.UTC)));
     }
 }

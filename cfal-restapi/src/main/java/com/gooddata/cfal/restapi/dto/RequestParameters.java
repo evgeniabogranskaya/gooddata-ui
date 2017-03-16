@@ -10,7 +10,9 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.BeanUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Class to encapsulate time filtering and paging parameters
@@ -75,6 +77,18 @@ public class RequestParameters extends PageRequest {
         final RequestParameters copy = RequestParameters.copy(this);
         copy.setLimit(this.getSanitizedLimit() + 1);
         return copy;
+    }
+
+    @Override
+    public UriComponentsBuilder updateWithPageParams(final UriComponentsBuilder builder) {
+        UriComponentsBuilder builderWithPaging = super.updateWithPageParams(builder);
+        if (from != null) {
+            builderWithPaging.queryParam("from", from.toDateTime(DateTimeZone.UTC));
+        }
+        if (to != null) {
+            builderWithPaging.queryParam("to", to.toDateTime(DateTimeZone.UTC));
+        }
+        return builderWithPaging;
     }
 
     @Override
