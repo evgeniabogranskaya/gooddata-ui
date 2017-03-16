@@ -4,49 +4,29 @@
 package com.gooddata.cfal;
 
 import javax.annotation.PreDestroy;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
 /**
- * Single threaded blocking audit log writing service.
+ * Single threaded blocking audit log writing service. Suitable for HTTP GCF workers.
  */
 public class SimpleAuditLogService extends AbstractAuditLogService {
 
-    private static final File DEFAULT_DIR = new File("/mnt/log/cfal");
-
-    private final BufferedWriter writer;
+    protected final AuditLogEventWriter writer;
 
     public SimpleAuditLogService(final String component) throws IOException {
-        this(component, DEFAULT_DIR);
+        this(component, new AuditLogEventFileWriter(component));
     }
 
-    public SimpleAuditLogService(final String component, final File directory) throws IOException {
+    protected SimpleAuditLogService(final String component, final AuditLogEventWriter writer) throws IOException {
         super(component);
-        notNull(directory, "directory");
-
-        if (!directory.isDirectory()) {
-            throw new IllegalArgumentException("Not a directory: " + directory.getAbsolutePath());
-        }
-        final File logFile = new File(directory, component + ".log");
-        try {
-            writer = new BufferedWriter(new FileWriter(logFile, true));
-        } catch (IOException e) {
-            throw new IOException("Unable to write file: " + logFile.getAbsolutePath(), e);
-        }
+        this.writer = notNull(writer, "writer");
     }
 
     @Override
-    protected void logEvent(final String eventData) {
-        try {
-            writer.write(eventData);
-            writer.flush();
-        } catch (IOException e) {
-            logger.error("Unable to write data={}", eventData, e);
-        }
+    protected void doLogEvent(final AuditLogEvent event) {
+        writer.logEvent(event);
     }
 
     @PreDestroy

@@ -3,11 +3,12 @@
  */
 package com.gooddata.cfal;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Audit log service for testing - logs messages using SLF4J
+ * Audit log service which logs messages using SLF4J. Suitable for testing only.
  */
 public class NoopAuditEventService extends AbstractAuditLogService {
 
@@ -18,7 +19,12 @@ public class NoopAuditEventService extends AbstractAuditLogService {
     }
 
     @Override
-    protected void logEvent(final String eventData) {
-        logger.info(eventData);
+    protected void doLogEvent(final AuditLogEvent event) {
+        try {
+            final String eventData = AuditLogEventFileWriter.format(event);
+            logger.info(eventData);
+        } catch (JsonProcessingException e) {
+            logger.error("Unable to write event={}", event.getType(), e);
+        }
     }
 }
