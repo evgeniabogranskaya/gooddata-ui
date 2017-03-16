@@ -15,7 +15,6 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 
-import static com.gooddata.cfal.AuditLogEventFileWriter.createLogFileName;
 import static com.gooddata.cfal.AuditLogEventType.STANDARD_LOGIN;
 import static java.nio.file.Files.readAllLines;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -45,7 +44,7 @@ public class AuditLogEventFileWriterTest {
 
     @Test
     public void shouldCreateFileName() throws Exception {
-        final File fileName = createLogFileName(tmp.getRoot(), "foo", "bar");
+        final File fileName = new AuditLogEventFileWriter(tmp.getRoot(), "foo", "bar").getLogFile();
         assertThat(fileName, is(notNullValue()));
         assertThat(fileName.getAbsolutePath(), containsString("foo"));
         assertThat(fileName.getAbsolutePath(), containsString("bar"));
@@ -53,17 +52,17 @@ public class AuditLogEventFileWriterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailOnEmptyComponent() throws Exception {
-        createLogFileName(tmp.getRoot(), "");
+        new AuditLogEventFileWriter(tmp.getRoot(), "");
     }
 
     @Test(expected = NullPointerException.class)
     public void shouldFailOnNullDir() throws Exception {
-        createLogFileName(null, "foo");
+        new AuditLogEventFileWriter((File)null, "foo");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailOnNonExistingDir() throws Exception {
-        createLogFileName(new File(tmp.getRoot(), "nonexistent"), "foo");
+        new AuditLogEventFileWriter(new File(tmp.getRoot(), "nonexistent"), "foo");
     }
 
     @Test(expected = IOException.class)

@@ -12,7 +12,6 @@ import java.io.Writer;
 import java.util.Arrays;
 
 import static org.apache.commons.lang3.Validate.noNullElements;
-import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
 
 /**
@@ -22,8 +21,15 @@ class AuditLogEventFileWriter extends AuditLogEventWriterBase {
 
     private static final File DEFAULT_DIR = new File("/mnt/log/cfal");
 
+    private final File logFile;
+
     AuditLogEventFileWriter(final File logFile) throws IOException {
         super(createWriter(logFile));
+        this.logFile = logFile;
+    }
+
+    AuditLogEventFileWriter(final File directory, final String... component) throws IOException {
+        this(createLogFileName(directory, component));
     }
 
     /**
@@ -34,7 +40,11 @@ class AuditLogEventFileWriter extends AuditLogEventWriterBase {
      * @see #createLogFileName(File, String...)
      */
     AuditLogEventFileWriter(final String... component) throws IOException {
-        this(createLogFileName(DEFAULT_DIR, component));
+        this(DEFAULT_DIR, component);
+    }
+
+    File getLogFile() {
+        return logFile;
     }
 
     private static Writer createWriter(final File logFile) throws IOException {
@@ -46,7 +56,7 @@ class AuditLogEventFileWriter extends AuditLogEventWriterBase {
         }
     }
 
-    static File createLogFileName(final File directory, final String... component) {
+    private static File createLogFileName(final File directory, final String... component) {
         notNull(directory, "directory");
         noNullElements(component, "component");
         Arrays.stream(component).forEach(Validate::notEmpty);
