@@ -3,7 +3,6 @@
  */
 package com.gooddata.cfal;
 
-import org.hamcrest.Matchers;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.DateTimeZone;
@@ -15,20 +14,12 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.file.Files;
-import java.util.List;
 
-import static com.gooddata.cfal.AuditLogEventType.STANDARD_LOGIN;
 import static com.gooddata.cfal.AuditLogEventFileWriter.createLogFileName;
-import static com.gooddata.cfal.AuditLogEventFileWriter.format;
+import static com.gooddata.cfal.AuditLogEventType.STANDARD_LOGIN;
 import static java.nio.file.Files.readAllLines;
-import static net.javacrumbs.jsonunit.JsonMatchers.jsonEquals;
-import static net.javacrumbs.jsonunit.core.util.ResourceUtils.resource;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -50,36 +41,6 @@ public class AuditLogEventFileWriterTest {
     @After
     public void tearDown() throws Exception {
         DateTimeUtils.currentTimeMillis();
-    }
-
-    @Test
-    public void shouldSerialize() throws Exception {
-        final String json = format(event);
-        assertThat(json, jsonEquals(resource("login.json")));
-        assertThat(json, endsWith("\n"));
-        assertThat(json, not(endsWith("\n\n")));
-    }
-
-    @Test
-    public void shouldWriteEvent() throws Exception {
-        final StringWriter sw = new StringWriter();
-        final AuditLogEventFileWriter writer = new AuditLogEventFileWriter(sw);
-        writer.logEvent(event);
-
-        assertThat(sw.toString(), jsonEquals(resource("login.json")));
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void shouldFailOnNullEvent() throws Exception {
-        final AuditLogEventFileWriter writer = new AuditLogEventFileWriter(new StringWriter());
-        writer.logEvent(null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void shouldFailOnNullComponent() throws Exception {
-        final AuditLogEventFileWriter writer = new AuditLogEventFileWriter(new StringWriter());
-        event.setComponent(null);
-        writer.logEvent(event);
     }
 
     @Test

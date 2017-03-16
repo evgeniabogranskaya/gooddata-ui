@@ -3,13 +3,8 @@
  */
 package com.gooddata.cfal;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,22 +18,12 @@ import static org.apache.commons.lang3.Validate.notNull;
 /**
  * Formats Audit Events as one-line JSON and writes them into the given file/writer.
  */
-class AuditLogEventFileWriter implements AuditLogEventWriter {
-
-    private static final Logger logger = LoggerFactory.getLogger(AuditLogEventFileWriter.class);
-
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+class AuditLogEventFileWriter extends AuditLogEventWriterBase {
 
     private static final File DEFAULT_DIR = new File("/mnt/log/cfal");
 
-    private final BufferedWriter writer;
-
-    AuditLogEventFileWriter(final Writer writer) {
-        this.writer = new BufferedWriter(notNull(writer, "writer"));
-    }
-
     AuditLogEventFileWriter(final File logFile) throws IOException {
-        this(createWriter(logFile));
+        super(createWriter(logFile));
     }
 
     /**
@@ -50,33 +35,6 @@ class AuditLogEventFileWriter implements AuditLogEventWriter {
      */
     AuditLogEventFileWriter(final String... component) throws IOException {
         this(createLogFileName(DEFAULT_DIR, component));
-    }
-
-    @Override
-    public void logEvent(final AuditLogEvent event) {
-        try {
-            final String eventData = format(event);
-            writer.write(eventData);
-            writer.flush();
-        } catch (IOException e) {
-            logger.error("Unable to write event={}", event.getType(), e);
-        }
-    }
-
-    /**
-     * Prepares event as a string ready to be written to the output log.
-     * @param event event
-     * @return single line string including the trailing newline
-     */
-    static String format(final AuditLogEvent event) throws JsonProcessingException {
-        notNull(event, "event");
-        notEmpty(event.getComponent(), "event.component");
-        return OBJECT_MAPPER.writeValueAsString(event) + "\n";
-    }
-
-    @Override
-    public void close() throws Exception {
-        writer.close();
     }
 
     private static Writer createWriter(final File logFile) throws IOException {
