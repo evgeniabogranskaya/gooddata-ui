@@ -28,13 +28,15 @@ class AuditLogEventWriterBase implements AuditLogEventWriter {
     }
 
     @Override
-    public void logEvent(final AuditLogEvent event) {
+    public int logEvent(final AuditLogEvent event) {
         try {
             final String eventData = format(event);
             writer.write(eventData);
             writer.flush();
+            return eventData.length();
         } catch (IOException e) {
             logger.error("Unable to write event={}", event.getType(), e);
+            return 0;
         }
     }
 
