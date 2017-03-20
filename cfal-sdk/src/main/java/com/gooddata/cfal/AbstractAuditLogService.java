@@ -15,15 +15,15 @@ import static org.apache.commons.lang3.Validate.notNull;
 /**
  * Common parent for Audit Log Services.
  * Enhances Audit Events with the component name.
- * Provides ability to disable logging using JMX or <code>gdc.audit-log.enabled</code> property.
+ * Provides ability to disable logging using JMX or <code>gdc.cfal.enabled</code> property.
  */
 @ManagedResource
 abstract class AbstractAuditLogService implements AuditLogService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Value("${gdc.audit-log.enabled:true}")
-    private boolean loggingEnabled = true;
+    @Value("${gdc.cfal.enabled:false}")    // disable cfal by default in components using this library from spring
+    private boolean loggingEnabled = true; // enable cfal for direct usage e.g. in unit tests
 
     private final String component;
 
