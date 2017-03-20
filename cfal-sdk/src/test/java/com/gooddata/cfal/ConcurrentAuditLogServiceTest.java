@@ -57,7 +57,7 @@ public class ConcurrentAuditLogServiceTest {
         final ReentrantLock lock = new ReentrantLock();
         lock.lock();
 
-        service = new ConcurrentAuditLogService("foo", event -> lock.lock(), 1, rejectionHandler);
+        service = new ConcurrentAuditLogService("foo", event -> { lock.lock(); return 0; }, 1, rejectionHandler);
 
         service.logEvent(EVENT);
         service.logEvent(EVENT);

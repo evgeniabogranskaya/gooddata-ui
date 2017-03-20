@@ -3,13 +3,10 @@
  */
 package com.gooddata.cfal;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,28 +14,40 @@ import java.io.Writer;
 import java.util.Arrays;
 
 import static org.apache.commons.lang3.Validate.noNullElements;
-import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
 
 /**
  * Formats Audit Events as one-line JSON and writes them into the given file/writer.
+ * <p>
+ * This class is not internally synchronized, if accessed from multiple threads it must be synchronized externally.
  */
 class AuditLogEventFileWriter implements AuditLogEventWriter {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuditLogEventFileWriter.class);
-
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
     private static final File DEFAULT_DIR = new File("/mnt/log/cfal");
+    private static final String ROTATED_FILE_NAME_SUFFIX = "-old";
+    private static final int DEFAULT_MAX_BYTES = 1024 * 1024 * 100;
 
-    private final BufferedWriter writer;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    AuditLogEventFileWriter(final Writer writer) {
-        this.writer = new BufferedWriter(notNull(writer, "writer"));
+    private final File logFile;
+
+    private AuditLogEventWriterBase writer;
+    private long maxBytes;
+    private long writtenBytes;
+
+    AuditLogEventFileWriter(final File logFile, final int maxBytes) throws IOException {
+        this.writer = createWriter(logFile);
+        this.logFile = logFile;
+        this.writtenBytes = logFile.length();
+        this.maxBytes = maxBytes;
     }
 
     AuditLogEventFileWriter(final File logFile) throws IOException {
-        this(createWriter(logFile));
+        this(logFile, DEFAULT_MAX_BYTES);
+    }
+
+    AuditLogEventFileWriter(final File directory, final String... component) throws IOException {
+        this(createLogFileName(directory, component));
     }
 
     /**
@@ -49,46 +58,73 @@ class AuditLogEventFileWriter implements AuditLogEventWriter {
      * @see #createLogFileName(File, String...)
      */
     AuditLogEventFileWriter(final String... component) throws IOException {
-        this(createLogFileName(DEFAULT_DIR, component));
+        this(DEFAULT_DIR, component);
     }
 
     @Override
-    public void logEvent(final AuditLogEvent event) {
-        try {
-            final String eventData = format(event);
-            writer.write(eventData);
-            writer.flush();
-        } catch (IOException e) {
-            logger.error("Unable to write event={}", event.getType(), e);
+    public int logEvent(final AuditLogEvent event) {
+        if (writtenBytes > maxBytes) {
+            rotate();
+            writtenBytes = 0;
         }
+
+        final int bytes = writer.logEvent(event);
+        writtenBytes += bytes;
+        return bytes;
     }
 
-    /**
-     * Prepares event as a string ready to be written to the output log.
-     * @param event event
-     * @return single line string including the trailing newline
-     */
-    static String format(final AuditLogEvent event) throws JsonProcessingException {
-        notNull(event, "event");
-        notEmpty(event.getComponent(), "event.component");
-        return OBJECT_MAPPER.writeValueAsString(event) + "\n";
+    private void rotate() {
+        logger.info("action=rotate status=start file={}", logFile);
+
+        final File oldFile = new File(logFile.getAbsolutePath() + ROTATED_FILE_NAME_SUFFIX);
+        if (oldFile.exists()) {
+            if (oldFile.delete()) {
+                logger.debug("action=rotate subaction=delete_old file={}", oldFile);
+            } else {
+                logger.error("action=rotate status=error subaction=delete_old file={}", oldFile);
+                return;
+            }
+        }
+
+        if (logFile.renameTo(oldFile)) {
+            logger.debug("action=rotate subaction=rename source={} target={}", logFile, oldFile);
+        } else {
+            logger.error("action=rotate status=error subaction=rename source={} target={}", logFile, oldFile);
+            return;
+        }
+
+        final AuditLogEventWriterBase newWriter;
+        try {
+            newWriter = createWriter(logFile);
+        } catch (IOException e) {
+            logger.error("action=rotate status=error create newfile={}", logFile, e);
+            return;
+        }
+
+        try {
+            writer.close();
+        } catch (Exception e) {
+            logger.warn("action=rotate subaction=close file={}", logFile, e);
+        }
+        writer = newWriter;
+        logger.info("action=rotate status=finished file={}", logFile);
     }
 
-    @Override
-    public void close() throws Exception {
-        writer.close();
+    File getLogFile() {
+        return logFile;
     }
 
-    private static Writer createWriter(final File logFile) throws IOException {
+    private static AuditLogEventWriterBase createWriter(final File logFile) throws IOException {
         notNull(logFile, "logFile");
         try {
-            return new FileWriter(logFile, true);
+            final Writer result = new FileWriter(logFile, true);
+            return new AuditLogEventWriterBase(result);
         } catch (IOException e) {
             throw new IOException("Unable to write file: " + logFile.getAbsolutePath(), e);
         }
     }
 
-    static File createLogFileName(final File directory, final String... component) {
+    private static File createLogFileName(final File directory, final String... component) {
         notNull(directory, "directory");
         noNullElements(component, "component");
         Arrays.stream(component).forEach(Validate::notEmpty);
