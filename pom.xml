@@ -155,4 +155,11 @@
             </build>
         </profile>
     </profiles>
+
+    <scm>
+        <connection>scm:git:git@github.com:gooddata/gdc-cfal.git</connection>
+        <developerConnection>scm:git:git@github.com:gooddata/gdc-cfal.git</developerConnection>
+        <url>https://github.com/gooddata/gdc-cfal</url>
+        <tag>HEAD</tag>
+    </scm>
 </project>
