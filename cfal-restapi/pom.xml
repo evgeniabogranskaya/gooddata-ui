@@ -346,7 +346,7 @@
                                 such as broken logging or NoClassDefFoundError-s
                             -->
                             <failOnMissing>true</failOnMissing>
-                            <directory>${project.build.directory}/</directory>
+                            <directory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</directory>
                             <checkFilesPattern>**/*.jar</checkFilesPattern>
                             <vendorId>com.gooddata</vendorId>
                             <ignoreVendorArchives>true</ignoreVendorArchives>
