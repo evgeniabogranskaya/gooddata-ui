@@ -57,13 +57,13 @@ public class AuditEventDTO {
                          @JsonProperty("userIp") String userIp,
                          @JsonProperty("success") boolean success,
                          @JsonProperty("type") String type) {
-        this.id = notEmpty(id, "id can't be empty");
-        this.userLogin = notEmpty(userLogin, "userLogin can't be empty");
-        this.occurred = notNull(occurred, "occurred can't be null");
-        this.recorded = notNull(recorded, "recorded can't be null");
-        this.userIp = notEmpty(userIp, "userIp can't be empty");
+        this.id = id;
+        this.userLogin = userLogin;
+        this.occurred = occurred;
+        this.recorded = recorded;
+        this.userIp = userIp;
         this.success = success;
-        this.type = notEmpty(type, "type can't be empty");
+        this.type = type;
     }
 
     public String getId() {
