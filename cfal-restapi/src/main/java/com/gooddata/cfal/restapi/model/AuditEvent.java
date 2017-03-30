@@ -7,6 +7,8 @@ import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 
+import java.util.Map;
+
 /**
  * Audit event entity
  */
@@ -27,19 +29,29 @@ public class AuditEvent {
 
     private String type;
 
-    public AuditEvent(final String domainId, final String userLogin, final DateTime occurred, final String userIp, final boolean success, final String type) {
-        this.domainId = domainId;
-        this.userLogin = userLogin;
-        this.occurred = occurred;
-        this.userIp = userIp;
-        this.success = success;
-        this.type = type;
+    private Map<String, String> params;
+
+    public AuditEvent(final String domainId,
+                      final String userLogin,
+                      final DateTime occurred,
+                      final String userIp,
+                      final boolean success,
+                      final String type,
+                      final Map<String, String> params) {
+        this(null, domainId, userLogin, occurred, userIp, success, type, params);
     }
 
     /**
      * Constructor for testing purposes
      */
-    public AuditEvent(final ObjectId id, final String domainId, final String userLogin, final DateTime occurred, final String userIp, final boolean success, final String type) {
+    public AuditEvent(final ObjectId id,
+                      final String domainId,
+                      final String userLogin,
+                      final DateTime occurred,
+                      final String userIp,
+                      final boolean success,
+                      final String type,
+                      final Map<String, String> params) {
         this.id = id;
         this.domainId = domainId;
         this.userLogin = userLogin;
@@ -47,6 +59,7 @@ public class AuditEvent {
         this.userIp = userIp;
         this.success = success;
         this.type = type;
+        this.params = params;
     }
 
     AuditEvent() {
@@ -78,5 +91,9 @@ public class AuditEvent {
 
     public String getType() {
         return type;
+    }
+
+    public Map<String, String> getParams() {
+        return params;
     }
 }

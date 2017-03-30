@@ -64,7 +64,8 @@ public class ConversionUtils {
                 new DateTime(auditEvent.getId().getDate(), DateTimeZone.UTC),
                 auditEvent.getUserIp(),
                 auditEvent.isSuccess(),
-                auditEvent.getType());
+                auditEvent.getType(),
+                auditEvent.getParams());
     }
 
     /**

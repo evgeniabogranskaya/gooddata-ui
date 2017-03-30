@@ -27,7 +27,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.gooddata.cfal.restapi.util.DateUtils.convertDateTimeToObjectId;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
@@ -60,6 +62,7 @@ public class AuditLogEventRepositoryIT {
     private static final String IP = "127.0.0.1";
     private static final boolean SUCCESS = true;
     private static final String TYPE = "login";
+    private static final Map<String, String> EMPTY_PARAMS = new HashMap<>();
 
     @Autowired
     private AuditLogEventRepository auditLogEventRepository;
@@ -76,9 +79,9 @@ public class AuditLogEventRepositoryIT {
         mongoTemplate.remove(new Query(), auditLogEventRepository.getMongoCollectionName(DOMAIN1));
         mongoTemplate.remove(new Query(), auditLogEventRepository.getMongoCollectionName(DOMAIN2));
 
-        event1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN1, USER1_LOGIN, date("1993-03-09"), IP, SUCCESS, TYPE);
-        event2 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN1, USER2_LOGIN, date("2001-03-09"), IP, SUCCESS, TYPE);
-        event3 = new AuditEvent(convertDateTimeToObjectId(date("2010-03-09")), DOMAIN1, USER1_LOGIN, date("2010-03-09"), IP, SUCCESS, TYPE);
+        event1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN1, USER1_LOGIN, date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS);
+        event2 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN1, USER2_LOGIN, date("2001-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS);
+        event3 = new AuditEvent(convertDateTimeToObjectId(date("2010-03-09")), DOMAIN1, USER1_LOGIN, date("2010-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS);
 
         mongoTemplate.save(event1, auditLogEventRepository.getMongoCollectionName(DOMAIN1));
         mongoTemplate.save(event2, auditLogEventRepository.getMongoCollectionName(DOMAIN1));
@@ -133,7 +136,7 @@ public class AuditLogEventRepositoryIT {
 
     @Test
     public void testSave() {
-        AuditEvent test = new AuditEvent(DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE);
+        AuditEvent test = new AuditEvent(DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE, EMPTY_PARAMS);
 
         auditLogEventRepository.save(test);
 
@@ -142,7 +145,7 @@ public class AuditLogEventRepositoryIT {
 
     @Test
     public void testDeleteAll() {
-        auditLogEventRepository.save(new AuditEvent(DOMAIN2, USER2_LOGIN, new DateTime(), IP, SUCCESS, TYPE));
+        auditLogEventRepository.save(new AuditEvent(DOMAIN2, USER2_LOGIN, new DateTime(), IP, SUCCESS, TYPE, EMPTY_PARAMS));
 
         auditLogEventRepository.deleteAllByDomain(DOMAIN2);
 
@@ -280,11 +283,11 @@ public class AuditLogEventRepositoryIT {
     }
 
     public void testFindByDomainEventsAreOrdered() {
-        AuditEvent auditEvent1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE);
-        AuditEvent auditEvent2 = new AuditEvent(convertDateTimeToObjectId(date("1994-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE);
-        AuditEvent auditEvent3 = new AuditEvent(convertDateTimeToObjectId(date("2000-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE);
-        AuditEvent auditEvent4 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE);
-        AuditEvent auditEvent5 = new AuditEvent(convertDateTimeToObjectId(date("2010-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE);
+        AuditEvent auditEvent1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE, EMPTY_PARAMS);
+        AuditEvent auditEvent2 = new AuditEvent(convertDateTimeToObjectId(date("1994-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE, EMPTY_PARAMS);
+        AuditEvent auditEvent3 = new AuditEvent(convertDateTimeToObjectId(date("2000-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE, EMPTY_PARAMS);
+        AuditEvent auditEvent4 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE, EMPTY_PARAMS);
+        AuditEvent auditEvent5 = new AuditEvent(convertDateTimeToObjectId(date("2010-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE, EMPTY_PARAMS);
 
         //persist in random order
         auditLogEventRepository.save(auditEvent3);
@@ -305,11 +308,11 @@ public class AuditLogEventRepositoryIT {
 
     @Test
     public void testFindByUserEventsAreOrdered() {
-        AuditEvent auditEvent1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE);
-        AuditEvent auditEvent2 = new AuditEvent(convertDateTimeToObjectId(date("1994-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE);
-        AuditEvent auditEvent3 = new AuditEvent(convertDateTimeToObjectId(date("2000-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE);
-        AuditEvent auditEvent4 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE);
-        AuditEvent auditEvent5 = new AuditEvent(convertDateTimeToObjectId(date("2010-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE);
+        AuditEvent auditEvent1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE, EMPTY_PARAMS);
+        AuditEvent auditEvent2 = new AuditEvent(convertDateTimeToObjectId(date("1994-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE, EMPTY_PARAMS);
+        AuditEvent auditEvent3 = new AuditEvent(convertDateTimeToObjectId(date("2000-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE, EMPTY_PARAMS);
+        AuditEvent auditEvent4 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE, EMPTY_PARAMS);
+        AuditEvent auditEvent5 = new AuditEvent(convertDateTimeToObjectId(date("2010-03-09")), DOMAIN2, USER1_LOGIN, new DateTime(), IP, SUCCESS, TYPE, EMPTY_PARAMS);
 
         //persist in random order
         auditLogEventRepository.save(auditEvent3);

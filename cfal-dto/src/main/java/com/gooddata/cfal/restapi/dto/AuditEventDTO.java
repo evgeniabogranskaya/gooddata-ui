@@ -15,8 +15,7 @@ import com.gooddata.util.ISODateTimeSerializer;
 import org.joda.time.DateTime;
 import org.springframework.web.util.UriTemplate;
 
-import static org.apache.commons.lang3.Validate.notEmpty;
-import static org.apache.commons.lang3.Validate.notNull;
+import java.util.Map;
 
 /**
  * Audit event DTO
@@ -49,6 +48,8 @@ public class AuditEventDTO {
 
     private final String type;
 
+    private final Map<String, String> params;
+
     @JsonCreator
     public AuditEventDTO(@JsonProperty("id") String id,
                          @JsonProperty("userLogin") String userLogin,
@@ -56,7 +57,8 @@ public class AuditEventDTO {
                          @JsonProperty("recorded") @JsonDeserialize(using = ISODateTimeDeserializer.class) DateTime recorded,
                          @JsonProperty("userIp") String userIp,
                          @JsonProperty("success") boolean success,
-                         @JsonProperty("type") String type) {
+                         @JsonProperty("type") String type,
+                         @JsonProperty("params") Map<String, String> params) {
         this.id = id;
         this.userLogin = userLogin;
         this.occurred = occurred;
@@ -64,6 +66,7 @@ public class AuditEventDTO {
         this.userIp = userIp;
         this.success = success;
         this.type = type;
+        this.params = params;
     }
 
     public String getId() {
@@ -94,5 +97,9 @@ public class AuditEventDTO {
 
     public String getType() {
         return type;
+    }
+
+    public Map<String, String> getParams() {
+        return params;
     }
 }

@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import static com.gooddata.cfal.restapi.config.WebConfig.COMPONENT_NAME;
 import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI_TEMPLATE;
@@ -82,6 +83,8 @@ public class AuditEventControllerTest {
 
     private static final String TYPE = "login";
 
+    private static final Map<String, String> EMPTY_PARAMS = new HashMap<>();
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -95,32 +98,32 @@ public class AuditEventControllerTest {
     private static final DateTime UPPER_BOUND = date("2005-01-01");
 
     private final AuditEventsDTO domainEvents = new AuditEventsDTO(
-            Arrays.asList(new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE),
-                    new AuditEventDTO("456", USER2_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE)),
+            Arrays.asList(new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS),
+                    new AuditEventDTO("456", USER2_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS)),
             new Paging(adminUri() + "?offset=456&limit=" + RequestParameters.DEFAULT_LIMIT),
             new HashMap<String, String>() {{
                 put("self", adminUri());
             }});
 
     private final AuditEventsDTO eventsForAdminUser = new AuditEventsDTO(
-            Arrays.asList(new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE),
-                    new AuditEventDTO("456", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE)),
+            Arrays.asList(new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS),
+                    new AuditEventDTO("456", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS)),
             new Paging(userUri(ADMIN_USER_ID) + "?offset=456&limit=" + RequestParameters.DEFAULT_LIMIT),
             new HashMap<String, String>() {{
                 put("self", userUri(ADMIN_USER_ID));
             }});
 
     private final AuditEventsDTO eventsForUser = new AuditEventsDTO(
-            Arrays.asList(new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE),
-                    new AuditEventDTO("456", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE)),
+            Arrays.asList(new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS),
+                    new AuditEventDTO("456", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS)),
             new Paging(userUri(NOT_ADMIN_USER_ID) + "?offset=456&limit=" + RequestParameters.DEFAULT_LIMIT),
             new HashMap<String, String>() {{
                 put("self", userUri(NOT_ADMIN_USER_ID));
             }});
 
     private final AuditEventsDTO domainEventsWithTimeInterval = new AuditEventsDTO(
-            Arrays.asList(new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE),
-                    new AuditEventDTO("456", USER2_LOGIN, date("1995-03-09"), date("1995-03-09"), IP, SUCCESS, TYPE)),
+            Arrays.asList(new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS),
+                    new AuditEventDTO("456", USER2_LOGIN, date("1995-03-09"), date("1995-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS)),
             new Paging(adminUri() + "?to=" + UPPER_BOUND + "&offset=456&limit=100"),
             new HashMap<String, String>() {{
                 put("self", adminUri());
@@ -195,7 +198,7 @@ public class AuditEventControllerTest {
         mockMvc.perform(get(adminUri())
                 .header(X_PUBLIC_USER_ID, ADMIN_USER_ID))
                 .andExpect(status().isOk())
-                .andExpect(content().json(IOUtils.toString(getClass().getResourceAsStream("auditEvents.json"))));
+                .andExpect(content().json(IOUtils.toString(getClass().getResourceAsStream("auditEvents.json")), true));
     }
 
     @Test
@@ -222,7 +225,7 @@ public class AuditEventControllerTest {
         mockMvc.perform(get(userUri(ADMIN_USER_ID))
                 .header(X_PUBLIC_USER_ID, ADMIN_USER_ID))
                 .andExpect(status().isOk())
-                .andExpect(content().json(IOUtils.toString(getClass().getResourceAsStream("adminUserAuditEvents.json"))));
+                .andExpect(content().json(IOUtils.toString(getClass().getResourceAsStream("adminUserAuditEvents.json")), true));
     }
 
     @Test
@@ -232,7 +235,7 @@ public class AuditEventControllerTest {
                 .param("to", UPPER_BOUND.toString())
                 .header(X_PUBLIC_USER_ID, ADMIN_USER_ID))
                 .andExpect(status().isOk())
-                .andExpect(content().json(IOUtils.toString(getClass().getResourceAsStream("auditEventsWithTimeInterval.json"))));
+                .andExpect(content().json(IOUtils.toString(getClass().getResourceAsStream("auditEventsWithTimeInterval.json")), true));
     }
 
     @Test
@@ -453,7 +456,7 @@ public class AuditEventControllerTest {
         mockMvc.perform(get(userUri(NOT_ADMIN_USER_ID))
                 .header(X_PUBLIC_USER_ID, ADMIN_USER_ID))
                 .andExpect(status().isOk())
-                .andExpect(content().json(IOUtils.toString(getClass().getResourceAsStream("userAuditEvents.json"))));
+                .andExpect(content().json(IOUtils.toString(getClass().getResourceAsStream("userAuditEvents.json")), true));
     }
 
     private String adminUri() {
