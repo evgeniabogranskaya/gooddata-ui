@@ -45,7 +45,13 @@
 #       id : STRING,
 #       userLogin: STRING,
 #       occurred: DATETIMEISO,
-#       recorded: DATETIMEISO
+#       recorded: DATETIMEISO,
+#       userIp: STRING,
+#       success: BOOLEAN,
+#       type: STRING,
+#       (params: {
+#           (STRING:STRING)*
+#       })?
 #  }>
 #  (end)
 #
