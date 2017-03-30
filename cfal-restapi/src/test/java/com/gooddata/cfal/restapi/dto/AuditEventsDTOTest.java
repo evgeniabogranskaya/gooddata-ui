@@ -7,6 +7,7 @@ import com.gooddata.collections.Paging;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
@@ -15,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI_TEMPLATE;
 import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI_TEMPLATE;
@@ -38,9 +40,10 @@ public class AuditEventsDTOTest {
     private static final String IP = "127.0.0.1";
     private static final boolean SUCCESS = true;
     private static final String TYPE = "login";
+    private static final Map<String, String> EMPTY_PARAMS = new HashMap<>();
 
-    private static final AuditEventDTO EVENT_1 = new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE);
-    private static final AuditEventDTO EVENT_2 = new AuditEventDTO("456", USER2_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE);
+    private static final AuditEventDTO EVENT_1 = new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS);
+    private static final AuditEventDTO EVENT_2 = new AuditEventDTO("456", USER2_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS);
 
     private static final String ADMIN_URI = ADMIN_URI_TEMPLATE.expand(DOMAIN).toString();
     private static final String USER_URI = USER_URI_TEMPLATE.expand(USER1_ID).toString();
@@ -75,7 +78,7 @@ public class AuditEventsDTOTest {
 
     @Test
     public void testSerialize() throws Exception {
-        json.write(EVENTS).assertThat().isEqualToJson("auditEvents.json");
+        json.write(EVENTS).assertThat().isEqualToJson("auditEvents.json", JSONCompareMode.STRICT);
     }
 
     @Test

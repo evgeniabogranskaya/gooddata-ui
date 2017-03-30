@@ -33,6 +33,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AuditEventServiceTest {
 
@@ -49,6 +51,8 @@ public class AuditEventServiceTest {
     private static final DateTime UPPER_BOUND = date("2000-01-01");
 
     private static final UserInfo USER_INFO = new UserInfo(USER_ID, USER_LOGIN, DOMAIN);
+
+    private static final Map<String, String> EMPTY_PARAMS = new HashMap<>();
 
     private RequestParameters requestParamLBUB;
     private RequestParameters requestParamLB;
@@ -241,6 +245,10 @@ public class AuditEventServiceTest {
         when(event1.getType()).thenReturn(TYPE);
         when(event2.getType()).thenReturn(TYPE);
         when(event3.getType()).thenReturn(TYPE);
+
+        when(event1.getParams()).thenReturn(EMPTY_PARAMS);
+        when(event2.getParams()).thenReturn(EMPTY_PARAMS);
+        when(event3.getParams()).thenReturn(EMPTY_PARAMS);
     }
 
     private void prepareRequestParams() {
