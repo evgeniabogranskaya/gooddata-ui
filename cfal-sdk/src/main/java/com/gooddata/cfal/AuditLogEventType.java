@@ -13,6 +13,8 @@ public enum AuditLogEventType {
     /** Login using SST in ADS proxy */
     DATAWAREHOUSE_SST_LOGIN,
     /** Login using user name and password in ADS proxy */
-    DATAWAREHOUSE_USERNAME_PASSWORD_LOGIN
+    DATAWAREHOUSE_USERNAME_PASSWORD_LOGIN,
+    /** ETL schedule change */
+    ETL_SCHEDULE_CHANGE,
     ;
 }

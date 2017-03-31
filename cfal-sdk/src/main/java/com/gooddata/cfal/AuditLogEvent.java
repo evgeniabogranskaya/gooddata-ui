@@ -3,6 +3,7 @@
  */
 package com.gooddata.cfal;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gooddata.util.ISODateTimeSerializer;
@@ -10,6 +11,9 @@ import org.joda.time.DateTime;
 
 import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Audit Event emitted from a client application
@@ -25,6 +29,10 @@ public class AuditLogEvent {
     private final String domainId;
 
     private String component;
+
+    @JsonProperty("params")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private Map<String, String> params = new HashMap<>();
 
     @JsonSerialize(using = ISODateTimeSerializer.class)
     private final DateTime occurred;
@@ -94,5 +102,13 @@ public class AuditLogEvent {
 
     public void setComponent(final String component) {
         this.component = component;
+    }
+
+    protected void addParam(final String key, final String value) {
+        params.put(key, value);
+    }
+
+    protected String getParam(final String key) {
+        return params.get(key);
     }
 }
