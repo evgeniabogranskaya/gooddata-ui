@@ -6,6 +6,7 @@ package com.gooddata.cfal;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gooddata.context.GdcCallContext;
 import com.gooddata.util.ISODateTimeSerializer;
 import org.joda.time.DateTime;
 
@@ -39,9 +40,17 @@ public class AuditLogEvent {
 
     private final boolean success;
 
+    /**
+     * Create audit log event and fill some attributes from GdcCallContext
+     * @param type type
+     * @param success was this event successful
+     */
     public AuditLogEvent(final AuditLogEventType type, final boolean success) {
-        // todo GdcCallContext
-        this(type, null, null, null, success);
+        this(type,
+             GdcCallContext.getCurrentContext().getUserLogin(),
+             GdcCallContext.getCurrentContext().getClientIp(),
+             GdcCallContext.getCurrentContext().getDomainId(),
+             success);
     }
 
     /**

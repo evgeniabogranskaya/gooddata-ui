@@ -38,6 +38,20 @@ public class ETLScheduleAuditLogEvent extends AuditLogEvent {
         addParam(SCHEDULE_ID, scheduleId);
     }
 
+    /**
+     * Create audit log event and fill some attributes from GdcCallContext
+     * @param type event type
+     * @param success was this event successful
+     * @param processId ETL process ID
+     * @param scheduleId ETL schedule ID
+     */
+    public ETLScheduleAuditLogEvent(final AuditLogEventType type, final boolean success, final String processId, final String scheduleId) {
+        super(type, success);
+        addParam(PROJECT_ID, GdcCallContext.getCurrentContext().getProjectId());
+        addParam(PROCESS_ID, processId);
+        addParam(SCHEDULE_ID, scheduleId);
+    }
+
     @JsonIgnore
     public String getProjectId() {
         return getParam(PROJECT_ID);
