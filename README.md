@@ -17,6 +17,18 @@ monitoring.graphite.reporting-enabled=false
 mvn package
 ```
 
+## Release CFAL Java SDK
+```
+mvn release:prepare -DautoVersionSubmodules=true -DpushChanges=false
+git push origin --tags
+mvn release:perform
+git checkout -b sdk
+git push origin HEAD
+```
+and open pull request like https://github.com/gooddata/gdc-cfal/pull/80
+
+## 
+
 ## Tests
 
 ### Unit tests
