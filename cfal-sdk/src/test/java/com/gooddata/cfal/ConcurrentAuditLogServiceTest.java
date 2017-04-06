@@ -8,7 +8,10 @@ import org.junit.Test;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import static com.gooddata.cfal.ConcurrentAuditLogService.POISON_PILL;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class ConcurrentAuditLogServiceTest {
@@ -66,5 +69,16 @@ public class ConcurrentAuditLogServiceTest {
 
         lock.unlock();
         service.destroy();
+    }
+
+    @Test
+    public void testPoisonPillIsNotWrittenByWriter() throws Exception {
+        AuditLogEventWriter auditLogEventWriter = mock(AuditLogEventWriter.class);
+
+        service = new ConcurrentAuditLogService("foo", auditLogEventWriter);
+
+        service.destroy();
+
+        verify(auditLogEventWriter, times(0)).logEvent(POISON_PILL);
     }
 }
