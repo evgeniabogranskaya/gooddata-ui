@@ -19,6 +19,8 @@ import static org.apache.commons.lang3.Validate.notNull;
  */
 public class ConcurrentAuditLogService extends SimpleAuditLogService {
 
+    static final AuditLogEvent POISON_PILL = new AuditLogEvent(AuditLogEventType.STANDARD_LOGIN, "poison", "pill", "die");
+
     private static final int DEFAULT_BACKLOG_SIZE = 1024;
 
     private final AtomicBoolean run = new AtomicBoolean(true);
@@ -69,6 +71,9 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService {
             while (run.get() || !queue.isEmpty()) {
                 try {
                     final AuditLogEvent event = queue.take();
+                    if (event == POISON_PILL) {
+                        break;
+                    }
                     writer.logEvent(event);
                 } catch (InterruptedException ignored) {
                     // ignore interruption as we are driven by the 'run' flag
@@ -90,6 +95,8 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService {
         try {
             // signal consumer it should stop processing tasks
             run.set(false);
+            //force consumer to die
+            queue.put(POISON_PILL);
             // wait for consumer to process all remaining tasks
             future.get();
             executorService.shutdown();

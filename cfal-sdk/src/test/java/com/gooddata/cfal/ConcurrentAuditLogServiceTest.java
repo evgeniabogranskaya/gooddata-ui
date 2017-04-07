@@ -6,9 +6,13 @@ package com.gooddata.cfal;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.CountDownLatch;
 
+import static com.gooddata.cfal.ConcurrentAuditLogService.POISON_PILL;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class ConcurrentAuditLogServiceTest {
@@ -54,17 +58,34 @@ public class ConcurrentAuditLogServiceTest {
     public void shouldCallRejectionHandler() throws Exception {
         final RejectionHandler rejectionHandler = mock(RejectionHandler.class);
 
-        final ReentrantLock lock = new ReentrantLock();
-        lock.lock();
+        final CountDownLatch lock = new CountDownLatch(1);
 
-        service = new ConcurrentAuditLogService("foo", event -> { lock.lock(); return 0; }, 1, rejectionHandler);
+        service = new ConcurrentAuditLogService("foo", event -> {
+            try {
+                lock.await();
+            } catch (InterruptedException ignore) {
+            }
+            return 0;
+        }, 1, rejectionHandler);
 
         service.logEvent(EVENT);
         service.logEvent(EVENT);
+        service.logEvent(EVENT); //log three events, because first event may already be consumed by consumer thread
 
-        verify(rejectionHandler).handle(EVENT);
+        verify(rejectionHandler, atLeastOnce()).handle(EVENT);
 
-        lock.unlock();
+        lock.countDown();
         service.destroy();
+    }
+
+    @Test
+    public void testPoisonPillIsNotWrittenByWriter() throws Exception {
+        AuditLogEventWriter auditLogEventWriter = mock(AuditLogEventWriter.class);
+
+        service = new ConcurrentAuditLogService("foo", auditLogEventWriter);
+
+        service.destroy();
+
+        verify(auditLogEventWriter, times(0)).logEvent(POISON_PILL);
     }
 }
