@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.gooddata.cfal</groupId>
         <artifactId>cfal</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>0.2.1-SNAPSHOT</version>
     </parent>
     <artifactId>cfal-restapi</artifactId>
     <packaging>war</packaging>
