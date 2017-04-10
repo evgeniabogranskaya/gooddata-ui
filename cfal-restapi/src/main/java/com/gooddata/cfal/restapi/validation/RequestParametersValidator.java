@@ -15,29 +15,29 @@ import org.springframework.validation.Validator;
 @Component
 public class RequestParametersValidator implements Validator {
 
-    public static String OFFSET_FIELD = "offset";
+    public static final String OFFSET_FIELD = "offset";
 
-    public static String FROM_FIELD = "from";
+    public static final String FROM_FIELD = "from";
 
-    public static String LIMIT_FIELD = "limit";
-
-
-    public static String ERROR_CODE_INVALID_OFFSET = "requestParameters.invalid_offset";
-
-    public static String ERROR_CODE_OFFSET_FROM_SPECIFIED = "requestParameters.offset_from_specified";
-
-    public static String ERROR_CODE_INVALID_TIME_INTERVAL = "requestParameters.invalid_time_interval";
-
-    public static String ERROR_CODE_NOT_POSITIVE_LIMIT = "requestParameters.not_positive_limit";
+    public static final String LIMIT_FIELD = "limit";
 
 
-    public static String INVALID_OFFSET_MSG = "invalid offset";
+    public static final String ERROR_CODE_INVALID_OFFSET = "requestParameters.invalid_offset";
 
-    public static String OFFSET_AND_FROM_SPECIFIED_MSG = "offset and time interval param \"from\" cannot be specified at once";
+    public static final String ERROR_CODE_OFFSET_FROM_SPECIFIED = "requestParameters.offset_from_specified";
 
-    public static String INVALID_TIME_INTERVAL_MSG = "\"to\" must be after \"before\"";
+    public static final String ERROR_CODE_INVALID_TIME_INTERVAL = "requestParameters.invalid_time_interval";
 
-    public static String NOT_POSITIVE_LIMIT_MSG = "limit parameter must be positive number";
+    public static final String ERROR_CODE_NOT_POSITIVE_LIMIT = "requestParameters.not_positive_limit";
+
+
+    public static final String INVALID_OFFSET_MSG = "invalid offset";
+
+    public static final String OFFSET_AND_FROM_SPECIFIED_MSG = "offset and time interval param \"from\" cannot be specified at once";
+
+    public static final String INVALID_TIME_INTERVAL_MSG = "\"to\" must be after \"before\"";
+
+    public static final String NOT_POSITIVE_LIMIT_MSG = "limit parameter must be positive number";
 
 
     @Override
