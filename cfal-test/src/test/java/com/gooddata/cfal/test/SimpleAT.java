@@ -6,7 +6,7 @@ package com.gooddata.cfal.test;
 import com.gooddata.account.Account;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.collections.PageableList;
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

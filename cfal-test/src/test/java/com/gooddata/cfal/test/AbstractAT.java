@@ -4,7 +4,7 @@
 package com.gooddata.cfal.test;
 
 import static java.lang.System.getProperty;
-import static org.junit.Assert.fail;
+import static org.testng.Assert.fail;
 
 import com.gooddata.CfalGoodData;
 import com.gooddata.account.Account;
