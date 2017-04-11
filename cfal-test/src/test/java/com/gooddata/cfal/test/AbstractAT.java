@@ -36,6 +36,7 @@ public abstract class AbstractAT {
     protected final String user;
     protected final String pass;
     protected final String domain;
+    protected final String projectId;
 
     protected final Account account;
 
@@ -46,6 +47,7 @@ public abstract class AbstractAT {
         user = getProperty("user", "bear@gooddata.com");
         pass = getProperty("pass", "jindrisska");
         domain = getProperty("domain", "default");
+        projectId = getProperty("projectId", "FoodMartDemo");
 
         gd = new CfalGoodData(host, user, pass);
         service = gd.getAuditLogService();
