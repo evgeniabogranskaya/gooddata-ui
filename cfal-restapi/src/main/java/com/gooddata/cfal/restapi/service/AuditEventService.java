@@ -29,11 +29,9 @@ public class AuditEventService {
     private static final Logger logger = LoggerFactory.getLogger(AuditEventService.class);
 
     private final AuditLogEventRepository auditLogEventRepository;
-    private final UserDomainService userDomainService;
 
-    public AuditEventService(final AuditLogEventRepository auditLogEventRepository, final UserDomainService userDomainService) {
+    public AuditEventService(final AuditLogEventRepository auditLogEventRepository) {
         this.auditLogEventRepository = notNull(auditLogEventRepository, "auditEventRepository cannot be null");
-        this.userDomainService = notNull(userDomainService, "userDomainService cannot be null");
     }
 
     /**

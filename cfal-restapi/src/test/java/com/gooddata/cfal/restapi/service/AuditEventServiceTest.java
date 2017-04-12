@@ -64,9 +64,6 @@ public class AuditEventServiceTest {
     @Mock
     private AuditLogEventRepository auditLogEventRepository;
 
-    @Mock
-    private UserDomainService userDomainService;
-
     private AuditEventService auditEventService;
 
     private AuditEvent event1;
@@ -77,7 +74,7 @@ public class AuditEventServiceTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        auditEventService = new AuditEventService(auditLogEventRepository, userDomainService);
+        auditEventService = new AuditEventService(auditLogEventRepository);
 
         mockEvents();
 
