@@ -27,7 +27,20 @@ git push origin HEAD
 ```
 and open pull request like https://github.com/gooddata/gdc-cfal/pull/80
 
-## 
+## Enable CFAL for new component
+
+Define new source log file for affected component node types (eg. `hieradata/type/cl_msf_restapi.yaml`, but don't forget to include it in `hieradata/type/rat.yaml`):
+```
+---
+fluentd::cfal_sources:
+  msfrestapi:
+    user: tomcat
+```
+CFAL (Fluentd) will create and monitor `/mnt/log/cfal/msfrestapi.log` after that.
+
+Fluentd itself is enabled on all cluster and RAT.
+
+There's a SELinux type `gdc_cfal_log_t` defined for accessing `/mnt/log/cfal/` logs called `gdc_cfal_log_t`, see [gdc-selinux](https://github.com/gooddata/gdc-selinux).
 
 ## Tests
 
