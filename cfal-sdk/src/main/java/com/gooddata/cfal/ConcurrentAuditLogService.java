@@ -75,8 +75,8 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService {
                         break;
                     }
                     writer.logEvent(event);
-                } catch (InterruptedException ignored) {
-                    // ignore interruption as we are driven by the 'run' flag
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt(); // to set interrupt flag
                 }
             }
         });
