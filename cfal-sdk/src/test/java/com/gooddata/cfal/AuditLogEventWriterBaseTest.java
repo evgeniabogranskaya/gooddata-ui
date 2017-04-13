@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.io.StringWriter;
 
+import static com.gooddata.cfal.AuditLogEventType.ETL_SCHEDULE_CHANGE;
 import static com.gooddata.cfal.AuditLogEventWriterBase.format;
 import static com.gooddata.cfal.AuditLogEventType.STANDARD_LOGIN;
 import static net.javacrumbs.jsonunit.JsonMatchers.jsonEquals;
@@ -64,6 +65,15 @@ public class AuditLogEventWriterBaseTest {
         final AuditLogEventWriterBase writer = new AuditLogEventWriterBase(new StringWriter());
         event.setComponent(null);
         writer.logEvent(event);
+    }
+
+    @Test
+    public void shouldSerializeParamsField() throws Exception {
+        ETLScheduleAuditLogEvent event = new ETLScheduleAuditLogEvent(ETL_SCHEDULE_CHANGE, "user@example.com", "1.2.3.4", "default", true, "project", "process", "schedule");
+        event.setComponent("foo");
+
+        final String json = format(event);
+        assertThat(json, jsonEquals(resource("scheduleChange.json")));
     }
 
 }
