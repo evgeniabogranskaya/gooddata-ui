@@ -10,7 +10,7 @@ import com.gooddata.collections.PageRequest;
 import com.gooddata.collections.Paging;
 import org.springframework.web.util.UriComponentsBuilder;
 
-public class PagingUtils {
+public abstract class PagingUtils {
 
     /**
      * Create paging
