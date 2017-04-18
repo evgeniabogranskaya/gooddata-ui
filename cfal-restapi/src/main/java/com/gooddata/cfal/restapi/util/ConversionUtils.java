@@ -18,7 +18,7 @@ import org.joda.time.DateTimeZone;
 
 import java.util.List;
 
-public class ConversionUtils {
+public abstract class ConversionUtils {
 
     /**
      * Create AuditEventsDTO
