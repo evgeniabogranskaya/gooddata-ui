@@ -34,6 +34,11 @@ public abstract class AbstractAuditLogService implements AuditLogService {
     @Override
     public void logEvent(final AuditLogEvent event) {
         if (!loggingEnabled) {
+            logger.info("action=cfal status=disabled event=" + event);
+            return;
+        }
+        if(!event.isValid()) {
+            logger.warn("action=cfal status=invalid event=" + event);
             return;
         }
         notNull(event, "event");
