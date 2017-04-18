@@ -5,7 +5,7 @@
     <parent>
         <artifactId>cfal</artifactId>
         <groupId>com.gooddata.cfal</groupId>
-        <version>0.2.2-SNAPSHOT</version>
+        <version>0.2.3-SNAPSHOT</version>
     </parent>
     <artifactId>cfal-test</artifactId>
 
