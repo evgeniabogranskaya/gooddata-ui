@@ -75,4 +75,10 @@ public class AbstractAuditLogServiceTest {
         instance.setLoggingEnabled(false);
         assertThat(instance.isLoggingEnabled(), is(false));
     }
+
+    @Test
+    public void doNoLogInvalidEvent() {
+        spyInstance.logEvent(new AuditLogEvent(AuditLogEventType.STANDARD_LOGIN, null, null, null));
+        Mockito.verify(spyInstance, never()).doLogEvent(any());
+    }
 }

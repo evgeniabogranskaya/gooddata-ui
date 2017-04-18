@@ -8,9 +8,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gooddata.context.GdcCallContext;
 import com.gooddata.util.ISODateTimeSerializer;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
-import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.util.HashMap;
@@ -74,9 +74,9 @@ public class AuditLogEvent {
     public AuditLogEvent(final AuditLogEventType type, final String userLogin, final String userIp,
                          final String domainId, final DateTime occurred, final boolean success) {
         this.type = notNull(type, "type");
-        this.userLogin = notEmpty(userLogin, "user login");
-        this.userIp = notEmpty(userIp, "user ip");
-        this.domainId = notEmpty(domainId, "domain id");
+        this.userLogin = userLogin;
+        this.userIp = userIp;
+        this.domainId = domainId;
         this.occurred = notNull(occurred, "occurred time");
         this.success = success;
     }
@@ -119,5 +119,23 @@ public class AuditLogEvent {
 
     protected String getParam(final String key) {
         return params.get(key);
+    }
+
+    boolean isValid() {
+        return !StringUtils.isBlank(userLogin) && !StringUtils.isBlank(userIp) && !StringUtils.isBlank(domainId);
+    }
+
+    @Override
+    public String toString() {
+        return "AuditLogEvent{" +
+                "type=" + type +
+                ", userLogin='" + userLogin + '\'' +
+                ", userIp='" + userIp + '\'' +
+                ", domainId='" + domainId + '\'' +
+                ", component='" + component + '\'' +
+                ", params=" + params +
+                ", occurred=" + occurred +
+                ", success=" + success +
+                '}';
     }
 }
