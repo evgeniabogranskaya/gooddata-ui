@@ -147,7 +147,7 @@
         <dependency>
             <groupId>com.gooddata.commons</groupId>
             <artifactId>gdc-commons-web</artifactId>
-            <version>2.1.4</version>
+            <version>3.1.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.gooddata.commons</groupId>
