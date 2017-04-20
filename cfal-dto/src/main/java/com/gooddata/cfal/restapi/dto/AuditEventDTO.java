@@ -5,6 +5,7 @@ package com.gooddata.cfal.restapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -48,6 +49,7 @@ public class AuditEventDTO {
 
     private final String type;
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private final Map<String, String> params;
 
     @JsonCreator
