@@ -48,6 +48,7 @@ public abstract class AbstractAuditLogService implements AuditLogService {
 
     protected abstract void doLogEvent(final AuditLogEvent event);
 
+    @ManagedAttribute(description = "Enables/Disables audit logging for a component")
     public boolean isLoggingEnabled() {
         return loggingEnabled;
     }
