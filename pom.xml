@@ -4,7 +4,7 @@
 
     <groupId>com.gooddata.cfal</groupId>
     <artifactId>cfal</artifactId>
-    <version>0.2.3-SNAPSHOT</version>
+    <version>0.2.3</version>
     <packaging>pom</packaging>
 
     <parent>
@@ -149,6 +149,6 @@
         <connection>scm:git:git@github.com:gooddata/gdc-cfal.git</connection>
         <developerConnection>scm:git:git@github.com:gooddata/gdc-cfal.git</developerConnection>
         <url>https://github.com/gooddata/gdc-cfal</url>
-        <tag>HEAD</tag>
+        <tag>cfal-0.2.3</tag>
     </scm>
 </project>
