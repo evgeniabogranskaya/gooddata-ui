@@ -12,6 +12,8 @@ public enum AuditLogEventType {
     STANDARD_LOGIN,
     /** Login using basic auth*/
     BASIC_LOGIN,
+    /** Login using SSO */
+    SSO_LOGIN,
     /** Login using SST in ADS proxy */
     DATAWAREHOUSE_SST_LOGIN,
     /** Login using user name and password in ADS proxy */
