@@ -18,19 +18,20 @@ import java.util.function.Predicate;
 import static java.lang.System.getProperty;
 
 /**
- * Acceptance test for ADS login
+ * Acceptance test for ADS login and logout
  */
-public class AdsLoginAT extends AbstractAT {
+public class AdsAutenticationEventsAT extends AbstractAT {
 
     private static final String TEST_QUERY = "SELECT 1";
     private static final String CFAL_INSTANCE_NAME = "CFAL test";
-    private static final String MESSAGE_TYPE = "DATAWAREHOUSE_USERNAME_PASSWORD_LOGIN";
+    private static final String MESSAGE_TYPE_LOGIN = "DATAWAREHOUSE_USERNAME_PASSWORD_LOGIN";
+    private static final String MESSAGE_TYPE_LOGOUT = "DATAWAREHOUSE_LOGOUT";
 
     private final String datawarehouseToken;
     private final JdbcTemplate jdbcTemplate;
     private final Warehouse warehouse;
 
-    public AdsLoginAT() {
+    public AdsAutenticationEventsAT() {
         super();
         this.datawarehouseToken = getProperty("datawarehouseToken", "vertica");
         this.warehouse = gd.getWarehouseService().createWarehouse(createWarehouseRequest()).get();
@@ -38,27 +39,29 @@ public class AdsLoginAT extends AbstractAT {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    @Test(groups = MESSAGE_TYPE)
-    public void testUsernamePasswordLoginUserApi() throws InterruptedException {
+    @Test(groups = MESSAGE_TYPE_LOGIN)
+    public void testUsernamePasswordAuthUserApi() throws InterruptedException {
         jdbcTemplate.execute(TEST_QUERY);
-        doTestUserApi(pageCheckPredicate());
+        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_LOGIN));
+        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_LOGOUT));
     }
 
-    @Test(groups = MESSAGE_TYPE)
-    public void testUsernamePasswordLoginAdminApi() throws InterruptedException {
+    @Test(groups = MESSAGE_TYPE_LOGIN)
+    public void testUsernamePasswordAuthAdminApi() throws InterruptedException {
         jdbcTemplate.execute(TEST_QUERY);
-        doTestAdminApi(pageCheckPredicate());
+        doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_LOGIN));
+        doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_LOGOUT));
     }
 
-    @AfterGroups(groups = MESSAGE_TYPE)
+    @AfterGroups(groups = MESSAGE_TYPE_LOGIN)
     public void tearDown() {
         if (warehouse != null) {
             gd.getWarehouseService().removeWarehouse(warehouse);
         }
     }
 
-    private Predicate<List<AuditEventDTO>> pageCheckPredicate() {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(account.getLogin()) && e.getType().equals(MESSAGE_TYPE));
+    private Predicate<List<AuditEventDTO>> pageCheckPredicate(final String eventType) {
+        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(account.getLogin()) && e.getType().equals(eventType));
     }
 
     private DriverManagerDataSource createDataSource(final Warehouse warehouse) {
