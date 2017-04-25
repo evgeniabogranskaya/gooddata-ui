@@ -11,6 +11,9 @@ Graphite logger complaining about Graphite endpoints inaccessibility.
 gdc.logging.appender=CONSOLE
 monitoring.graphite.reporting-enabled=false
 ```
+## CFAL Event Catalog
+
+All audited events are listed in [confluence](https://confluence.intgdc.com/display/plat/CFAL+Event+Catalog).
 
 ## Build
 ```
