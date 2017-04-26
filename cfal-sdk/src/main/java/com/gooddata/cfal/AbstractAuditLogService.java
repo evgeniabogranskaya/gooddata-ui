@@ -17,7 +17,7 @@ import static org.apache.commons.lang3.Validate.notNull;
  * Enhances Audit Events with the component name.
  * Provides ability to disable logging using JMX or <code>gdc.cfal.enabled</code> property.
  */
-@ManagedResource(objectName = "com.gooddata.cfal:name=AuditLogService")
+@ManagedResource
 public abstract class AbstractAuditLogService implements AuditLogService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());

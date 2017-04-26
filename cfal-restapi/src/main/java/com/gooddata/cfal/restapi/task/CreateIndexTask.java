@@ -18,7 +18,7 @@ import static org.apache.commons.lang3.Validate.notNull;
  * Task for index creation
  */
 @Component
-@ManagedResource(objectName = "com.gooddata.cfal:name=CreateIndexTask")
+@ManagedResource
 public class CreateIndexTask {
 
     private static final Logger logger = LoggerFactory.getLogger(CreateIndexTask.class);
