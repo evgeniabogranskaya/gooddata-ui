@@ -5,6 +5,9 @@ package com.gooddata.cfal.restapi.dto;
 
 import com.gooddata.collections.Paging;
 import org.apache.commons.io.IOUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -20,7 +23,6 @@ import java.util.Map;
 
 import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI_TEMPLATE;
 import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI_TEMPLATE;
-import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,8 +44,9 @@ public class AuditEventsDTOTest {
     private static final String TYPE = "login";
     private static final Map<String, String> EMPTY_PARAMS = new HashMap<>();
 
-    private static final AuditEventDTO EVENT_1 = new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS);
-    private static final AuditEventDTO EVENT_2 = new AuditEventDTO("456", USER2_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS);
+    private static final DateTime DATE = new LocalDate(1993, 3, 9).toDateTimeAtStartOfDay(DateTimeZone.UTC);
+    private static final AuditEventDTO EVENT_1 = new AuditEventDTO("123", USER1_LOGIN, DATE, DATE, IP, SUCCESS, TYPE, EMPTY_PARAMS);
+    private static final AuditEventDTO EVENT_2 = new AuditEventDTO("456", USER2_LOGIN, DATE, DATE, IP, SUCCESS, TYPE, EMPTY_PARAMS);
 
     private static final String ADMIN_URI = ADMIN_URI_TEMPLATE.expand(DOMAIN).toString();
     private static final String USER_URI = USER_URI_TEMPLATE.expand(USER1_ID).toString();

@@ -4,6 +4,9 @@
 package com.gooddata.cfal.restapi.dto;
 
 import org.apache.commons.io.IOUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -12,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -31,8 +33,10 @@ public class AuditEventDTOTest {
     private static String PARAM_KEY = "KEY";
     private static String PARAM_VALUE = "VALUE";
 
-    private final AuditEventDTO event = new AuditEventDTO("123", "bear@gooddata.com", date("1993-03-09"), date("1993-03-09"), "127.0.0.1", true, "login", new HashMap<>());
-    private final AuditEventDTO eventWithParams = new AuditEventDTO("123", "bear@gooddata.com", date("1993-03-09"), date("1993-03-09"), "127.0.0.1", true, "login",
+    private static final DateTime DATE = new LocalDate(1993, 3, 9).toDateTimeAtStartOfDay(DateTimeZone.UTC);
+
+    private final AuditEventDTO event = new AuditEventDTO("123", "bear@gooddata.com", DATE, DATE, "127.0.0.1", true, "login", new HashMap<>());
+    private final AuditEventDTO eventWithParams = new AuditEventDTO("123", "bear@gooddata.com", DATE, DATE, "127.0.0.1", true, "login",
             new HashMap<String, String>() {{
                 put(PARAM_KEY, PARAM_VALUE);
             }});
