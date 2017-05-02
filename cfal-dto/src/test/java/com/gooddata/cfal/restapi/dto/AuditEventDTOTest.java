@@ -3,18 +3,15 @@
  */
 package com.gooddata.cfal.restapi.dto;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.JsonTest;
-import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.test.context.junit4.SpringRunner;
 
+import static net.javacrumbs.jsonunit.JsonMatchers.jsonEquals;
+import static net.javacrumbs.jsonunit.core.util.ResourceUtils.resource;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -23,12 +20,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.Collections;
 import java.util.HashMap;
 
-@RunWith(SpringRunner.class)
-@JsonTest
 public class AuditEventDTOTest {
 
-    @Autowired
-    private JacksonTester<AuditEventDTO> json;
+    private final ObjectMapper json = new ObjectMapper();
 
     private static String PARAM_KEY = "KEY";
     private static String PARAM_VALUE = "VALUE";
@@ -44,14 +38,14 @@ public class AuditEventDTOTest {
 
     @Test
     public void testSerialize() throws Exception {
-        json.write(event).assertThat().isEqualToJson("auditEvent.json", JSONCompareMode.STRICT);
+        assertThat(event, jsonEquals(resource("com/gooddata/cfal/restapi/dto/auditEvent.json")));
     }
 
     @Test
     public void testDeserialize() throws Exception {
-        String content = IOUtils.toString(getClass().getResourceAsStream("auditEvent.json"));
+        String content = IOUtils.toString(resource("com/gooddata/cfal/restapi/dto/auditEvent.json"));
 
-        final AuditEventDTO deserializedObject = json.parse(content).getObject();
+        final AuditEventDTO deserializedObject = json.readValue(content, AuditEventDTO.class);
         assertThat(deserializedObject, notNullValue());
         assertThat(deserializedObject.getId(), is(event.getId()));
         assertThat(deserializedObject.getOccurred(), is(event.getOccurred()));
@@ -64,14 +58,14 @@ public class AuditEventDTOTest {
 
     @Test
     public void testSerializeEventWithParams() throws Exception {
-        json.write(eventWithParams).assertThat().isEqualToJson("auditEventWithParam.json", JSONCompareMode.STRICT);
+        assertThat(eventWithParams, jsonEquals(resource("com/gooddata/cfal/restapi/dto/auditEventWithParam.json")));
     }
 
     @Test
     public void testDeserializeWithParams() throws Exception {
-        String content = IOUtils.toString(getClass().getResourceAsStream("auditEventWithParam.json"));
+        String content = IOUtils.toString(resource("com/gooddata/cfal/restapi/dto/auditEventWithParam.json"));
 
-        final AuditEventDTO deserializedObject = json.parse(content).getObject();
+        final AuditEventDTO deserializedObject = json.readValue(content, AuditEventDTO.class);
         assertThat(deserializedObject.getParams(), is(not(Collections.emptyMap())));
     }
 
