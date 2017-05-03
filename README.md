@@ -20,6 +20,14 @@ All audited events are listed in [confluence](https://confluence.intgdc.com/disp
 mvn package
 ```
 
+## Run REST API Locally
+```
+mvn install -am -pl cfal-dto
+cd cfal-restapi
+mvn spring-boot:run
+curl localhost:8080/info
+```
+
 ## Release CFAL Java SDK
 ```
 mvn release:prepare -DautoVersionSubmodules=true -DpushChanges=false
