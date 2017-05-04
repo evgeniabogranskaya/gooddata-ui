@@ -1,15 +1,14 @@
 /*
  * Copyright (C) 2007-2017, GoodData(R) Corporation. All rights reserved.
  */
-package com.gooddata.cfal.test;
+package com.gooddata.cfal.datawarehouse;
 
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
+import com.gooddata.cfal.test.AbstractAT;
 import com.gooddata.project.Environment;
 import com.gooddata.warehouse.Warehouse;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.Test;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -18,20 +17,16 @@ import java.util.function.Predicate;
 import static java.lang.System.getProperty;
 
 /**
- * Acceptance test for ADS login and logout
+ * Common parent for all ADS related AT
  */
-public class AdsAutenticationEventsAT extends AbstractAT {
-
-    private static final String TEST_QUERY = "SELECT 1";
+class AbstractAdsAT extends AbstractAT {
     private static final String CFAL_INSTANCE_NAME = "CFAL test";
-    private static final String MESSAGE_TYPE_LOGIN = "DATAWAREHOUSE_USERNAME_PASSWORD_LOGIN";
-    private static final String MESSAGE_TYPE_LOGOUT = "DATAWAREHOUSE_LOGOUT";
 
     private final String datawarehouseToken;
     private final JdbcTemplate jdbcTemplate;
     private final Warehouse warehouse;
 
-    public AdsAutenticationEventsAT() {
+    AbstractAdsAT() {
         super();
         this.datawarehouseToken = getProperty("datawarehouseToken", "vertica");
         this.warehouse = gd.getWarehouseService().createWarehouse(createWarehouseRequest()).get();
@@ -39,29 +34,21 @@ public class AdsAutenticationEventsAT extends AbstractAT {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    @Test(groups = MESSAGE_TYPE_LOGIN)
-    public void testUsernamePasswordAuthUserApi() throws InterruptedException {
-        jdbcTemplate.execute(TEST_QUERY);
-        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_LOGIN));
-        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_LOGOUT));
+
+    protected Predicate<List<AuditEventDTO>> pageCheckPredicate(final String eventType) {
+        return (auditEvents) -> auditEvents.stream().anyMatch(e -> matchEvent(eventType, e));
     }
 
-    @Test(groups = MESSAGE_TYPE_LOGIN)
-    public void testUsernamePasswordAuthAdminApi() throws InterruptedException {
-        jdbcTemplate.execute(TEST_QUERY);
-        doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_LOGIN));
-        doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_LOGOUT));
+    private boolean matchEvent(String eventType, AuditEventDTO e) {
+        return e.getUserLogin().equals(account.getLogin()) &&
+                e.getType().equals(eventType) &&
+                warehouse.getId().equals(e.getParams().get("instance_id"));
     }
 
-    @AfterGroups(groups = MESSAGE_TYPE_LOGIN)
-    public void tearDown() {
+    protected void safelyDeleteAds() {
         if (warehouse != null) {
             gd.getWarehouseService().removeWarehouse(warehouse);
         }
-    }
-
-    private Predicate<List<AuditEventDTO>> pageCheckPredicate(final String eventType) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(account.getLogin()) && e.getType().equals(eventType));
     }
 
     private DriverManagerDataSource createDataSource(final Warehouse warehouse) {
@@ -72,5 +59,9 @@ public class AdsAutenticationEventsAT extends AbstractAT {
         final Warehouse warehouse = new Warehouse(CFAL_INSTANCE_NAME, datawarehouseToken);
         warehouse.setEnvironment(Environment.TESTING);
         return warehouse;
+    }
+
+    protected JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
     }
 }
