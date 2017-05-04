@@ -36,7 +36,13 @@ class AbstractAdsAT extends AbstractAT {
 
 
     protected Predicate<List<AuditEventDTO>> pageCheckPredicate(final String eventType) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(account.getLogin()) && e.getType().equals(eventType));
+        return (auditEvents) -> auditEvents.stream().anyMatch(e -> matchEvent(eventType, e));
+    }
+
+    private boolean matchEvent(String eventType, AuditEventDTO e) {
+        return e.getUserLogin().equals(account.getLogin()) &&
+                e.getType().equals(eventType) &&
+                warehouse.getId().equals(e.getParams().get("instance_id"));
     }
 
     protected void safelyDeleteAds() {
