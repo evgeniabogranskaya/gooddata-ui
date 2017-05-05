@@ -24,5 +24,7 @@ public enum AuditLogEventType {
     DATAWAREHOUSE_DATA_ACCESS,
     /** ETL schedule change */
     ETL_SCHEDULE_CHANGE,
+    /** ETL process manual execution **/
+    ETL_PROCESS_MANUAL_EXECUTION,
     ;
 }
