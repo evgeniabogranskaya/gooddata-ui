@@ -1,9 +1,10 @@
 /*
  * Copyright (C) 2007-2017, GoodData(R) Corporation. All rights reserved.
  */
-package com.gooddata.cfal.test;
+package com.gooddata.cfal.msf;
 
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
+import com.gooddata.cfal.test.AbstractAT;
 import com.gooddata.dataload.processes.DataloadProcess;
 import com.gooddata.dataload.processes.ProcessType;
 import com.gooddata.dataload.processes.Schedule;
