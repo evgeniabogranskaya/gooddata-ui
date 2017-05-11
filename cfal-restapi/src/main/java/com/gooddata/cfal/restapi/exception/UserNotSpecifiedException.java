@@ -5,6 +5,8 @@ package com.gooddata.cfal.restapi.exception;
 
 import com.gooddata.exception.GdcErrorCode;
 import com.gooddata.exception.GdcRuntimeException;
+import com.gooddata.exception.annotation.LoggingLevel;
+import com.gooddata.exception.annotation.LoggingSettings;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @GdcErrorCode(id = "gdc.auditlog.user.not_specified", description = "user ID was not specified in request")
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+@LoggingSettings(level = LoggingLevel.INFO)
 public class UserNotSpecifiedException extends GdcRuntimeException {
     public UserNotSpecifiedException(final String message) {
         super(message);
