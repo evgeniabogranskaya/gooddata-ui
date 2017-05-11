@@ -5,11 +5,14 @@ package com.gooddata.cfal.restapi.exception;
 
 import com.gooddata.exception.GdcErrorCode;
 import com.gooddata.exception.GdcRuntimeException;
+import com.gooddata.exception.annotation.LoggingLevel;
+import com.gooddata.exception.annotation.LoggingSettings;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @GdcErrorCode(id = "gdc.auditlog.validation_failed", description = "validation failed")
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+@LoggingSettings(level = LoggingLevel.DEBUG)
 public class ValidationException extends GdcRuntimeException {
     public ValidationException(final String message) {
         super(message);
