@@ -13,7 +13,7 @@ public class MonitoringTestConfig {
 
     @Bean
     public MetricRegistry metricRegistry() {
-        return Mockito.mock(MetricRegistry.class);
+        return Mockito.mock(MetricRegistry.class, Mockito.RETURNS_MOCKS);
     }
 
     @Bean
