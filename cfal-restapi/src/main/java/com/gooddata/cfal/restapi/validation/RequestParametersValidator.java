@@ -5,14 +5,12 @@ package com.gooddata.cfal.restapi.validation;
 
 import com.gooddata.cfal.restapi.dto.RequestParameters;
 import org.bson.types.ObjectId;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 /**
  * Validator for {@link RequestParameters}
  */
-@Component
 public class RequestParametersValidator implements Validator {
 
     public static final String OFFSET_FIELD = "offset";
