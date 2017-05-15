@@ -28,5 +28,11 @@ public enum AuditLogEventType {
     ETL_PROCESS_MANUAL_EXECUTION,
     /** ETL schedule manual execution **/
     ETL_SCHEDULE_MANUAL_EXECUTION,
+    /** ETL process create **/
+    ETL_PROCESS_CREATION,
+    /** ETL process update **/
+    ETL_PROCESS_UPDATE,
+    /** ETL process delete **/
+    ETL_PROCESS_DELETION,
     ;
 }
