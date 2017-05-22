@@ -56,6 +56,7 @@ public class AuditEventServiceIT {
     private static final boolean SUCCESS = true;
     private static final String TYPE = "login";
     private static final Map<String, String> EMPTY_PARAMS = new HashMap<>();
+    private static final Map<String, String> EMPTY_LINKS = new HashMap<>();
 
     @Autowired
     private AuditLogEventRepository auditLogEventRepository;
@@ -74,9 +75,9 @@ public class AuditEventServiceIT {
     public void setUp() {
         auditLogEventRepository.deleteAllByDomain(DOMAIN);
 
-        event1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN, USER1_LOGIN, date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS);
-        event2 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN, USER2_LOGIN, date("2001-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS);
-        event3 = new AuditEvent(convertDateTimeToObjectId(date("2015-03-09")), DOMAIN, USER1_LOGIN, date("2015-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS);
+        event1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN, USER1_LOGIN, date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+        event2 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN, USER2_LOGIN, date("2001-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+        event3 = new AuditEvent(convertDateTimeToObjectId(date("2015-03-09")), DOMAIN, USER1_LOGIN, date("2015-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
 
         auditLogEventRepository.save(event1);
         auditLogEventRepository.save(event2);
