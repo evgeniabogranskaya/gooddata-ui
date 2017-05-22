@@ -38,10 +38,11 @@ public class AuditEventsDTOTest {
     private static final boolean SUCCESS = true;
     private static final String TYPE = "login";
     private static final Map<String, String> EMPTY_PARAMS = new HashMap<>();
+    private static final Map<String, String> EMPTY_LINKS = new HashMap<>();
 
     private static final DateTime DATE = new LocalDate(1993, 3, 9).toDateTimeAtStartOfDay(DateTimeZone.UTC);
-    private static final AuditEventDTO EVENT_1 = new AuditEventDTO("123", USER1_LOGIN, DATE, DATE, IP, SUCCESS, TYPE, EMPTY_PARAMS);
-    private static final AuditEventDTO EVENT_2 = new AuditEventDTO("456", USER2_LOGIN, DATE, DATE, IP, SUCCESS, TYPE, EMPTY_PARAMS);
+    private static final AuditEventDTO EVENT_1 = new AuditEventDTO("123", USER1_LOGIN, DATE, DATE, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+    private static final AuditEventDTO EVENT_2 = new AuditEventDTO("456", USER2_LOGIN, DATE, DATE, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
 
     private static final String ADMIN_URI = ADMIN_URI_TEMPLATE.expand(DOMAIN).toString();
     private static final String USER_URI = USER_URI_TEMPLATE.expand(USER1_ID).toString();

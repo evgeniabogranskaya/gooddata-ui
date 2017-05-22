@@ -19,8 +19,8 @@ public class ETLScheduleAuditLogEventTest {
     private static final String USER_IP = "127.0.0.1";
     private static final String DOMAIN_ID = "default";
     private static final String PROJECT_ID = "FoodMartDemo";
-    private static final String PROCESS_ID = "TestProcessId";
-    private static final String SCHEDULE_ID = "TestScheduleId";
+    private static final String PROCESS = "/gdc/projects/" + PROJECT_ID + "/dataload/processes/TestProcessId";
+    private static final String SCHEDULE = "/gdc/projects/" + PROJECT_ID + "/schedules/TestScheduleId";
 
 
     @Before
@@ -40,16 +40,16 @@ public class ETLScheduleAuditLogEventTest {
 
     @Test
     public void shouldSetValuesFromGdcCallContext() {
-        final ETLScheduleAuditLogEvent event = new ETLScheduleAuditLogEvent(ETL_SCHEDULE_CHANGE, true, PROCESS_ID, SCHEDULE_ID);
+        final ETLScheduleAuditLogEvent event = new ETLScheduleAuditLogEvent(ETL_SCHEDULE_CHANGE, true, PROCESS, SCHEDULE);
 
         assertThat(event.getType(), is(ETL_SCHEDULE_CHANGE));
         assertThat(event.isSuccess(), is(true));
         assertThat(event.getUserLogin(), is(USER_LOGIN));
         assertThat(event.getUserIp(), is(USER_IP));
         assertThat(event.getDomainId(), is(DOMAIN_ID));
-        assertThat(event.getProjectId(), is(PROJECT_ID));
-        assertThat(event.getProcessId(), is(PROCESS_ID));
-        assertThat(event.getScheduleId(), is(SCHEDULE_ID));
+        assertThat(event.getProject(), is("/gdc/projects/" + PROJECT_ID));
+        assertThat(event.getProcess(), is(PROCESS));
+        assertThat(event.getSchedule(), is(SCHEDULE));
     }
 
 }

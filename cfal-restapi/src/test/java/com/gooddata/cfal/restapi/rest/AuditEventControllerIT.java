@@ -75,6 +75,7 @@ public class AuditEventControllerIT {
     private static final boolean SUCCESS = true;
     private static final String TYPE = "login";
     private static final Map<String, String> EMPTY_PARAMS = new HashMap<>();
+    private static final Map<String, String> EMPTY_LINKS = new HashMap<>();
 
     @Value("${security.user.name}")
     private String name;
@@ -94,11 +95,11 @@ public class AuditEventControllerIT {
     @Autowired
     private AuditLogEventRepository auditLogEventRepository;
 
-    private AuditEvent event1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN, USER1_LOGIN, date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS);
-    private AuditEvent event2 = new AuditEvent(convertDateTimeToObjectId(date("1995-03-09")), DOMAIN, USER2_LOGIN, date("1995-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS);
-    private AuditEvent event3 = new AuditEvent(convertDateTimeToObjectId(date("1996-03-09")), DOMAIN, USER1_LOGIN, date("1996-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS);
-    private AuditEvent event4 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN, USER1_LOGIN, date("2001-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS);
-    private AuditEvent event5 = new AuditEvent(convertDateTimeToObjectId(date("2016-03-09")), DOMAIN, USER2_LOGIN, date("2016-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS);
+    private AuditEvent event1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN, USER1_LOGIN, date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+    private AuditEvent event2 = new AuditEvent(convertDateTimeToObjectId(date("1995-03-09")), DOMAIN, USER2_LOGIN, date("1995-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+    private AuditEvent event3 = new AuditEvent(convertDateTimeToObjectId(date("1996-03-09")), DOMAIN, USER1_LOGIN, date("1996-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+    private AuditEvent event4 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN, USER1_LOGIN, date("2001-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+    private AuditEvent event5 = new AuditEvent(convertDateTimeToObjectId(date("2016-03-09")), DOMAIN, USER2_LOGIN, date("2016-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
 
     private C4User c4User1;
     private C4User c4User2;

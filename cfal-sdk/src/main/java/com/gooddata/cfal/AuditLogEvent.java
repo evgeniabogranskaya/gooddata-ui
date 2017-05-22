@@ -35,6 +35,10 @@ public class AuditLogEvent {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, String> params = new HashMap<>();
 
+    @JsonProperty("links")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private Map<String, String> links = new HashMap<>();
+
     @JsonSerialize(using = ISODateTimeSerializer.class)
     private final DateTime occurred;
 
@@ -119,6 +123,14 @@ public class AuditLogEvent {
 
     protected String getParam(final String key) {
         return params.get(key);
+    }
+
+    protected void addLink(final String key, final String value) {
+        links.put(key, value);
+    }
+
+    protected String getLink(final String key) {
+        return links.get(key);
     }
 
     boolean isValid() {

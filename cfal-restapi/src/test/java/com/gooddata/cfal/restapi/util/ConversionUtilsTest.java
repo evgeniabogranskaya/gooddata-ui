@@ -36,10 +36,11 @@ public class ConversionUtilsTest {
     private static final boolean SUCCESS = true;
     private static final String TYPE = "login";
     private static final Map<String, String> EMPTY_PARAMS = new HashMap<>();
+    private static final Map<String, String> EMPTY_LINKS = new HashMap<>();
 
     @Test
     public void testCreateAuditEventDTO() {
-        AuditEventDTO auditEventDTO = ConversionUtils.createAuditEventDTO(new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS));
+        AuditEventDTO auditEventDTO = ConversionUtils.createAuditEventDTO(new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS));
 
         assertThat(auditEventDTO.getId(), is(ID.toString()));
         assertThat(auditEventDTO.getUserLogin(), is(USER_LOGIN));
@@ -56,7 +57,7 @@ public class ConversionUtilsTest {
     public void testCreateAuditEventsDTO() {
         RequestParameters requestParameters = new RequestParameters();
         AuditEventsDTO auditEventsDTO = ConversionUtils.createAuditEventsDTO(
-                BASE_URI, Collections.singletonList(new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS)), requestParameters);
+                BASE_URI, Collections.singletonList(new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS)), requestParameters);
 
         assertThat(auditEventsDTO, hasSize(1));
         assertThat(auditEventsDTO.getPaging().getNextUri(), is(nullValue()));
@@ -67,7 +68,7 @@ public class ConversionUtilsTest {
         RequestParameters requestParameters = new RequestParameters();
         requestParameters.setTo(TIME);
         AuditEventsDTO auditEventsDTO = ConversionUtils.createAuditEventsDTO(
-                BASE_URI, Collections.singletonList(new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS)), requestParameters);
+                BASE_URI, Collections.singletonList(new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS)), requestParameters);
 
         assertThat(auditEventsDTO, hasSize(1));
         assertThat(auditEventsDTO.getPaging().getNextUri(), is(nullValue()));
@@ -97,7 +98,7 @@ public class ConversionUtilsTest {
 
     @Test
     public void testCreateAuditEventsDTOListHasMoreElementsThanLimit() {
-        AuditEvent event = new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS);
+        AuditEvent event = new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
 
         RequestParameters requestParameters = new RequestParameters();
         requestParameters.setLimit(3);
@@ -110,7 +111,7 @@ public class ConversionUtilsTest {
 
     @Test
     public void testCreateAuditEventsDTOListHasExactlyElementsOfLimit() {
-        AuditEvent event = new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS);
+        AuditEvent event = new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
 
         RequestParameters requestParameters = new RequestParameters();
         requestParameters.setLimit(3);

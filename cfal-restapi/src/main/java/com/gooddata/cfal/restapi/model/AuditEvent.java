@@ -31,14 +31,17 @@ public class AuditEvent {
 
     private Map<String, String> params;
 
+    private Map<String, String> links;
+
     public AuditEvent(final String domainId,
                       final String userLogin,
                       final DateTime occurred,
                       final String userIp,
                       final boolean success,
                       final String type,
-                      final Map<String, String> params) {
-        this(null, domainId, userLogin, occurred, userIp, success, type, params);
+                      final Map<String, String> params,
+                      final Map<String, String> links) {
+        this(null, domainId, userLogin, occurred, userIp, success, type, params, links);
     }
 
     /**
@@ -51,7 +54,8 @@ public class AuditEvent {
                       final String userIp,
                       final boolean success,
                       final String type,
-                      final Map<String, String> params) {
+                      final Map<String, String> params,
+                      final Map<String, String> links) {
         this.id = id;
         this.domainId = domainId;
         this.userLogin = userLogin;
@@ -60,6 +64,7 @@ public class AuditEvent {
         this.success = success;
         this.type = type;
         this.params = params;
+        this.links = links;
     }
 
     AuditEvent() {
@@ -95,5 +100,9 @@ public class AuditEvent {
 
     public Map<String, String> getParams() {
         return params;
+    }
+
+    public Map<String, String> getLinks() {
+        return links;
     }
 }
