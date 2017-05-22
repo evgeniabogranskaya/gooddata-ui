@@ -65,7 +65,8 @@ public abstract class ConversionUtils {
                 auditEvent.getUserIp(),
                 auditEvent.isSuccess(),
                 auditEvent.getType(),
-                auditEvent.getParams());
+                auditEvent.getParams(),
+                auditEvent.getLinks());
     }
 
     /**

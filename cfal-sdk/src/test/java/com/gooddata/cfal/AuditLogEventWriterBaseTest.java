@@ -68,8 +68,10 @@ public class AuditLogEventWriterBaseTest {
     }
 
     @Test
-    public void shouldSerializeParamsField() throws Exception {
-        ETLScheduleAuditLogEvent event = new ETLScheduleAuditLogEvent(ETL_SCHEDULE_CHANGE, "user@example.com", "1.2.3.4", "default", true, "project", "process", "schedule");
+    public void shouldSerializeLinksField() throws Exception {
+        ETLScheduleAuditLogEvent event = new ETLScheduleAuditLogEvent(ETL_SCHEDULE_CHANGE, "user@example.com", "1.2.3.4", "default",
+                true, "/gdc/projects/project", "/gdc/projects/project/dataload/process/process",
+                "/gdc/projects/project/schedules/schedule");
         event.setComponent("foo");
 
         final String json = format(event);

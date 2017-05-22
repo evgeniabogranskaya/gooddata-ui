@@ -13,24 +13,24 @@ import com.gooddata.context.GdcCallContext;
  */
 public class ETLProcessAuditLogEvent extends AuditLogEvent {
 
-    private static final String PROJECT_ID = "projectId";
-
-    private static final String PROCESS_ID = "processId";
+    private static final String PROJECT = "project";
+    private static final String PROCESS = "process";
+    private static final String PROJECT_URI_PREFIX = "/gdc/projects/";
 
     public ETLProcessAuditLogEvent(final AuditLogEventType type,
                                    final String userLogin,
                                    final String userIp,
                                    final String domainId,
                                    final boolean success,
-                                   final String projectId,
-                                   final String processId) {
+                                   final String project,
+                                   final String process) {
         super(type, userLogin, userIp, domainId, success);
 
-        notEmpty(projectId, "projectId");
-        notEmpty(processId, "processId");
+        notEmpty(project, "project");
+        notEmpty(process, "process");
 
-        addParam(PROJECT_ID, projectId);
-        addParam(PROCESS_ID, processId);
+        addLink(PROJECT, project);
+        addLink(PROCESS, process);
     }
 
     /**
@@ -38,21 +38,29 @@ public class ETLProcessAuditLogEvent extends AuditLogEvent {
      *
      * @param type      event type
      * @param success   was this event successful
-     * @param processId ETL process ID
+     * @param process ETL process uri
      */
-    public ETLProcessAuditLogEvent(final AuditLogEventType type, final boolean success, final String processId) {
+    public ETLProcessAuditLogEvent(final AuditLogEventType type, final boolean success, final String process) {
         super(type, success);
-        addParam(PROJECT_ID, GdcCallContext.getCurrentContext().getProjectId());
-        addParam(PROCESS_ID, processId);
+        addLink(PROJECT, PROJECT_URI_PREFIX + GdcCallContext.getCurrentContext().getProjectId());
+        addLink(PROCESS, process);
     }
 
+    /**
+     *
+     * @return project uri
+     */
     @JsonIgnore
-    public String getProjectId() {
-        return getParam(PROJECT_ID);
+    public String getProject() {
+        return getLink(PROJECT);
     }
 
+    /**
+     *
+     * @return ETL process uri
+     */
     @JsonIgnore
-    public String getProcessId() {
-        return getParam(PROCESS_ID);
+    public String getProcess() {
+        return getLink(PROCESS);
     }
 }

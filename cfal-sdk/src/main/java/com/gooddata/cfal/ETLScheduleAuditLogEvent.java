@@ -12,37 +12,41 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public class ETLScheduleAuditLogEvent extends ETLProcessAuditLogEvent {
 
-    private static final String SCHEDULE_ID = "scheduleId";
+    private static final String SCHEDULE = "schedule";
 
     public ETLScheduleAuditLogEvent(final AuditLogEventType type,
                                     final String userLogin,
                                     final String userIp,
                                     final String domainId,
                                     final boolean success,
-                                    final String projectId,
-                                    final String processId,
-                                    final String scheduleId) {
-        super(type, userLogin, userIp, domainId, success, projectId, processId);
+                                    final String project,
+                                    final String process,
+                                    final String schedule) {
+        super(type, userLogin, userIp, domainId, success, project, process);
 
-        notEmpty(scheduleId, "scheduleId");
+        notEmpty(schedule, "schedule");
 
-        addParam(SCHEDULE_ID, scheduleId);
+        addLink(SCHEDULE, schedule);
     }
 
     /**
      * Create audit log event and fill some attributes from GdcCallContext
      * @param type event type
      * @param success was this event successful
-     * @param processId ETL process ID
-     * @param scheduleId ETL schedule ID
+     * @param process ETL process uri
+     * @param schedule ETL schedule uri
      */
-    public ETLScheduleAuditLogEvent(final AuditLogEventType type, final boolean success, final String processId, final String scheduleId) {
-        super(type, success, processId);
-        addParam(SCHEDULE_ID, scheduleId);
+    public ETLScheduleAuditLogEvent(final AuditLogEventType type, final boolean success, final String process, final String schedule) {
+        super(type, success, process);
+        addLink(SCHEDULE, schedule);
     }
 
+    /**
+     *
+     * @return ETL schedule uri
+     */
     @JsonIgnore
-    public String getScheduleId() {
-        return getParam(SCHEDULE_ID);
+    public String getSchedule() {
+        return getLink(SCHEDULE);
     }
 }
