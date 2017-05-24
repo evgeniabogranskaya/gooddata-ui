@@ -51,6 +51,9 @@
 #       type: STRING,
 #       (params: {
 #           (STRING:STRING)*
+#       })?,
+#       (links: {
+#           (STRING:STRING)*
 #       })?
 #  }>
 #  (end)
