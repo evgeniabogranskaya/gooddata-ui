@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gooddata.util.GoodDataToStringBuilder;
 import com.gooddata.util.ISODateTimeDeserializer;
 import com.gooddata.util.ISODateTimeSerializer;
 import org.joda.time.DateTime;
@@ -113,4 +114,10 @@ public class AuditEventDTO {
     public Map<String, String> getLinks() {
         return links;
     }
+
+    @Override
+    public String toString() {
+        return GoodDataToStringBuilder.defaultToString(this);
+    }
+
 }
