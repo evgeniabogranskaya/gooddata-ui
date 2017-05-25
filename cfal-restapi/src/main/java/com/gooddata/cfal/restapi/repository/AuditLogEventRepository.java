@@ -130,15 +130,25 @@ public class AuditLogEventRepository {
     }
 
     /**
-     * Creates a TTL-index on given collection. Index is set to delete all records older than 7 days
+     * Return number of days all records are supposed to be deleted.
+     * As the index is constructed on "eventdate" field, one extra day is added.
+     * @return number of days
+     */
+    private long getRecordTtlDays() {
+        return recordTtlDays + 1;
+    }
+
+    /**
+     * Creates a TTL-index on given collection. Index is set to delete all records older than {@link #getRecordTtlDays()} days.
      *
      * @param collectionName collection for which you want to create TTL-index
      */
     private void createTtlIndex(final String collectionName) {
         final Index index = new Index()
+                .named("ttl")
                 .background()
-                .expire(recordTtlDays, TimeUnit.DAYS)
-                .on("occurred", Sort.Direction.ASC);
+                .expire(getRecordTtlDays(), TimeUnit.DAYS)
+                .on("eventdate", Sort.Direction.ASC);
 
         try {
             mongoTemplate.indexOps(collectionName).ensureIndex(index);
