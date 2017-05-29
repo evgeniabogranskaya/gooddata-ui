@@ -22,6 +22,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -42,10 +43,13 @@ import static com.gooddata.cfal.restapi.validation.RequestParametersValidator.NO
 import static com.gooddata.cfal.restapi.validation.RequestParametersValidator.OFFSET_AND_FROM_SPECIFIED_MSG;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static java.lang.String.format;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -254,6 +258,19 @@ public class AuditEventControllerTest {
     }
 
     @Test
+    public void testListAuditEventsOverLimit() throws Exception {
+        mockMvc.perform(get(adminUri())
+                .param("limit", "10001")
+                .header(X_PUBLIC_USER_ID, ADMIN_USER_ID))
+                .andExpect(status().isOk())
+        ;
+        final ArgumentCaptor<RequestParameters> captor = ArgumentCaptor.forClass(RequestParameters.class);
+        verify(auditEventService).findByDomain(eq("default"), captor.capture());
+        final RequestParameters params = captor.getValue();
+        assertThat(params.getLimit(), is(10000));
+    }
+
+    @Test
     public void testListAuditEventsForUserWithBadLimit() throws Exception {
         String wrongValue = "not number";
         String errorMessage = format(TYPE_MISMATCH_MESSAGE, wrongValue, "limit");
@@ -310,6 +327,19 @@ public class AuditEventControllerTest {
                 .andExpect(jsonPath("$.error.errorClass", is(ValidationException.class.getName())))
                 .andExpect(jsonPath("$.error.message", is(errorMessage)))
                 .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
+    }
+
+    @Test
+    public void testListAuditEventsForUserOverLimit() throws Exception {
+        mockMvc.perform(get(userUri(ADMIN_USER_ID))
+                .param("limit", "10001")
+                .header(X_PUBLIC_USER_ID, ADMIN_USER_ID))
+                .andExpect(status().isOk())
+        ;
+        final ArgumentCaptor<RequestParameters> captor = ArgumentCaptor.forClass(RequestParameters.class);
+        verify(auditEventService).findByUser(any(), captor.capture());
+        final RequestParameters params = captor.getValue();
+        assertThat(params.getLimit(), is(10000));
     }
 
     @Test
