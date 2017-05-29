@@ -13,6 +13,7 @@ import com.gooddata.cfal.restapi.exception.UserNotSpecifiedException;
 import com.gooddata.cfal.restapi.service.AuditEventService;
 import com.gooddata.cfal.restapi.service.UserDomainService;
 import com.gooddata.context.GdcCallContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.apache.commons.lang3.Validate.isTrue;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import javax.validation.Valid;
@@ -34,11 +36,14 @@ public class AuditEventController {
 
     private final AuditEventService auditEventService;
     private final UserDomainService userDomainService;
+    private final int maximumLimit;
 
     public AuditEventController(final AuditEventService auditEventService,
-                                final UserDomainService userDomainService) {
+                                final UserDomainService userDomainService,
+                                @Value("${gdc.cfal.mongo.limit}") final int maximumLimit) {
         this.auditEventService = notNull(auditEventService, "auditEventService cannot be null");
         this.userDomainService = notNull(userDomainService, "userDomainService cannot be null");
+        this.maximumLimit = maximumLimit;
     }
 
     @RequestMapping(path = AuditEventDTO.ADMIN_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -48,7 +53,9 @@ public class AuditEventController {
 
         userDomainService.authorizeAdmin(userId, domainId);
 
-        return auditEventService.findByDomain(domainId, requestParameters);
+        final RequestParameters params = sanitizeParameters(requestParameters);
+
+        return auditEventService.findByDomain(domainId, params);
     }
 
     @RequestMapping(path = AuditEventDTO.USER_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -58,8 +65,10 @@ public class AuditEventController {
 
         final UserInfo userInfo = userDomainService.getUserInfo(userId);
 
+        final RequestParameters params = sanitizeParameters(requestParameters);
+
         if (userId.equals(loggedUserId)) {
-            return auditEventService.findByUser(userInfo, requestParameters);
+            return auditEventService.findByUser(userInfo, params);
         }
 
         final UserInfo loggedUserInfo = userDomainService.getUserInfo(loggedUserId);
@@ -68,7 +77,7 @@ public class AuditEventController {
             throw new UserNotAuthorizedException("user with ID" + loggedUserId + " is not authorized to access this resource");
         }
 
-        return auditEventService.findByUser(userInfo, requestParameters);
+        return auditEventService.findByUser(userInfo, params);
     }
 
     /**
@@ -86,5 +95,11 @@ public class AuditEventController {
             throw new UserNotSpecifiedException("User ID is not specified");
         }
         return userId;
+    }
+
+    private RequestParameters sanitizeParameters(final RequestParameters requestParameters) {
+        final RequestParameters params = RequestParameters.copy(requestParameters);
+        params.setLimit(requestParameters.getSanitizedLimit(maximumLimit));
+        return params;
     }
 }
