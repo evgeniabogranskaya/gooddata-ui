@@ -357,8 +357,8 @@ public class AuditLogEventRepositoryIT {
         assertThat(indexInfo, hasSize(greaterThanOrEqualTo(1)));
         // make sure there's an index with 'expireAfterSeconds' set to 7-days on top of 'occurred' key
         assertThat(indexInfo, hasItem(Matchers
-                .both(dbObjectMatch("expireAfterSeconds", is(DAYS.toSeconds(7))))
-                .and(dbObjectMatch("key", dbObjectMatch("occurred", is(1))))));
+                .both(dbObjectMatch("expireAfterSeconds", is(DAYS.toSeconds(7 + 1))))
+                .and(dbObjectMatch("key", dbObjectMatch("eventdate", is(1))))));
     }
 
     @Test
@@ -372,7 +372,6 @@ public class AuditLogEventRepositoryIT {
         final List<DBObject> indexInfo = mongoTemplate.getCollection(mongoCollectionName).getIndexInfo();
         // there should be at least one (new) index
         assertThat(indexInfo, hasSize(greaterThanOrEqualTo(1)));
-        // make sure there's an index with 'expireAfterSeconds' set to 7-days on top of 'occurred' key
         assertThat(indexInfo, hasItem(dbObjectMatch("key", dbObjectMatch("userLogin", is(1)))));
     }
 
