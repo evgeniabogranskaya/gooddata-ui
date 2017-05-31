@@ -3,9 +3,11 @@
  */
 package com.gooddata.cfal.test;
 
+import com.gooddata.GoodDataRestException;
 import com.gooddata.account.Account;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.collections.PageableList;
+import org.apache.http.HttpStatus;
 import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -18,6 +20,16 @@ public class SimpleAT extends AbstractAT {
     public void shouldReachDomainResource() throws Exception {
         final PageableList<AuditEventDTO> events = service.listAuditEvents(domain);
         assertThat(events, is(notNullValue()));
+    }
+
+    @Test
+    public void shouldReturnErrorOnInvalidDomain() throws Exception {
+        try {
+            service.listAuditEvents("this_domain_should_never_exists");
+        } catch (GoodDataRestException e) {
+            assertThat(e.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
+            assertThat(e.getErrorCode(), is("gdc.auditlog.domain_not_found"));
+        }
     }
 
     @Test

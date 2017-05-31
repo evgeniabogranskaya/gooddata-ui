@@ -35,6 +35,7 @@
 #    - (200 OK) <AuditEvents>
 #    - (400 Bad Request) <ERROR>   % Invalid request
 #    - (401 Unauthorized) <ERROR>   % User not admin of domain
+#    - (404 Not found) <ERROR>     % Domain doesn't exist
 #
 #############################################################################################################
 # Group: Data Structures

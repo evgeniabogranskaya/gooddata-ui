@@ -9,6 +9,7 @@ import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
 import com.gooddata.cfal.restapi.dto.UserInfo;
+import com.gooddata.cfal.restapi.exception.DomainNotFoundException;
 import com.gooddata.cfal.restapi.exception.UserNotAuthorizedException;
 import com.gooddata.cfal.restapi.exception.UserNotDomainAdminException;
 import com.gooddata.cfal.restapi.exception.UserNotSpecifiedException;
@@ -76,6 +77,8 @@ public class AuditEventControllerTest {
     private static final String BAD_OFFSET = "badOffset";
 
     private static final String DOMAIN = "default";
+
+    private static final String INVALID_DOMAIN = "invalid_domain";
 
     private static final ObjectId OFFSET = new ObjectId();
 
@@ -146,6 +149,7 @@ public class AuditEventControllerTest {
         doReturn(true).when(userDomainService).isUserDomainAdmin(ADMIN_USER_ID, DOMAIN);
 
         doThrow(new UserNotDomainAdminException("")).when(userDomainService).authorizeAdmin(NOT_ADMIN_USER_ID, DOMAIN);
+        doThrow(new DomainNotFoundException("")).when(userDomainService).authorizeAdmin(NOT_ADMIN_USER_ID, INVALID_DOMAIN);
 
         RequestParameters pageRequestWithBadOffset = new RequestParameters();
         pageRequestWithBadOffset.setOffset(BAD_OFFSET);
@@ -195,6 +199,15 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, NOT_ADMIN_USER_ID))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error.errorClass", is(UserNotDomainAdminException.class.getName())))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
+    }
+
+    @Test
+    public void shouldFailOnInvalidDomain() throws Exception {
+        mockMvc.perform(get(ADMIN_URI_TEMPLATE.expand(INVALID_DOMAIN).toString())
+                .header(X_PUBLIC_USER_ID, NOT_ADMIN_USER_ID))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error.errorClass", is(DomainNotFoundException.class.getName())))
                 .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
