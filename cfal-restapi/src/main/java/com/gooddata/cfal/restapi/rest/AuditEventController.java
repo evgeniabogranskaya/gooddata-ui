@@ -94,6 +94,7 @@ public class AuditEventController {
         if (userId == null) {
             throw new UserNotSpecifiedException("User ID is not specified");
         }
+        userDomainService.ensureFeatureEnabled(userId);
         return userId;
     }
 
