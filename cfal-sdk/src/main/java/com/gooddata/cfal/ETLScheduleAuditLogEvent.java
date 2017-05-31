@@ -3,8 +3,6 @@
  */
 package com.gooddata.cfal;
 
-import static org.apache.commons.lang3.Validate.notEmpty;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -23,8 +21,6 @@ public class ETLScheduleAuditLogEvent extends ETLProcessAuditLogEvent {
                                     final String process,
                                     final String schedule) {
         super(type, userLogin, userIp, domainId, success, project, process);
-
-        notEmpty(schedule, "schedule");
 
         addLink(SCHEDULE, schedule);
     }
