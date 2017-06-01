@@ -4,6 +4,7 @@
 package com.gooddata.auditlog;
 
 import com.gooddata.AbstractService;
+import com.gooddata.GoodDataRestException;
 import com.gooddata.account.Account;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
@@ -29,6 +30,7 @@ public class AuditLogService extends AbstractService {
      * Get list of audit events for the given domain id
      * @param domainId domain id
      * @return non-null paged list of events
+     * @throws GoodDataRestException is something wents wrong
      */
     public PageableList<AuditEventDTO> listAuditEvents(final String domainId) {
         return listAuditEvents(domainId, new RequestParameters());
@@ -39,6 +41,7 @@ public class AuditLogService extends AbstractService {
      * @param domainId domain id
      * @param page request parameters
      * @return non-null paged list of events
+     * @throws GoodDataRestException is something wents wrong
      */
     public PageableList<AuditEventDTO> listAuditEvents(final String domainId, final Page page) {
         notEmpty(domainId, "domainId");
@@ -54,6 +57,7 @@ public class AuditLogService extends AbstractService {
      * Get list of audit events for the given account
      * @param account account with valid id
      * @return non-null paged list of events
+     * @throws GoodDataRestException is something wents wrong
      */
     public PageableList<AuditEventDTO> listAuditEvents(final Account account) {
         return listAuditEvents(account, new RequestParameters());
@@ -64,6 +68,7 @@ public class AuditLogService extends AbstractService {
      * @param account account with valid id
      * @param page request parameters
      * @return non-null paged list of events
+     * @throws GoodDataRestException is something wents wrong
      */
     public PageableList<AuditEventDTO> listAuditEvents(final Account account, final Page page) {
         notNull(account, "account");
