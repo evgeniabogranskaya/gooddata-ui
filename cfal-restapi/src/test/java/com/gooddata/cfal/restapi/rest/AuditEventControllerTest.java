@@ -12,6 +12,7 @@ import com.gooddata.cfal.restapi.dto.UserInfo;
 import com.gooddata.cfal.restapi.exception.DomainNotFoundException;
 import com.gooddata.cfal.restapi.exception.UserNotAuthorizedException;
 import com.gooddata.cfal.restapi.exception.UserNotDomainAdminException;
+import com.gooddata.cfal.restapi.exception.UserNotFoundException;
 import com.gooddata.cfal.restapi.exception.UserNotSpecifiedException;
 import com.gooddata.cfal.restapi.exception.ValidationException;
 import com.gooddata.cfal.restapi.service.AuditEventService;
@@ -69,6 +70,8 @@ public class AuditEventControllerTest {
     private static final String ADMIN_USER_ID = "ADMIN";
 
     private static final String NOT_ADMIN_USER_ID = "NOT_ADMIN";
+
+    private static final String INVALID_USER_ID = "INVALIDA";
 
     private static final String USER1_LOGIN = "bear@gooddata.com";
 
@@ -144,6 +147,7 @@ public class AuditEventControllerTest {
 
         doReturn(adminUserInfo).when(userDomainService).getUserInfo(ADMIN_USER_ID);
         doReturn(notAdminUserInfo).when(userDomainService).getUserInfo(NOT_ADMIN_USER_ID);
+        doThrow(new UserNotFoundException("")).when(userDomainService).getUserInfo(INVALID_USER_ID);
 
         doReturn(false).when(userDomainService).isUserDomainAdmin(NOT_ADMIN_USER_ID, DOMAIN);
         doReturn(true).when(userDomainService).isUserDomainAdmin(ADMIN_USER_ID, DOMAIN);
@@ -492,6 +496,15 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, NOT_ADMIN_USER_ID))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error.errorClass", is(UserNotAuthorizedException.class.getName())))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
+    }
+
+    @Test
+    public void testAdminAccessingUserApiOfInvalidUser() throws Exception {
+        mockMvc.perform(get(userUri(INVALID_USER_ID))
+                .header(X_PUBLIC_USER_ID, ADMIN_USER_ID))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error.errorClass", is(UserNotFoundException.class.getName())))
                 .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
