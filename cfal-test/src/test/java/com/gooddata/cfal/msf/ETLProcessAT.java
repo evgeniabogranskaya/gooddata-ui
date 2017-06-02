@@ -29,7 +29,7 @@ import java.util.function.Predicate;
 /**
  * Tests ETL process messages
  */
-@Test(enabled = false) //TODO: remove after msf pipeline passes
+@Test
 public class ETLProcessAT extends AbstractAT {
 
     private static final String EXECUTION_MESSAGE_TYPE = "ETL_PROCESS_MANUAL_EXECUTION";
@@ -117,82 +117,82 @@ public class ETLProcessAT extends AbstractAT {
         }
     }
 
-    @Test(groups = EXECUTION_MESSAGE_TYPE)
+    @Test(groups = EXECUTION_MESSAGE_TYPE, enabled = false)
     public void testProcessManualExecutionMessageUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(EXECUTION_MESSAGE_TYPE, true));
     }
 
-    @Test(groups = EXECUTION_MESSAGE_TYPE)
+    @Test(groups = EXECUTION_MESSAGE_TYPE, enabled = false)
     public void testProcessManualExecutionMessageAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(EXECUTION_MESSAGE_TYPE, true));
     }
 
-    @Test(groups = EXECUTION_MESSAGE_TYPE)
+    @Test(groups = EXECUTION_MESSAGE_TYPE, enabled = false)
     public void testProcessManualExecutionMessageErrorUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(EXECUTION_MESSAGE_TYPE, false));
     }
 
-    @Test(groups = EXECUTION_MESSAGE_TYPE)
+    @Test(groups = EXECUTION_MESSAGE_TYPE, enabled = false)
     public void testProcessManualExecutionMessageErrorAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(EXECUTION_MESSAGE_TYPE, false));
     }
 
-    @Test(groups = CREATE_MESSAGE_TYPE)
+    @Test(groups = CREATE_MESSAGE_TYPE, enabled = false)
     public void testProcessCreateMessageUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(CREATE_MESSAGE_TYPE, true));
     }
 
-    @Test(groups = CREATE_MESSAGE_TYPE)
+    @Test(groups = CREATE_MESSAGE_TYPE, enabled = false)
     public void testProcessCreateMessageAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(CREATE_MESSAGE_TYPE, true));
     }
 
-    @Test(groups = CREATE_MESSAGE_TYPE)
+    @Test(groups = CREATE_MESSAGE_TYPE, enabled = false)
     public void testProcessCreateMessageErrorUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(CREATE_MESSAGE_TYPE, false));
     }
 
-    @Test(groups = CREATE_MESSAGE_TYPE)
+    @Test(groups = CREATE_MESSAGE_TYPE, enabled = false)
     public void testProcessCreateMessageErrorAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(CREATE_MESSAGE_TYPE, false));
     }
 
-    @Test(groups = UPDATE_MESSAGE_TYPE)
+    @Test(groups = UPDATE_MESSAGE_TYPE, enabled = false)
     public void testProcessUpdateMessageUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(UPDATE_MESSAGE_TYPE, true));
     }
 
-    @Test(groups = UPDATE_MESSAGE_TYPE)
+    @Test(groups = UPDATE_MESSAGE_TYPE, enabled = false)
     public void testProcessUpdateMessageAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(UPDATE_MESSAGE_TYPE, true));
     }
 
-    @Test(groups = UPDATE_MESSAGE_TYPE)
+    @Test(groups = UPDATE_MESSAGE_TYPE, enabled = false)
     public void testProcessUpdateErrorMessageUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(UPDATE_MESSAGE_TYPE, false));
     }
 
-    @Test(groups = UPDATE_MESSAGE_TYPE)
+    @Test(groups = UPDATE_MESSAGE_TYPE, enabled = false)
     public void testProcessUpdateErrorMessageAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(UPDATE_MESSAGE_TYPE, false));
     }
 
-    @Test(groups = DELETE_MESSAGE_TYPE)
+    @Test(groups = DELETE_MESSAGE_TYPE, enabled = false)
     public void testProcessDeleteMessageUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(DELETE_MESSAGE_TYPE, true));
     }
 
-    @Test(groups = DELETE_MESSAGE_TYPE)
+    @Test(groups = DELETE_MESSAGE_TYPE, enabled = false)
     public void testProcessDeleteMessageAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(DELETE_MESSAGE_TYPE, true));
     }
 
-    @Test(groups = DELETE_MESSAGE_TYPE)
+    @Test(groups = DELETE_MESSAGE_TYPE, enabled = false)
     public void testProcessDeleteMessageErrorUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(DELETE_MESSAGE_TYPE, false));
     }
 
-    @Test(groups = DELETE_MESSAGE_TYPE)
+    @Test(groups = DELETE_MESSAGE_TYPE, enabled = false)
     public void testProcessDeleteMessageErrorAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(DELETE_MESSAGE_TYPE, false));
     }
