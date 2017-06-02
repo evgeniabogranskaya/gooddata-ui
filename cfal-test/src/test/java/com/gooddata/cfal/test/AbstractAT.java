@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 
 public abstract class AbstractAT {
 
-    private static Logger logger = LoggerFactory.getLogger(AbstractAT.class);
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static final int POLL_LIMIT = 10;
     private static final int POLL_INTERVAL_SECONDS = 30;
