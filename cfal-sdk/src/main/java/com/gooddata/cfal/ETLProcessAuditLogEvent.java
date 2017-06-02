@@ -3,8 +3,6 @@
  */
 package com.gooddata.cfal;
 
-import static org.apache.commons.lang3.Validate.notEmpty;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gooddata.context.GdcCallContext;
 
@@ -25,9 +23,6 @@ public class ETLProcessAuditLogEvent extends AuditLogEvent {
                                    final String project,
                                    final String process) {
         super(type, userLogin, userIp, domainId, success);
-
-        notEmpty(project, "project");
-        notEmpty(process, "process");
 
         addLink(PROJECT, project);
         addLink(PROCESS, process);
