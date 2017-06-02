@@ -86,15 +86,15 @@ public abstract class AbstractAT {
     private void doTest(final Function<Page, PageableList<AuditEventDTO>> serviceCall, Predicate<List<AuditEventDTO>> pageCheckPredicate) throws InterruptedException {
         //poll until message is found in audit log or poll limit is hit
         int count = 1;
-        while (!hasMessage(serviceCall, pageCheckPredicate) && count <= POLL_LIMIT) {
+        while (count++ <= POLL_LIMIT) {
+            if (hasMessage(serviceCall, pageCheckPredicate)) {
+                return;
+            }
             logger.info("message not found, waiting {} seconds", POLL_INTERVAL_SECONDS);
             TimeUnit.SECONDS.sleep(POLL_INTERVAL_SECONDS);
-            count++;
         }
 
-        if (!hasMessage(serviceCall, pageCheckPredicate)) {
-            fail("message not found");
-        }
+        fail("message not found");
     }
 
     /**
