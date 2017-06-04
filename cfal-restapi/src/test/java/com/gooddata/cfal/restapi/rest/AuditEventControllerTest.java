@@ -210,8 +210,8 @@ public class AuditEventControllerTest {
     public void shouldFailOnInvalidDomain() throws Exception {
         mockMvc.perform(get(ADMIN_URI_TEMPLATE.expand(INVALID_DOMAIN).toString())
                 .header(X_PUBLIC_USER_ID, NOT_ADMIN_USER_ID))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error.errorClass", is(DomainNotFoundException.class.getName())))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.errorClass", is(UserNotAuthorizedException.class.getName())))
                 .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
@@ -503,8 +503,8 @@ public class AuditEventControllerTest {
     public void testAdminAccessingUserApiOfInvalidUser() throws Exception {
         mockMvc.perform(get(userUri(INVALID_USER_ID))
                 .header(X_PUBLIC_USER_ID, ADMIN_USER_ID))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error.errorClass", is(UserNotFoundException.class.getName())))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.errorClass", is(UserNotAuthorizedException.class.getName())))
                 .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 

@@ -27,8 +27,8 @@ public class SimpleAT extends AbstractAT {
         try {
             service.listAuditEvents("this_domain_should_never_exists");
         } catch (GoodDataRestException e) {
-            assertThat(e.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
-            assertThat(e.getErrorCode(), is("gdc.auditlog.domain_not_found"));
+            assertThat(e.getStatusCode(), is(HttpStatus.SC_UNAUTHORIZED));
+            assertThat(e.getErrorCode(), is("gdc.auditlog.user.not_authorized"));
         }
     }
 

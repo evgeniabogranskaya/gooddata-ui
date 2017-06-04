@@ -13,6 +13,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,11 @@ public class AuditlogExceptionTranslatorAdvice extends HandlerExceptionResolver 
     public AuditlogExceptionTranslatorAdvice(final HttpExceptionTranslator translator, final MessageSource messageSource) {
         super(translator);
         this.messageSource = notNull(messageSource, "messageSource cannot be null");
+    }
+
+    @ExceptionHandler(value = {UserNotFoundException.class, DomainNotFoundException.class})
+    protected ResponseEntity<ErrorStructure> translateNotFoundExceptionToUnauthorized(final HttpServletRequest request, final Exception ex) {
+        return doResolveException(request, new UserNotAuthorizedException("User not authorized", ex));
     }
 
 
