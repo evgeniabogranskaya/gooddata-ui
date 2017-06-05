@@ -22,7 +22,6 @@
 #    - (200 OK) <AuditEvents>
 #    - (400 Bad Request) <ERROR>   % Invalid request
 #    - (401 Unauthorized) <ERROR>   % User not permitted to see audit events for user
-#    - (404 Not found) <ERROR>     % User doesn't exist
 #
 # header: /gdc/domains/<domainId>/auditEvents
 #
@@ -36,7 +35,6 @@
 #    - (200 OK) <AuditEvents>
 #    - (400 Bad Request) <ERROR>   % Invalid request
 #    - (401 Unauthorized) <ERROR>   % User not admin of domain
-#    - (404 Not found) <ERROR>     % Domain doesn't exist
 #
 #############################################################################################################
 # Group: Data Structures
