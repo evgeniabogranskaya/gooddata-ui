@@ -3,10 +3,8 @@
  */
 package com.gooddata.cfal.test;
 
-import static java.lang.System.getProperty;
-import static org.testng.Assert.fail;
-
 import com.gooddata.CfalGoodData;
+import com.gooddata.GoodDataEndpoint;
 import com.gooddata.account.Account;
 import com.gooddata.auditlog.AuditLogService;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
@@ -22,6 +20,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static java.lang.System.getProperty;
+import static org.testng.Assert.fail;
+
 public abstract class AbstractAT {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -30,6 +31,8 @@ public abstract class AbstractAT {
     private static final int POLL_INTERVAL_SECONDS = 30;
 
     protected final CfalGoodData gd;
+    protected final GoodDataEndpoint endpoint;
+
     protected final AuditLogService service;
 
     protected final String host;
@@ -49,7 +52,9 @@ public abstract class AbstractAT {
         domain = getProperty("domain", "default");
         projectId = getProperty("projectId", "FoodMartDemo");
 
-        gd = new CfalGoodData(host, user, pass);
+        endpoint = new GoodDataEndpoint(host);
+
+        gd = new CfalGoodData(endpoint, user, pass);
         service = gd.getAuditLogService();
 
         account = gd.getAccountService().getCurrent();

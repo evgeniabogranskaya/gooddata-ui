@@ -4,6 +4,7 @@
 package com.gooddata;
 
 import com.gooddata.auditlog.AuditLogService;
+import com.gooddata.authentication.LoginPasswordAuthentication;
 import org.apache.http.client.HttpClient;
 import org.springframework.web.client.RestTemplate;
 
@@ -14,8 +15,8 @@ public class CfalGoodData extends GoodData {
 
     private final AuditLogService auditLogService;
 
-    public CfalGoodData(final String hostname, final String login, final String password) {
-        super(hostname, login, password);
+    public CfalGoodData(final GoodDataEndpoint endpoint, final String login, final String password) {
+        super(endpoint, new LoginPasswordAuthentication(login, password));
         auditLogService = new AuditLogService(getRestTemplate());
     }
 
