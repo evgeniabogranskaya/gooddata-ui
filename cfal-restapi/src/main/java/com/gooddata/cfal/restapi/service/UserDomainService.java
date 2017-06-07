@@ -3,13 +3,16 @@
  */
 package com.gooddata.cfal.restapi.service;
 
+import com.gooddata.c4.C4SomethingNotFoundException;
 import com.gooddata.c4.domain.C4Domain;
 import com.gooddata.c4.domain.C4DomainNotFoundException;
 import com.gooddata.c4.domain.DomainService;
+import com.gooddata.c4.setting.C4SettingEntry;
 import com.gooddata.c4.user.C4User;
 import com.gooddata.c4.user.C4UserNotFoundException;
 import com.gooddata.c4.user.UserService;
 import com.gooddata.cfal.restapi.dto.UserInfo;
+import com.gooddata.cfal.restapi.exception.AuditLogNotEnabledException;
 import com.gooddata.cfal.restapi.exception.DomainNotFoundException;
 import com.gooddata.cfal.restapi.exception.UserNotDomainAdminException;
 import com.gooddata.cfal.restapi.exception.UserNotFoundException;
@@ -27,6 +30,8 @@ import static org.apache.commons.lang3.Validate.notNull;
 public class UserDomainService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDomainService.class);
+
+    private static final String SETTING_NAME = "cfal";
 
     private final UserService userService;
     private final DomainService domainService;
@@ -107,6 +112,23 @@ public class UserDomainService {
             return isAdmin;
         } catch (C4DomainNotFoundException ex) {
             throw new DomainNotFoundException("domain with ID " + domainId + " not found", ex);
+        }
+    }
+
+    /**
+     * Ensure CFAL is enabled for the given user
+     * @param userId user
+     * @throws AuditLogNotEnabledException
+     */
+    public void ensureFeatureEnabled(final String userId) {
+        notEmpty(userId, "userId cannot be empty");
+        try {
+            final C4SettingEntry setting = userService.getSetting(userId, SETTING_NAME);
+            if (!Boolean.parseBoolean(setting.getValue())) {
+                throw new AuditLogNotEnabledException("Audit log is not enabled for user " + userId);
+            }
+        } catch (C4SomethingNotFoundException e) {
+            throw new AuditLogNotEnabledException("Audit log is not enabled for user " + userId, e);
         }
     }
 }
