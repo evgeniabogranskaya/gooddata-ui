@@ -10,6 +10,8 @@ public enum AuditLogEventType {
 
     /** Login using user name and password */
     STANDARD_LOGIN,
+    /** Logout */
+    STANDARD_LOGOUT,
     /** Login using basic auth*/
     BASIC_LOGIN,
     /** Login using SSO */
