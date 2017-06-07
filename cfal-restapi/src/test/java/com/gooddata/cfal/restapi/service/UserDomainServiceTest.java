@@ -3,13 +3,16 @@
  */
 package com.gooddata.cfal.restapi.service;
 
+import com.gooddata.c4.C4SomethingNotFoundException;
 import com.gooddata.c4.domain.C4Domain;
 import com.gooddata.c4.domain.C4DomainNotFoundException;
 import com.gooddata.c4.domain.DomainService;
+import com.gooddata.c4.setting.C4SettingEntry;
 import com.gooddata.c4.user.C4User;
 import com.gooddata.c4.user.C4UserNotFoundException;
 import com.gooddata.c4.user.UserService;
 import com.gooddata.cfal.restapi.dto.UserInfo;
+import com.gooddata.cfal.restapi.exception.AuditLogNotEnabledException;
 import com.gooddata.cfal.restapi.exception.DomainNotFoundException;
 import com.gooddata.cfal.restapi.exception.UserNotDomainAdminException;
 import com.gooddata.cfal.restapi.exception.UserNotFoundException;
@@ -31,6 +34,7 @@ public class UserDomainServiceTest {
     private static final String USER_ID = "user";
     private static final String NOT_ADMIN_USER_ID = "not admin";
     private static final String NON_EXISTENT_USER_ID = "non existent user";
+    private static final String FF_DISABLED_USER_ID = "ff disabled user";
     private static final String DOMAIN = "domain";
     private static final String NON_EXISTENT_DOMAIN = "non existent domain";
     private static final String DOMAIN_URI = "/gdc/c4/domain/" + DOMAIN;
@@ -58,6 +62,9 @@ public class UserDomainServiceTest {
         C4Domain c4Domain = mock(C4Domain.class);
         doReturn(c4Domain).when(domainService).getDomain(DOMAIN);
         doReturn(USER_URI).when(c4Domain).getOwner();
+
+        doReturn(new C4SettingEntry("cfal", "true")).when(userService).getSetting(USER_ID, "cfal");
+        doThrow(C4SomethingNotFoundException.class).when(userService).getSetting(FF_DISABLED_USER_ID, "cfal");
 
         doThrow(C4UserNotFoundException.class).when(userService).getUser(NON_EXISTENT_USER_ID);
         doThrow(C4DomainNotFoundException.class).when(domainService).getDomain(NON_EXISTENT_DOMAIN);
@@ -132,5 +139,15 @@ public class UserDomainServiceTest {
     @Test(expected = NullPointerException.class)
     public void testGetUserInfoNullUserId() {
         userDomainService.getUserInfo(null);
+    }
+
+    @Test
+    public void shouldBeEnabledForUser() throws Exception {
+        userDomainService.ensureFeatureEnabled(USER_ID);
+    }
+
+    @Test(expected = AuditLogNotEnabledException.class)
+    public void shouldBeDisabledForDisabledUser() throws Exception {
+        userDomainService.ensureFeatureEnabled(FF_DISABLED_USER_ID);
     }
 }

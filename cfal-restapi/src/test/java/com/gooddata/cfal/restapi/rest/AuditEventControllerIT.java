@@ -5,6 +5,7 @@ package com.gooddata.cfal.restapi.rest;
 
 import com.gooddata.c4.domain.C4Domain;
 import com.gooddata.c4.domain.DomainService;
+import com.gooddata.c4.setting.C4SettingEntry;
 import com.gooddata.c4.user.C4User;
 import com.gooddata.c4.user.UserService;
 import com.gooddata.cfal.restapi.config.MonitoringTestConfig;
@@ -47,8 +48,11 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -128,6 +132,8 @@ public class AuditEventControllerIT {
 
         doReturn(c4User1).when(userService).getUser(USER1_ID);
         doReturn(c4User2).when(userService).getUser(USER2_ID);
+
+        doReturn(new C4SettingEntry("cfal", "true")).when(userService).getSetting(anyString(), eq("cfal"));
 
         c4Domain = mock(C4Domain.class);
 

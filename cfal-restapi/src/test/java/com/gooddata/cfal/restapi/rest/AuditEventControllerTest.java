@@ -9,6 +9,7 @@ import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
 import com.gooddata.cfal.restapi.dto.UserInfo;
+import com.gooddata.cfal.restapi.exception.AuditLogNotEnabledException;
 import com.gooddata.cfal.restapi.exception.DomainNotFoundException;
 import com.gooddata.cfal.restapi.exception.UserNotAuthorizedException;
 import com.gooddata.cfal.restapi.exception.UserNotDomainAdminException;
@@ -72,6 +73,8 @@ public class AuditEventControllerTest {
     private static final String NOT_ADMIN_USER_ID = "NOT_ADMIN";
 
     private static final String INVALID_USER_ID = "INVALIDA";
+
+    private static final String FF_NOT_ENABLED_USER_ID = "ff not enabled user";
 
     private static final String USER1_LOGIN = "bear@gooddata.com";
 
@@ -155,6 +158,8 @@ public class AuditEventControllerTest {
         doThrow(new UserNotDomainAdminException("")).when(userDomainService).authorizeAdmin(NOT_ADMIN_USER_ID, DOMAIN);
         doThrow(new DomainNotFoundException("")).when(userDomainService).authorizeAdmin(NOT_ADMIN_USER_ID, INVALID_DOMAIN);
 
+        doThrow(new AuditLogNotEnabledException("")).when(userDomainService).ensureFeatureEnabled(FF_NOT_ENABLED_USER_ID);
+
         RequestParameters pageRequestWithBadOffset = new RequestParameters();
         pageRequestWithBadOffset.setOffset(BAD_OFFSET);
 
@@ -203,6 +208,24 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, NOT_ADMIN_USER_ID))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error.errorClass", is(UserNotDomainAdminException.class.getName())))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
+    }
+
+    @Test
+    public void shouldFailOnAdminForNonEnabledFeature() throws Exception {
+        mockMvc.perform(get(adminUri())
+                .header(X_PUBLIC_USER_ID, FF_NOT_ENABLED_USER_ID))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.errorClass", is(AuditLogNotEnabledException.class.getName())))
+                .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
+    }
+
+    @Test
+    public void shouldFailOnUserForNonEnabledFeature() throws Exception {
+        mockMvc.perform(get(userUri(FF_NOT_ENABLED_USER_ID))
+                .header(X_PUBLIC_USER_ID, FF_NOT_ENABLED_USER_ID))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.errorClass", is(AuditLogNotEnabledException.class.getName())))
                 .andExpect(jsonPath("$.error.component", is(COMPONENT_NAME)));
     }
 
