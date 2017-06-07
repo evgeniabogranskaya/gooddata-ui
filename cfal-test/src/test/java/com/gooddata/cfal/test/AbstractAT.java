@@ -15,7 +15,9 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -84,17 +86,23 @@ public abstract class AbstractAT {
 
 
     private void doTest(final Function<Page, PageableList<AuditEventDTO>> serviceCall, Predicate<List<AuditEventDTO>> pageCheckPredicate) throws InterruptedException {
+        final String testMethodName = Arrays.stream(Thread.currentThread().getStackTrace())
+                .filter(e -> Objects.equals(e.getClassName(), getClass().getName()))
+                .map(StackTraceElement::getMethodName)
+                .findFirst()
+                .orElse("unknown");
+
         //poll until message is found in audit log or poll limit is hit
         int count = 1;
-        while (!hasMessage(serviceCall, pageCheckPredicate) && count <= POLL_LIMIT) {
-            logger.info("message not found, waiting {} seconds", POLL_INTERVAL_SECONDS);
+        while (count++ <= POLL_LIMIT) {
+            if (hasMessage(serviceCall, pageCheckPredicate)) {
+                return;
+            }
+            logger.info("{}(): message not found, waiting {} seconds", testMethodName, POLL_INTERVAL_SECONDS);
             TimeUnit.SECONDS.sleep(POLL_INTERVAL_SECONDS);
-            count++;
         }
 
-        if (!hasMessage(serviceCall, pageCheckPredicate)) {
-            fail("message not found");
-        }
+        fail("message not found");
     }
 
     /**
