@@ -70,12 +70,15 @@ mvn verify
 mvn -am -pl cfal-test -P at verify
 ```
 
-parameter               | default             | example
-------------------------|---------------------|--------
-`host`                  | `localhost`         | `-Dhost=mcl-cfal.na.intgdc.com`
-`user`                  | `bear@gooddata.com` | `-Duser=bear@gooddata.com`
-`pass`                  | `jindrisska`        | `-Dpass=jindrisska`
-`datawarehouseToken`    | `vertica`           | `-DdatawarehouseToken=vertica`
+parameter               | default                 | example
+------------------------|-------------------------|--------
+`host`                  | `localhost`             | `-Dhost=mcl-cfal.na.intgdc.com`
+`user`                  | `bear@gooddata.com`     | `-Duser=bear@gooddata.com`
+`pass`                  | `jindrisska`            | `-Dpass=jindrisska`
+`projectId`             | `FoodMartDemo`          | `-DprojectId=FoodMartDemo`
+`projectToken`          | _none_                  | `-DprojectToken=pgroup2`
+`keepProject`           | `true` for FoodMartDemo | `-DprojectToken=pgroup2`
+`datawarehouseToken`    | `vertica`               | `-DdatawarehouseToken=vertica`
 
 ### Manual tests
 

@@ -14,6 +14,7 @@ import com.gooddata.collections.PageableList;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeSuite;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +28,7 @@ import static org.testng.Assert.fail;
 
 public abstract class AbstractAT {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static final int POLL_LIMIT = 10;
     private static final int POLL_INTERVAL_SECONDS = 30;
@@ -41,7 +42,6 @@ public abstract class AbstractAT {
     protected final String user;
     protected final String pass;
     protected final String domain;
-    protected final String projectId;
 
     protected final Account account;
 
@@ -52,7 +52,6 @@ public abstract class AbstractAT {
         user = getProperty("user", "bear@gooddata.com");
         pass = getProperty("pass", "jindrisska");
         domain = getProperty("domain", "default");
-        projectId = getProperty("projectId", "FoodMartDemo");
 
         endpoint = new GoodDataEndpoint(host);
 
@@ -61,6 +60,11 @@ public abstract class AbstractAT {
 
         account = gd.getAccountService().getCurrent();
         startTime = new DateTime();
+    }
+
+    @BeforeSuite
+    public void logConnectionInfo() throws Exception {
+        logger.info("host={} user={} domain={}", host, user, domain);
     }
 
     /**

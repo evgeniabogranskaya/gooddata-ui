@@ -19,7 +19,7 @@ import static java.lang.System.getProperty;
 /**
  * Common parent for all ADS related AT
  */
-class AbstractAdsAT extends AbstractAT {
+abstract class AbstractAdsAT extends AbstractAT {
     private static final String CFAL_INSTANCE_NAME = "CFAL test";
 
     private final String datawarehouseToken;
@@ -30,6 +30,7 @@ class AbstractAdsAT extends AbstractAT {
         super();
         this.datawarehouseToken = getProperty("datawarehouseToken", "vertica");
         this.warehouse = gd.getWarehouseService().createWarehouse(createWarehouseRequest()).get();
+        logger.info("Created warehouse_id={}", warehouse.getId());
         final DataSource dataSource = createDataSource(warehouse);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
