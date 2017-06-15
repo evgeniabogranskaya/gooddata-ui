@@ -4,12 +4,12 @@
 package com.gooddata.cfal.msf;
 
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import com.gooddata.cfal.test.AbstractAT;
+import com.gooddata.cfal.test.AbstractProjectAT;
 import com.gooddata.dataload.processes.DataloadProcess;
 import com.gooddata.dataload.processes.ProcessType;
 import com.gooddata.dataload.processes.Schedule;
-import com.gooddata.project.Project;
 import org.testng.annotations.AfterGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -18,17 +18,16 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class ETLScheduleChangeAT extends AbstractAT {
+public class ETLScheduleChangeAT extends AbstractProjectAT {
 
     private static final String MESSAGE_TYPE = "ETL_SCHEDULE_CHANGE";
 
-    private final Project project;
-    private final DataloadProcess process;
-    private final Schedule schedule;
+    private DataloadProcess process;
+    private Schedule schedule;
 
-    public ETLScheduleChangeAT() throws URISyntaxException {
+    @BeforeClass
+    public void createProcessAndSchedule() throws URISyntaxException {
         final File file = new File(getClass().getClassLoader().getResource("test.rb").toURI());
-        project = gd.getProjectService().getProjectById(projectId);
         process = gd.getProcessService().createProcess(project, new DataloadProcess(getClass().getSimpleName(), ProcessType.RUBY), file);
         schedule = gd.getProcessService().createSchedule(project, new Schedule(process, "test.rb", "0 0 * * *"));
     }

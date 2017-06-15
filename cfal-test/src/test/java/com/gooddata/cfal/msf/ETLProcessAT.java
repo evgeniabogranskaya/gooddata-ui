@@ -10,12 +10,11 @@ import static org.testng.Assert.fail;
 import com.gooddata.FutureResult;
 import com.gooddata.GoodDataException;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import com.gooddata.cfal.test.AbstractAT;
+import com.gooddata.cfal.test.AbstractProjectAT;
 import com.gooddata.dataload.processes.DataloadProcess;
 import com.gooddata.dataload.processes.ProcessExecution;
 import com.gooddata.dataload.processes.ProcessExecutionDetail;
 import com.gooddata.dataload.processes.ProcessType;
-import com.gooddata.project.Project;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -30,7 +29,7 @@ import java.util.function.Predicate;
  * Tests ETL process messages
  */
 @Test
-public class ETLProcessAT extends AbstractAT {
+public class ETLProcessAT extends AbstractProjectAT {
 
     private static final String EXECUTION_MESSAGE_TYPE = "ETL_PROCESS_MANUAL_EXECUTION";
     private static final String CREATE_MESSAGE_TYPE = "ETL_PROCESS_CREATION";
@@ -43,7 +42,6 @@ public class ETLProcessAT extends AbstractAT {
     @BeforeClass
     public void createProcess() throws URISyntaxException {
         final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
-        final Project project = gd.getProjectService().getProjectById(projectId);
         process = gd.getProcessService().createProcess(project, new DataloadProcess(getClass().getSimpleName(), ProcessType.RUBY), file);
     }
 
@@ -51,7 +49,6 @@ public class ETLProcessAT extends AbstractAT {
     public void badCreateProcess() throws URISyntaxException {
         try {
             final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
-            final Project project = gd.getProjectService().getProjectById(projectId);
             gd.getProcessService().createProcess(project, new DataloadProcess(getClass().getSimpleName(), ProcessType.GRAPH), file);
             fail("should throw exception");
         } catch (GoodDataException ignored) {
@@ -110,7 +107,7 @@ public class ETLProcessAT extends AbstractAT {
     public void badRemoveProcess() {
         try {
             final DataloadProcess badProcess = mock(DataloadProcess.class);
-            doReturn("/gdc/projects/" + projectId + "/dataload/processes/aaa").when(badProcess).getUri();
+            doReturn("/gdc/projects/" + project.getId() + "/dataload/processes/aaa").when(badProcess).getUri();
             gd.getProcessService().removeProcess(badProcess);
             fail("should throw exception");
         } catch (GoodDataException ignored) {
