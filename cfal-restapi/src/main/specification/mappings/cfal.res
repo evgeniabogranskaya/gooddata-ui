@@ -17,6 +17,7 @@
 #       limit  - INT    (optional)          % The maximum number of records per page.
 #       from   - DATETIMEISO (optional)     % specify min timestamp of audit events to be returned
 #       to     - DATETIMEISO (optional)     % specify max timestamp of audit events to be returned
+#       type   - STRING|^[a-zA-Z]([a-zA-Z_]*)$| (optional) % specify type of the events to be returned
 #
 #   GET
 #    - (200 OK) <AuditEvents>
@@ -30,6 +31,7 @@
 #       limit  - INT    (optional)          % The maximum number of records per page.
 #       from   - DATETIMEISO (optional)     % specify min timestamp of audit events to be returned
 #       to     - DATETIMEISO (optional)     % specify max timestamp of audit events to be returned
+#       type   - STRING|^[a-zA-Z]([a-zA-Z_]*)$| (optional) % specify type of the events to be returned
 #
 #   GET
 #    - (200 OK) <AuditEvents>

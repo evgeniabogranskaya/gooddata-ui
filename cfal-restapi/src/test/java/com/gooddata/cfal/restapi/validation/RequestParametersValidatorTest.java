@@ -77,4 +77,13 @@ public class RequestParametersValidatorTest {
 
         assertThat(errors.getErrorCount(), is(0));
     }
+
+    @Test
+    public void testValidateEventType() {
+        requestParameters.setType("_x");
+
+        requestParametersValidator.validate(requestParameters, errors);
+
+        assertThat(errors, hasFieldError(RequestParametersValidator.TYPE_FIELD, RequestParametersValidator.ERROR_CODE_NOT_VALID_TYPE));
+    }
 }

@@ -19,6 +19,7 @@ public class RequestParametersValidator implements Validator {
 
     public static final String LIMIT_FIELD = "limit";
 
+    public static final String TYPE_FIELD = "type";
 
     public static final String ERROR_CODE_INVALID_OFFSET = "requestParameters.invalid_offset";
 
@@ -28,6 +29,7 @@ public class RequestParametersValidator implements Validator {
 
     public static final String ERROR_CODE_NOT_POSITIVE_LIMIT = "requestParameters.not_positive_limit";
 
+    public static final String ERROR_CODE_NOT_VALID_TYPE = "requestParameters.not_matching_eventtype";
 
     public static final String INVALID_OFFSET_MSG = "invalid offset";
 
@@ -37,6 +39,9 @@ public class RequestParametersValidator implements Validator {
 
     public static final String NOT_POSITIVE_LIMIT_MSG = "limit parameter must be positive number";
 
+    private static final String TYPE_REGEXP = "^[a-zA-Z]([a-zA-Z_]*)$";
+
+    public static final String CODE_NOT_VALID_TYPE_MSG = "\"type\" does not match regularExpression=" + TYPE_REGEXP;
 
     @Override
     public boolean supports(final Class<?> aClass) {
@@ -46,7 +51,7 @@ public class RequestParametersValidator implements Validator {
     @Override
     public void validate(final Object o, final Errors errors) {
         final RequestParameters requestParameters = (RequestParameters) o;
-        if(requestParameters.getOffset() != null) {
+        if (requestParameters.getOffset() != null) {
             if (!ObjectId.isValid(requestParameters.getOffset())) {
                 errors.rejectValue(OFFSET_FIELD, ERROR_CODE_INVALID_OFFSET, INVALID_OFFSET_MSG);
             }
@@ -62,7 +67,11 @@ public class RequestParametersValidator implements Validator {
             }
         }
 
-        if(requestParameters.getLimit() <= 0 ) {
+        if (requestParameters.getType() != null && !requestParameters.getType().matches(TYPE_REGEXP)) {
+            errors.rejectValue(TYPE_FIELD, ERROR_CODE_NOT_VALID_TYPE, CODE_NOT_VALID_TYPE_MSG);
+        }
+
+        if (requestParameters.getLimit() <= 0) {
             errors.rejectValue(LIMIT_FIELD, ERROR_CODE_NOT_POSITIVE_LIMIT, NOT_POSITIVE_LIMIT_MSG);
         }
     }
