@@ -36,5 +36,7 @@ public enum AuditLogEventType {
     ETL_PROCESS_UPDATE,
     /** ETL process delete **/
     ETL_PROCESS_DELETION,
+    /** ADD manual execution */
+    ETL_ADD_MANUAL_EXECUTION,
     ;
 }
