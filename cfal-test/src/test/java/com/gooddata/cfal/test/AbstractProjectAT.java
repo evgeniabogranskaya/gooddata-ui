@@ -9,7 +9,6 @@ import com.gooddata.project.ProjectEnvironment;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
-import static java.lang.System.getProperty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -19,18 +18,16 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public abstract class AbstractProjectAT extends AbstractAT {
 
     private final String existingProjectId; // may be null
-    private final String projectToken;
     private final boolean keepProject;
     protected static Project project;
 
     public AbstractProjectAT() {
-        this.projectToken = getProperty("projectToken");
-        final String projectId = getProperty("projectId");
-        if (isBlank(projectId) && isBlank(projectToken)) {
+        final String projectId = props.getProjectId();
+        if (isBlank(projectId) && isBlank(props.getProjectToken())) {
             this.existingProjectId = "FoodMartDemo";
             this.keepProject = true;
         } else {
-            this.keepProject = Boolean.getBoolean("keepProject");
+            this.keepProject = props.getKeepProject();
             if (isNotBlank(projectId)) {
                 this.existingProjectId = projectId;
             } else {
@@ -42,7 +39,7 @@ public abstract class AbstractProjectAT extends AbstractAT {
     @BeforeSuite
     public void getOrCreateProject() throws Exception {
         if (existingProjectId == null) {
-            project = createProject(projectToken);
+            project = createProject(props.getProjectToken());
         } else {
             project = gd.getProjectService().getProjectById(existingProjectId);
         }
@@ -55,7 +52,7 @@ public abstract class AbstractProjectAT extends AbstractAT {
         project.setEnvironment(ProjectEnvironment.TESTING);
         final FutureResult<Project> result = gd.getProjectService().createProject(project);
         logger.info("Creating project uri={}", result.getPollingUri());
-        return result.get(POLL_TIMEOUT, POLL_TIMEOUT_UNIT);
+        return result.get(props.getPollTimeoutMinutes(), props.getPollTimeoutUnit());
     }
 
     @AfterSuite

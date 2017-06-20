@@ -6,7 +6,9 @@ package com.gooddata.cfal.test;
 import com.gooddata.CfalGoodData;
 import com.gooddata.GoodDataEndpoint;
 import com.gooddata.account.Account;
+import com.gooddata.auditlog.AdsService;
 import com.gooddata.auditlog.AuditLogService;
+import com.gooddata.auditlog.TestEnvironmentProperties;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
 import com.gooddata.collections.Page;
@@ -23,13 +25,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static java.lang.System.getProperty;
 import static org.testng.Assert.fail;
 
 public abstract class AbstractAT {
-
-    public static final int POLL_TIMEOUT = Integer.getInteger("pollTimeoutMinutes", 5);
-    public static final TimeUnit POLL_TIMEOUT_UNIT = TimeUnit.MINUTES;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -41,33 +39,31 @@ public abstract class AbstractAT {
 
     protected final AuditLogService service;
 
-    protected final String host;
-    protected final String user;
-    protected final String pass;
-    protected final String domain;
+    protected final TestEnvironmentProperties props;
 
     protected final Account account;
 
     private final DateTime startTime;
 
+    protected final AdsService adsService;
+
     public AbstractAT() {
-        host = getProperty("host", "localhost");
-        user = getProperty("user", "bear@gooddata.com");
-        pass = getProperty("pass", "jindrisska");
-        domain = getProperty("domain", "default");
+        props = new TestEnvironmentProperties();
 
-        endpoint = new GoodDataEndpoint(host);
+        endpoint = new GoodDataEndpoint(props.getHost());
 
-        gd = new CfalGoodData(endpoint, user, pass);
+        gd = new CfalGoodData(endpoint, props.getUser(), props.getPass());
         service = gd.getAuditLogService();
 
         account = gd.getAccountService().getCurrent();
         startTime = new DateTime();
+
+        this.adsService = new AdsService(gd, props);
     }
 
     @BeforeSuite
     public void logConnectionInfo() throws Exception {
-        logger.info("host={} user={} domain={}", host, user, domain);
+        logger.info("host={} user={} domain={}", props.getHost(), props.getUser(), props.getDomain());
     }
 
     /**
@@ -90,7 +86,7 @@ public abstract class AbstractAT {
      * @throws InterruptedException
      */
     public void doTestAdminApi(Predicate<List<AuditEventDTO>> pageCheckPredicate, String type) throws InterruptedException {
-        doTest((Page page) -> service.listAuditEvents(domain, page), pageCheckPredicate, type);
+        doTest((Page page) -> service.listAuditEvents(props.getDomain(), page), pageCheckPredicate, type);
     }
 
     private void doTest(final Function<Page, PageableList<AuditEventDTO>> serviceCall,
