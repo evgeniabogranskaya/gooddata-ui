@@ -68,7 +68,7 @@ public class AuditLogEventRepository {
      * Finds all events for given user and in given time interval. If <code>offset</code> is not null, than returns events younger (greater ID) than <code>offset</code>.
      * Result list (page) has size equal to <code>limit</code>.
      *
-     * @param userInfo identifies user
+     * @param userInfo          identifies user
      * @param requestParameters parameters for filtering events
      * @return list starting from <code>offset</code> and limited on given time range
      */
@@ -132,6 +132,7 @@ public class AuditLogEventRepository {
     /**
      * Return number of days all records are supposed to be deleted.
      * As the index is constructed on "eventdate" field, one extra day is added.
+     *
      * @return number of days
      */
     private long getRecordTtlDays() {
@@ -185,6 +186,10 @@ public class AuditLogEventRepository {
 
         if (idCriteria != null) {
             query.addCriteria(idCriteria);
+        }
+
+        if (requestParameters.getType() != null) {
+            query.addCriteria(Criteria.where("type").is(requestParameters.getType()));
         }
 
         query.with(new Sort(Sort.Direction.ASC, "id"));

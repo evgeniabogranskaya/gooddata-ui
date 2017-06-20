@@ -18,7 +18,8 @@ public class RequestParametersTest {
     private static final DateTime TO = new DateTime();
     private static final Integer LIMIT = 10;
     private static final String OFFSET = new ObjectId().toString();
-    
+    public static final String EVENT_TYPE = "STANDARD_LOGIN";
+
     @Test
     public void testCopy() {
         RequestParameters requestParameters = new RequestParameters();
@@ -26,6 +27,7 @@ public class RequestParametersTest {
         requestParameters.setTo(TO);
         requestParameters.setLimit(LIMIT);
         requestParameters.setOffset(OFFSET);
+        requestParameters.setType(EVENT_TYPE);
 
         RequestParameters copy = RequestParameters.copy(requestParameters);
 
@@ -44,6 +46,7 @@ public class RequestParametersTest {
         requestParameters.setTo(TO);
         requestParameters.setLimit(LIMIT);
         requestParameters.setOffset(OFFSET);
+        requestParameters.setType(EVENT_TYPE);
 
         RequestParameters result = requestParameters.withIncrementedLimit();
 
@@ -51,6 +54,7 @@ public class RequestParametersTest {
         assertThat(result.getTo(), is(TO));
         assertThat(result.getSanitizedLimit(), is(LIMIT+1));
         assertThat(result.getOffset(), is(OFFSET));
+        assertThat(result.getType(), is(EVENT_TYPE));
     }
 
     @Test
@@ -60,10 +64,12 @@ public class RequestParametersTest {
         requestParameters.setTo(TO);
         requestParameters.setLimit(LIMIT);
         requestParameters.setOffset(OFFSET);
+        requestParameters.setType(EVENT_TYPE);
 
         UriComponentsBuilder result = requestParameters.updateWithPageParams(UriComponentsBuilder.newInstance());
 
-        assertThat(result.build().toUriString(), is("?offset=" + OFFSET + "&limit=" + LIMIT + "&from=" + FROM.toDateTime(DateTimeZone.UTC) + "&to=" + TO.toDateTime(DateTimeZone.UTC)));
+        assertThat(result.build().toUriString(), is(String.format("?offset=%s&limit=%d&from=%s&to=%s&type=%s",
+                OFFSET, LIMIT, FROM.toDateTime(DateTimeZone.UTC), TO.toDateTime(DateTimeZone.UTC), EVENT_TYPE)));
     }
 
     @Test

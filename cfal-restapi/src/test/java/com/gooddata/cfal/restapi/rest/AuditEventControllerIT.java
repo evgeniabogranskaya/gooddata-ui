@@ -41,6 +41,7 @@ import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI_TEMPLATE;
 import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI_TEMPLATE;
 import static com.gooddata.cfal.restapi.util.DateUtils.convertDateTimeToObjectId;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
+import static com.gooddata.cfal.restapi.util.EntityDTOIdMatcher.hasSameIdAs;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -59,7 +60,7 @@ import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource(locations="classpath:application-test.properties")
+@TestPropertySource(locations = "classpath:application-test.properties")
 @Import(MonitoringTestConfig.class)
 public class AuditEventControllerIT {
 
@@ -78,6 +79,7 @@ public class AuditEventControllerIT {
     private static final String IP = "127.0.0.1";
     private static final boolean SUCCESS = true;
     private static final String TYPE = "login";
+    private static final String TYPE2 = "logout";
     private static final Map<String, String> EMPTY_PARAMS = new HashMap<>();
     private static final Map<String, String> EMPTY_LINKS = new HashMap<>();
 
@@ -104,6 +106,7 @@ public class AuditEventControllerIT {
     private AuditEvent event3 = new AuditEvent(convertDateTimeToObjectId(date("1996-03-09")), DOMAIN, USER1_LOGIN, date("1996-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
     private AuditEvent event4 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN, USER1_LOGIN, date("2001-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
     private AuditEvent event5 = new AuditEvent(convertDateTimeToObjectId(date("2016-03-09")), DOMAIN, USER2_LOGIN, date("2016-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+    private AuditEvent event6 = new AuditEvent(convertDateTimeToObjectId(date("2016-03-09")), DOMAIN, USER2_LOGIN, date("2016-03-09"), IP, SUCCESS, TYPE2, EMPTY_PARAMS, EMPTY_LINKS);
 
     private C4User c4User1;
     private C4User c4User2;
@@ -120,6 +123,7 @@ public class AuditEventControllerIT {
         auditLogEventRepository.save(event3);
         auditLogEventRepository.save(event4);
         auditLogEventRepository.save(event5);
+        auditLogEventRepository.save(event6);
 
         c4User1 = mock(C4User.class);
         c4User2 = mock(C4User.class);
@@ -148,7 +152,8 @@ public class AuditEventControllerIT {
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
-        assertThat(result.getBody(), containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2),  EntityDTOIdMatcher.hasSameIdAs(event3), EntityDTOIdMatcher.hasSameIdAs(event4), EntityDTOIdMatcher.hasSameIdAs(event5)));
+        assertThat(result.getBody(), containsInAnyOrder(hasSameIdAs(event1), hasSameIdAs(event2), hasSameIdAs(event3),
+                hasSameIdAs(event4), hasSameIdAs(event5), hasSameIdAs(event6)));
     }
 
     @Test
@@ -162,7 +167,7 @@ public class AuditEventControllerIT {
 
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage.getStatusCode(), is(HttpStatus.OK));
-        assertThat(firstPage.getBody(), containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2)));
+        assertThat(firstPage.getBody(), containsInAnyOrder(hasSameIdAs(event1), hasSameIdAs(event2)));
         String secondPageUri = firstPage.getBody().getPaging().getNextUri();
         assertThat(secondPageUri, notNullValue());
 
@@ -170,7 +175,7 @@ public class AuditEventControllerIT {
 
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage.getStatusCode(), is(HttpStatus.OK));
-        assertThat(secondPage.getBody(), containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event3), EntityDTOIdMatcher.hasSameIdAs(event4)));
+        assertThat(secondPage.getBody(), containsInAnyOrder(hasSameIdAs(event3), hasSameIdAs(event4)));
 
         String thirdPageUri = secondPage.getBody().getPaging().getNextUri();
         assertThat(thirdPageUri, notNullValue());
@@ -179,7 +184,7 @@ public class AuditEventControllerIT {
 
         assertThat(thirdPage, is(notNullValue()));
         assertThat(thirdPage.getStatusCode(), is(HttpStatus.OK));
-        assertThat(thirdPage.getBody(), Matchers.contains(EntityDTOIdMatcher.hasSameIdAs(event5)));
+        assertThat(thirdPage.getBody(), Matchers.containsInAnyOrder(hasSameIdAs(event5), hasSameIdAs(event6)));
 
         String fourthPageUri = thirdPage.getBody().getPaging().getNextUri();
         assertThat(fourthPageUri, nullValue());
@@ -210,12 +215,36 @@ public class AuditEventControllerIT {
     }
 
     @Test
+    public void testListAuditEventsInvalidType() {
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setType("_x");
+
+        String uri = createUriWithParams(requestParameters, adminUri());
+
+        ResponseEntity<ErrorStructure> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), ErrorStructure.class);
+
+        assertThat(result.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void testListAuditEventsForUserInvalidType() {
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setType("_x");
+
+        String uri = createUriWithParams(requestParameters, userUri(USER1_ID));
+
+        ResponseEntity<ErrorStructure> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), ErrorStructure.class);
+
+        assertThat(result.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
     public void testListAuditEventsForUser() {
         ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(userUri(USER1_ID), HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
-        assertThat(result.getBody(), containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event3), EntityDTOIdMatcher.hasSameIdAs(event4)));
+        assertThat(result.getBody(), containsInAnyOrder(hasSameIdAs(event1), hasSameIdAs(event3), hasSameIdAs(event4)));
     }
 
     @Test
@@ -229,7 +258,7 @@ public class AuditEventControllerIT {
 
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage.getStatusCode(), is(HttpStatus.OK));
-        assertThat(firstPage.getBody(), Matchers.contains(EntityDTOIdMatcher.hasSameIdAs(event1)));
+        assertThat(firstPage.getBody(), Matchers.contains(hasSameIdAs(event1)));
         String secondPageUri = firstPage.getBody().getPaging().getNextUri();
         assertThat(secondPageUri, notNullValue());
 
@@ -237,7 +266,7 @@ public class AuditEventControllerIT {
 
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage.getStatusCode(), is(HttpStatus.OK));
-        assertThat(secondPage.getBody(), Matchers.contains(EntityDTOIdMatcher.hasSameIdAs(event3)));
+        assertThat(secondPage.getBody(), Matchers.contains(hasSameIdAs(event3)));
 
         String thirdPageUri = secondPage.getBody().getPaging().getNextUri();
         assertThat(thirdPageUri, notNullValue());
@@ -246,10 +275,38 @@ public class AuditEventControllerIT {
 
         assertThat(thirdPage, is(notNullValue()));
         assertThat(thirdPage.getStatusCode(), is(HttpStatus.OK));
-        assertThat(thirdPage.getBody(), Matchers.contains(EntityDTOIdMatcher.hasSameIdAs(event4)));
+        assertThat(thirdPage.getBody(), Matchers.contains(hasSameIdAs(event4)));
 
         String fourthPageUri = thirdPage.getBody().getPaging().getNextUri();
         assertThat(fourthPageUri, nullValue());
+    }
+
+    @Test
+    public void testListAuditEventsWithType() {
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setType(TYPE2);
+
+        String uri = createUriWithParams(requestParameters, adminUri());
+
+        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getStatusCode(), is(HttpStatus.OK));
+        assertThat(result.getBody(), contains(hasSameIdAs(event6)));
+    }
+
+    @Test
+    public void testListAuditEventsForUserWithType() {
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setType(TYPE2);
+
+        String uri = createUriWithParams(requestParameters, userUri(USER2_ID));
+
+        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER2_ID), AuditEventsDTO.class);
+
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getStatusCode(), is(HttpStatus.OK));
+        assertThat(result.getBody(), contains(hasSameIdAs(event6)));
     }
 
     @Test
@@ -263,7 +320,7 @@ public class AuditEventControllerIT {
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
-        assertThat(result.getBody(), containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event4), EntityDTOIdMatcher.hasSameIdAs(event5)));
+        assertThat(result.getBody(), containsInAnyOrder(hasSameIdAs(event4), hasSameIdAs(event5), hasSameIdAs(event6)));
     }
 
     @Test
@@ -277,7 +334,7 @@ public class AuditEventControllerIT {
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
-        assertThat(result.getBody(), containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2), EntityDTOIdMatcher.hasSameIdAs(event3)));
+        assertThat(result.getBody(), containsInAnyOrder(hasSameIdAs(event1), hasSameIdAs(event2), hasSameIdAs(event3)));
     }
 
     @Test
@@ -292,7 +349,7 @@ public class AuditEventControllerIT {
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
-        assertThat(result.getBody(), containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event2), EntityDTOIdMatcher.hasSameIdAs(event3)));
+        assertThat(result.getBody(), containsInAnyOrder(hasSameIdAs(event2), hasSameIdAs(event3)));
     }
 
     @Test
@@ -306,7 +363,7 @@ public class AuditEventControllerIT {
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
-        assertThat(result.getBody(), containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event3), EntityDTOIdMatcher.hasSameIdAs(event4)));
+        assertThat(result.getBody(), containsInAnyOrder(hasSameIdAs(event3), hasSameIdAs(event4)));
     }
 
     @Test
@@ -320,7 +377,7 @@ public class AuditEventControllerIT {
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
-        assertThat(result.getBody(), contains(EntityDTOIdMatcher.hasSameIdAs(event1)));
+        assertThat(result.getBody(), contains(hasSameIdAs(event1)));
     }
 
     @Test
@@ -335,7 +392,7 @@ public class AuditEventControllerIT {
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
-        assertThat(result.getBody(), contains(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event3)));
+        assertThat(result.getBody(), contains(hasSameIdAs(event1), hasSameIdAs(event3)));
     }
 
     @Test
@@ -351,7 +408,7 @@ public class AuditEventControllerIT {
 
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage.getStatusCode(), is(HttpStatus.OK));
-        assertThat(firstPage.getBody(), containsInAnyOrder(EntityDTOIdMatcher.hasSameIdAs(event1), EntityDTOIdMatcher.hasSameIdAs(event2)));
+        assertThat(firstPage.getBody(), containsInAnyOrder(hasSameIdAs(event1), hasSameIdAs(event2)));
 
         String secondPageUri = firstPage.getBody().getPaging().getNextUri();
         assertThat(secondPageUri, is(notNullValue()));
@@ -360,7 +417,7 @@ public class AuditEventControllerIT {
 
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage.getStatusCode(), is(HttpStatus.OK));
-        assertThat(secondPage.getBody(), contains(EntityDTOIdMatcher.hasSameIdAs(event3)));
+        assertThat(secondPage.getBody(), contains(hasSameIdAs(event3)));
     }
 
     @Test
@@ -377,7 +434,7 @@ public class AuditEventControllerIT {
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
-        assertThat(result.getBody(), contains(EntityDTOIdMatcher.hasSameIdAs(event2), EntityDTOIdMatcher.hasSameIdAs(event5)));
+        assertThat(result.getBody(), contains(hasSameIdAs(event2), hasSameIdAs(event5), hasSameIdAs(event6)));
     }
 
     @Test
@@ -386,7 +443,7 @@ public class AuditEventControllerIT {
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
-        assertThat(result.getBody(), contains(EntityDTOIdMatcher.hasSameIdAs(event2), EntityDTOIdMatcher.hasSameIdAs(event5)));
+        assertThat(result.getBody(), contains(hasSameIdAs(event2), hasSameIdAs(event5), hasSameIdAs(event6)));
     }
 
     @Test

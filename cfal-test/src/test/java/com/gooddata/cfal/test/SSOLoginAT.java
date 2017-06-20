@@ -79,12 +79,12 @@ public class SSOLoginAT extends AbstractAT {
 
     @Test(dependsOnMethods = "shouldLoginUserWithSSO")
     public void testLoginMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate());
+        doTestUserApi(pageCheckPredicate(), MESSAGE_TYPE);
     }
 
     @Test(dependsOnMethods = "shouldLoginUserWithSSO")
     public void testLoginMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate());
+        doTestAdminApi(pageCheckPredicate(), MESSAGE_TYPE);
     }
 
     private Predicate<List<AuditEventDTO>> pageCheckPredicate() {

@@ -40,22 +40,22 @@ public class ETLScheduleChangeAT extends AbstractProjectAT {
 
     @AfterGroups(groups = MESSAGE_TYPE)
     public void tearDown() {
-        if(schedule != null) {
+        if (schedule != null) {
             gd.getProcessService().removeSchedule(schedule);
         }
-        if(process != null) {
+        if (process != null) {
             gd.getProcessService().removeProcess(process);
         }
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void testChangeETLScheduleUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate());
+        doTestUserApi(pageCheckPredicate(), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void testChangeETLScheduleAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate());
+        doTestAdminApi(pageCheckPredicate(), MESSAGE_TYPE);
     }
 
     private Predicate<List<AuditEventDTO>> pageCheckPredicate() {

@@ -23,12 +23,12 @@ public class LoginAT extends AbstractAT {
 
     @Test(groups = MESSAGE_TYPE)
     public void testLoginMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate());
+        doTestUserApi(pageCheckPredicate(), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void testLoginMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate());
+        doTestAdminApi(pageCheckPredicate(), MESSAGE_TYPE);
     }
 
     private Predicate<List<AuditEventDTO>> pageCheckPredicate() {

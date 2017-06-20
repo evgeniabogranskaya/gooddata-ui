@@ -23,6 +23,8 @@ public class RequestParameters extends PageRequest {
 
     private DateTime to;
 
+    private String type;
+
     public RequestParameters() {
     }
 
@@ -50,6 +52,19 @@ public class RequestParameters extends PageRequest {
 
     public ObjectId getOffsetAsObjectId() {
         return getOffset() == null ? null : new ObjectId(getOffset());
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Specify event type for filtering purposes
+     *
+     * @param type
+     */
+    public void setType(String type) {
+        this.type = type;
     }
 
     /**
@@ -88,6 +103,10 @@ public class RequestParameters extends PageRequest {
         if (to != null) {
             builderWithPaging.queryParam("to", to.toDateTime(DateTimeZone.UTC));
         }
+        if (type != null) {
+            builderWithPaging.queryParam("type", type);
+        }
+
         return builderWithPaging;
     }
 
@@ -103,6 +122,7 @@ public class RequestParameters extends PageRequest {
                 .appendSuper(super.equals(o))
                 .append(from, that.from)
                 .append(to, that.to)
+                .append(type, that.type)
                 .isEquals();
     }
 
@@ -112,6 +132,7 @@ public class RequestParameters extends PageRequest {
                 .appendSuper(super.hashCode())
                 .append(from)
                 .append(to)
+                .append(type)
                 .toHashCode();
     }
 }

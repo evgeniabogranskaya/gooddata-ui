@@ -54,22 +54,22 @@ public class ETLScheduleManualExecutionAT extends AbstractProjectAT {
 
     @Test(dependsOnMethods = "executeSchedule", groups = MESSAGE_TYPE)
     public void testScheduleManualExecutionMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(true));
+        doTestUserApi(pageCheckPredicate(true), MESSAGE_TYPE);
     }
 
     @Test(dependsOnMethods = "executeSchedule", groups = MESSAGE_TYPE)
     public void testScheduleManualExecutionMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(true));
+        doTestAdminApi(pageCheckPredicate(true), MESSAGE_TYPE);
     }
 
     @Test(dependsOnMethods = "badExecuteSchedule", groups = MESSAGE_TYPE)
     public void testScheduleManualExecutionMessageErrorUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(false));
+        doTestUserApi(pageCheckPredicate(false), MESSAGE_TYPE);
     }
 
     @Test(dependsOnMethods = "badExecuteSchedule", groups = MESSAGE_TYPE)
     public void testScheduleManualExecutionMessageErrorAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(false));
+        doTestAdminApi(pageCheckPredicate(false), MESSAGE_TYPE);
     }
 
     @AfterGroups(groups = MESSAGE_TYPE)

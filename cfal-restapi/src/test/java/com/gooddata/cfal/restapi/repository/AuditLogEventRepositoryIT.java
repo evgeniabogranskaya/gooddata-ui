@@ -62,6 +62,8 @@ public class AuditLogEventRepositoryIT {
     private static final String IP = "127.0.0.1";
     private static final boolean SUCCESS = true;
     private static final String TYPE = "login";
+    private static final String TYPE2 = "logout";
+
     private static final Map<String, String> EMPTY_PARAMS = new HashMap<>();
     private static final Map<String, String> EMPTY_LINKS = new HashMap<>();
     @Autowired
@@ -73,6 +75,7 @@ public class AuditLogEventRepositoryIT {
     private AuditEvent event1;
     private AuditEvent event2;
     private AuditEvent event3;
+    private AuditEvent event4;
 
     @Before
     public void setUp() {
@@ -82,10 +85,12 @@ public class AuditLogEventRepositoryIT {
         event1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN1, USER1_LOGIN, date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
         event2 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN1, USER2_LOGIN, date("2001-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
         event3 = new AuditEvent(convertDateTimeToObjectId(date("2010-03-09")), DOMAIN1, USER1_LOGIN, date("2010-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+        event4 = new AuditEvent(convertDateTimeToObjectId(date("2010-03-09")), DOMAIN1, USER1_LOGIN, date("2010-03-09"), IP, SUCCESS, TYPE2, EMPTY_PARAMS, EMPTY_LINKS);
 
         mongoTemplate.save(event1, auditLogEventRepository.getMongoCollectionName(DOMAIN1));
         mongoTemplate.save(event2, auditLogEventRepository.getMongoCollectionName(DOMAIN1));
         mongoTemplate.save(event3, auditLogEventRepository.getMongoCollectionName(DOMAIN1));
+        mongoTemplate.save(event4, auditLogEventRepository.getMongoCollectionName(DOMAIN1));
     }
 
     @Test
@@ -96,7 +101,22 @@ public class AuditLogEventRepositoryIT {
         List<AuditEvent> events = auditLogEventRepository.findByDomain(DOMAIN1, requestParameters);
 
         assertThat(events, is(notNullValue()));
-        assertThat(events, containsInAnyOrder(EntityIdMatcher.hasSameIdAs(event1), EntityIdMatcher.hasSameIdAs(event2), EntityIdMatcher.hasSameIdAs(event3)));
+        assertThat(events, containsInAnyOrder(EntityIdMatcher.hasSameIdAs(event1),
+                EntityIdMatcher.hasSameIdAs(event2),
+                EntityIdMatcher.hasSameIdAs(event3),
+                EntityIdMatcher.hasSameIdAs(event4)));
+    }
+
+    @Test
+    public void testFindByDomainWithType() {
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setLimit(10);
+        requestParameters.setType(TYPE2);
+
+        List<AuditEvent> events = auditLogEventRepository.findByDomain(DOMAIN1, requestParameters);
+
+        assertThat(events, is(notNullValue()));
+        assertThat(events, contains(EntityIdMatcher.hasSameIdAs(event4)));
     }
 
     @Test
@@ -119,7 +139,7 @@ public class AuditLogEventRepositoryIT {
         List<AuditEvent> events = auditLogEventRepository.findByDomain(DOMAIN1, requestParameters);
 
         assertThat(events, is(notNullValue()));
-        assertThat(events, Matchers.contains(EntityIdMatcher.hasSameIdAs(event3)));
+        assertThat(events, Matchers.contains(EntityIdMatcher.hasSameIdAs(event3), EntityIdMatcher.hasSameIdAs(event4)));
     }
 
     @Test
@@ -160,12 +180,29 @@ public class AuditLogEventRepositoryIT {
         List<AuditEvent> eventsUser1 = auditLogEventRepository.findByUser(new UserInfo(USER1_ID, USER1_LOGIN, DOMAIN1), requestParameters);
 
         assertThat(eventsUser1, is(notNullValue()));
-        assertThat(eventsUser1, containsInAnyOrder(EntityIdMatcher.hasSameIdAs(event1), EntityIdMatcher.hasSameIdAs(event3)));
+        assertThat(eventsUser1, containsInAnyOrder(EntityIdMatcher.hasSameIdAs(event1), EntityIdMatcher.hasSameIdAs(event3), EntityIdMatcher.hasSameIdAs(event4)));
 
         List<AuditEvent> eventsUser2 = auditLogEventRepository.findByUser(new UserInfo(USER2_ID, USER2_LOGIN, DOMAIN1), requestParameters);
 
         assertThat(eventsUser2, is(notNullValue()));
         assertThat(eventsUser2, Matchers.contains(EntityIdMatcher.hasSameIdAs(event2)));
+    }
+
+    @Test
+    public void testFindByUserWithType() {
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setLimit(10);
+        requestParameters.setType(TYPE2);
+
+        List<AuditEvent> eventsUser1 = auditLogEventRepository.findByUser(new UserInfo(USER1_ID, USER1_LOGIN, DOMAIN1), requestParameters);
+
+        assertThat(eventsUser1, is(notNullValue()));
+        assertThat(eventsUser1, contains(EntityIdMatcher.hasSameIdAs(event4)));
+
+        List<AuditEvent> eventsUser2 = auditLogEventRepository.findByUser(new UserInfo(USER2_ID, USER2_LOGIN, DOMAIN1), requestParameters);
+
+        assertThat(eventsUser2, is(notNullValue()));
+        assertThat(eventsUser2, hasSize(0));
     }
 
     @Test
@@ -177,7 +214,7 @@ public class AuditLogEventRepositoryIT {
         List<AuditEvent> eventsUser1 = auditLogEventRepository.findByUser(new UserInfo(USER1_ID, USER1_LOGIN, DOMAIN1), requestParameters1);
 
         assertThat(eventsUser1, is(notNullValue()));
-        assertThat(eventsUser1, Matchers.contains(EntityIdMatcher.hasSameIdAs(event3)));
+        assertThat(eventsUser1, Matchers.contains(EntityIdMatcher.hasSameIdAs(event3), EntityIdMatcher.hasSameIdAs(event4)));
 
         RequestParameters requestParameters2 = new RequestParameters();
         requestParameters2.setLimit(10);
@@ -216,7 +253,15 @@ public class AuditLogEventRepositoryIT {
         List<AuditEvent> thirdPage = auditLogEventRepository.findByUser(userInfo, requestParametersThirdPage);
 
         assertThat(thirdPage, is(notNullValue()));
-        assertThat(thirdPage, hasSize(0));
+        assertThat(thirdPage, Matchers.contains(EntityIdMatcher.hasSameIdAs(event4)));
+
+        RequestParameters requestParametersFourthPage = new RequestParameters();
+        requestParametersFourthPage.setLimit(1);
+        requestParametersFourthPage.setOffset(event4.getId().toString());
+
+        List<AuditEvent> fourthPage = auditLogEventRepository.findByUser(userInfo, requestParametersFourthPage);
+        assertThat(fourthPage, is(notNullValue()));
+        assertThat(fourthPage, hasSize(0));
     }
 
     @Test
@@ -228,7 +273,7 @@ public class AuditLogEventRepositoryIT {
         List<AuditEvent> events = auditLogEventRepository.findByDomain(DOMAIN1, requestParameters);
 
         assertThat(events, is(notNullValue()));
-        assertThat(events, containsInAnyOrder(EntityIdMatcher.hasSameIdAs(event2), EntityIdMatcher.hasSameIdAs(event3)));
+        assertThat(events, containsInAnyOrder(EntityIdMatcher.hasSameIdAs(event2), EntityIdMatcher.hasSameIdAs(event3), EntityIdMatcher.hasSameIdAs(event4)));
     }
 
     @Test

@@ -66,22 +66,22 @@ public class WebDAVBasicLoginAT extends AbstractAT {
 
     @Test
     public void testWebDAVMessageUserApi() throws Exception {
-        doTestUserApi(pageCheckPredicate(true));
+        doTestUserApi(pageCheckPredicate(true), MESSAGE_TYPE);
     }
 
     @Test
     public void testWebDAVMessageAdminApi() throws Exception {
-        doTestAdminApi(pageCheckPredicate(true));
+        doTestAdminApi(pageCheckPredicate(true), MESSAGE_TYPE);
     }
 
     @Test
     public void testWebDAVMessageUserApiFail() throws Exception {
-        doTestUserApi(pageCheckPredicate(false));
+        doTestUserApi(pageCheckPredicate(false), MESSAGE_TYPE);
     }
 
     @Test
     public void testWebDAVMessageAdminApiFail() throws Exception {
-        doTestAdminApi(pageCheckPredicate(false));
+        doTestAdminApi(pageCheckPredicate(false), MESSAGE_TYPE);
     }
 
     private Predicate<List<AuditEventDTO>> pageCheckPredicate(final boolean success) {
