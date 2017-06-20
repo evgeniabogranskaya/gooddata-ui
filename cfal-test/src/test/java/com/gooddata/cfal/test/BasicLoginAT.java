@@ -49,22 +49,22 @@ public class BasicLoginAT extends AbstractAT {
 
     @Test(dependsOnMethods = "shouldLogUsingBasicAuth")
     public void testLoginMessageUserApi() throws InterruptedException, IOException {
-        doTestUserApi(pageCheckPredicate(true));
+        doTestUserApi(pageCheckPredicate(true), MESSAGE_TYPE);
     }
 
     @Test(dependsOnMethods = "shouldLogUsingBasicAuth")
     public void testLoginMessageAdminApi() throws InterruptedException, IOException {
-        doTestAdminApi(pageCheckPredicate(true));
+        doTestAdminApi(pageCheckPredicate(true), MESSAGE_TYPE);
     }
 
     @Test(dependsOnMethods = "shouldNotLogWithBadPasswordUsingBasicAuth")
     public void testLoginBadPasswordMessageUserApi() throws InterruptedException, IOException {
-        doTestUserApi(pageCheckPredicate(false));
+        doTestUserApi(pageCheckPredicate(false), MESSAGE_TYPE);
     }
 
     @Test(dependsOnMethods = "shouldNotLogWithBadPasswordUsingBasicAuth")
     public void testLoginBadPasswordMessageAdminApi() throws InterruptedException, IOException {
-        doTestAdminApi(pageCheckPredicate(false));
+        doTestAdminApi(pageCheckPredicate(false), MESSAGE_TYPE);
     }
 
     private HttpResponse doBasicAuth(final String password) throws IOException {

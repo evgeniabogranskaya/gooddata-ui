@@ -18,15 +18,15 @@ public class AdsAutenticationEventsAT extends AbstractAdsAT {
     @Test(groups = MESSAGE_TYPE_LOGIN)
     public void testUsernamePasswordAuthUserApi() throws InterruptedException {
         getJdbcTemplate().execute(TEST_QUERY);
-        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_LOGIN));
-        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_LOGOUT));
+        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_LOGIN), MESSAGE_TYPE_LOGIN);
+        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_LOGOUT), MESSAGE_TYPE_LOGOUT);
     }
 
     @Test(groups = MESSAGE_TYPE_LOGIN)
     public void testUsernamePasswordAuthAdminApi() throws InterruptedException {
         getJdbcTemplate().execute(TEST_QUERY);
-        doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_LOGIN));
-        doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_LOGOUT));
+        doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_LOGIN), MESSAGE_TYPE_LOGIN);
+        doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_LOGOUT), MESSAGE_TYPE_LOGOUT);
     }
 
     @AfterGroups(groups = MESSAGE_TYPE_LOGIN)
