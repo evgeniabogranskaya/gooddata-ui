@@ -119,7 +119,7 @@ curl localhost:8080/cfal-restapi/health -u cfal:cfal
 `
 
 ## Deploy a PI
-Use [EL 7 PI deploy job](https://ci.intgdc.com/job/Deploy%20a%20developer%20instance%20via%20foreman%20(el7)/build?delay=0sec)
+Use [EL 7 PI deploy job](https://ci.intgdc.com/job/deploy-instance-el7/build?delay=0sec)
 
 parameter | value
 ----------|-------
@@ -130,9 +130,10 @@ parameter | value
 `HIERA_OVERRIDES`:
 ```
 cfg_cfal_enabled: true
-cfg_rpm_vertica_version_el7: "%{hiera('\''vertica_latest_el7'\'')}"
-cfg_rpm_gdc_vertica_udx_rfc4180csvparser_version_el7: "%{hiera('\''vertica_udx_latest_el7'\'')}"
-cfg_rpm_gdc_vertica_udx_gdccsvparser_version_el7: "%{hiera('\''vertica_udx_latest_el7'\'')}"
+cfg_rpm_vertica_version_el7: "%{hiera('vertica72_latest_el7')}"
+cfg_rpm_vertica_odbc_version_el7: "%{hiera('vertica72_latest_el7')}"
+cfg_rpm_gdc_vertica_udx_rfc4180csvparser_version_el7: "%{hiera('vertica72_udx_latest_el7')}"
+cfg_rpm_gdc_vertica_udx_gdccsvparser_version_el7: "%{hiera('vertica72_udx_latest_el7')}"
 ```
 
 Configuration for pipeline instance in [ci-infra](https://github.com/gooddata/ci-infra/blob/master/jenkins/jobs/ci/cfal-project.yaml).
