@@ -22,6 +22,8 @@ public enum AuditLogEventType {
     DATAWAREHOUSE_LOGOUT,
     /** Data access on ADS proxy */
     DATAWAREHOUSE_DATA_ACCESS,
+    /** Add user to Datawarehouse */
+    DATAWAREHOUSE_ADD_USER,
     /** ETL schedule change */
     ETL_SCHEDULE_CHANGE,
     /** ETL process manual execution **/
