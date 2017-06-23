@@ -75,8 +75,10 @@ public class ETLProcessAT extends AbstractProjectAT {
 
     @BeforeClass(dependsOnMethods = "createProcess")
     public void executeProcess() {
-        final FutureResult<ProcessExecutionDetail> result = gd.getProcessService().executeProcess(new ProcessExecution(process, SCRIPT_NAME));
-        result.get();
+        final ProcessExecution execution = new ProcessExecution(process, SCRIPT_NAME);
+        final FutureResult<ProcessExecutionDetail> result = gd.getProcessService().executeProcess(execution);
+        logger.info("Process execution uri={}", result.getPollingUri());
+        result.get(POLL_TIMEOUT, POLL_TIMEOUT_UNIT);
     }
 
     /**
@@ -92,7 +94,7 @@ public class ETLProcessAT extends AbstractProjectAT {
             executable.set(execution, "nonExistentExecutable");
 
             final FutureResult<ProcessExecutionDetail> result = gd.getProcessService().executeProcess(execution);
-            result.get();
+            result.get(POLL_TIMEOUT, POLL_TIMEOUT_UNIT);
             fail("should throw exception");
         } catch (GoodDataException ignored) {
         }

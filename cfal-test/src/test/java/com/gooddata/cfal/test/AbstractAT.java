@@ -28,6 +28,9 @@ import static org.testng.Assert.fail;
 
 public abstract class AbstractAT {
 
+    public static final int POLL_TIMEOUT = Integer.getInteger("pollTimeoutMinutes", 5);
+    public static final TimeUnit POLL_TIMEOUT_UNIT = TimeUnit.MINUTES;
+
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static final int POLL_LIMIT = 10;

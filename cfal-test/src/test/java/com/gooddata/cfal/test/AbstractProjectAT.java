@@ -3,6 +3,7 @@
  */
 package com.gooddata.cfal.test;
 
+import com.gooddata.FutureResult;
 import com.gooddata.project.Project;
 import com.gooddata.project.ProjectEnvironment;
 import org.testng.annotations.AfterSuite;
@@ -52,7 +53,9 @@ public abstract class AbstractProjectAT extends AbstractAT {
     private Project createProject(final String projectToken) {
         final Project project = new Project("CFAL Test", projectToken);
         project.setEnvironment(ProjectEnvironment.TESTING);
-        return gd.getProjectService().createProject(project).get();
+        final FutureResult<Project> result = gd.getProjectService().createProject(project);
+        logger.info("Creating project uri={}", result.getPollingUri());
+        return result.get(POLL_TIMEOUT, POLL_TIMEOUT_UNIT);
     }
 
     @AfterSuite
