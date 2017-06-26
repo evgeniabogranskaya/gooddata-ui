@@ -15,5 +15,6 @@ interface AuditLogEventWriter extends AutoCloseable {
      */
     int logEvent(AuditLogEvent event);
 
-    default void close() throws Exception {};
+    @Override
+    default void close() throws Exception {}
 }
