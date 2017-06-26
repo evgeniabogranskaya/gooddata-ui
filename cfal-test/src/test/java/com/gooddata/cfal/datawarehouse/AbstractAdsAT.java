@@ -3,6 +3,7 @@
  */
 package com.gooddata.cfal.datawarehouse;
 
+import com.gooddata.FutureResult;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.test.AbstractAT;
 import com.gooddata.project.Environment;
@@ -29,9 +30,11 @@ abstract class AbstractAdsAT extends AbstractAT {
     AbstractAdsAT() {
         super();
         this.datawarehouseToken = getProperty("datawarehouseToken", "vertica");
-        this.warehouse = gd.getWarehouseService().createWarehouse(createWarehouseRequest()).get();
-        logger.info("Created warehouse_id={}", warehouse.getId());
-        final DataSource dataSource = createDataSource(warehouse);
+        final FutureResult<Warehouse> result = gd.getWarehouseService().createWarehouse(createWarehouseRequest());
+        logger.info("Creating warehouse uri={}", result.getPollingUri());
+        this.warehouse = result.get(POLL_TIMEOUT, POLL_TIMEOUT_UNIT);
+        logger.info("Created warehouse_id={}", this.warehouse.getId());
+        final DataSource dataSource = createDataSource(this.warehouse);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
