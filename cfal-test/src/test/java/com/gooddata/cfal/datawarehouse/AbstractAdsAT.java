@@ -69,4 +69,8 @@ abstract class AbstractAdsAT extends AbstractAT {
     protected JdbcTemplate getJdbcTemplate() {
         return jdbcTemplate;
     }
+
+    protected Warehouse getWarehouse() {
+        return warehouse;
+    }
 }
