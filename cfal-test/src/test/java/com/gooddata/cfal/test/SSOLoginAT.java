@@ -58,7 +58,7 @@ public class SSOLoginAT extends AbstractAT {
                 .setSecretKeyForSigning(new ClassPathResource("/sso/smurfs.priv").getInputStream())
                 .createPgpEncryptor();
 
-        final String json = new ObjectMapper().writeValueAsString(new SSOLogin(user));
+        final String json = new ObjectMapper().writeValueAsString(new SSOLogin(props.getUser()));
 
         final ByteArrayOutputStream signedMessageOut = new ByteArrayOutputStream();
         encryptor.signMessage(IOUtils.toInputStream(json), signedMessageOut, true);
@@ -71,7 +71,7 @@ public class SSOLoginAT extends AbstractAT {
 
     @Test
     public void shouldLoginUserWithSSO() throws Exception {
-        final RestTemplate rest = createRestTemplate(new GoodDataEndpoint(host), HttpClientBuilder.create().build());
+        final RestTemplate rest = createRestTemplate(new GoodDataEndpoint(props.getHost()), HttpClientBuilder.create().build());
 
         final ResponseEntity<String> result = rest.getForEntity(URI, String.class, session, "smurfs");
         assertThat(result.getStatusCode(), is(HttpStatus.OK));

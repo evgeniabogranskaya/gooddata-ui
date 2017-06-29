@@ -78,7 +78,7 @@ public class ETLProcessAT extends AbstractProjectAT {
         final ProcessExecution execution = new ProcessExecution(process, SCRIPT_NAME);
         final FutureResult<ProcessExecutionDetail> result = gd.getProcessService().executeProcess(execution);
         logger.info("Process execution uri={}", result.getPollingUri());
-        result.get(POLL_TIMEOUT, POLL_TIMEOUT_UNIT);
+        result.get(props.getPollTimeoutMinutes(), props.getPollTimeoutUnit());
     }
 
     /**
@@ -94,7 +94,7 @@ public class ETLProcessAT extends AbstractProjectAT {
             executable.set(execution, "nonExistentExecutable");
 
             final FutureResult<ProcessExecutionDetail> result = gd.getProcessService().executeProcess(execution);
-            result.get(POLL_TIMEOUT, POLL_TIMEOUT_UNIT);
+            result.get(props.getPollTimeoutMinutes(), props.getPollTimeoutUnit());
             fail("should throw exception");
         } catch (GoodDataException ignored) {
         }

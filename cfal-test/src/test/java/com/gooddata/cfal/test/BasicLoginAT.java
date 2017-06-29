@@ -35,7 +35,7 @@ public class BasicLoginAT extends AbstractAT {
 
     @Test
     public void shouldLogUsingBasicAuth() throws IOException {
-        final HttpResponse response = doBasicAuth(pass);
+        final HttpResponse response = doBasicAuth(props.getPass());
 
         assertThat(response.getStatusLine().getStatusCode(), is(HttpStatus.SC_OK));
     }
@@ -69,10 +69,10 @@ public class BasicLoginAT extends AbstractAT {
 
     private HttpResponse doBasicAuth(final String password) throws IOException {
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(new AuthScope(host, 443), new UsernamePasswordCredentials(user, password));
+        credentialsProvider.setCredentials(new AuthScope(props.getHost(), 443), new UsernamePasswordCredentials(props.getUser(), password));
 
         final AuthCache authCache = new BasicAuthCache();
-        authCache.put(new HttpHost(host, 443, "https"), new BasicScheme());
+        authCache.put(new HttpHost(props.getHost(), 443, "https"), new BasicScheme());
 
         final HttpClientContext context = HttpClientContext.create();
         context.setCredentialsProvider(credentialsProvider);
@@ -89,7 +89,7 @@ public class BasicLoginAT extends AbstractAT {
     }
 
     private String getUrl(final String uri) {
-        return HTTPS + host + ":" + 443 + uri;
+        return HTTPS + props.getHost() + ":" + 443 + uri;
     }
 
     private Predicate<List<AuditEventDTO>> pageCheckPredicate(final boolean success) {

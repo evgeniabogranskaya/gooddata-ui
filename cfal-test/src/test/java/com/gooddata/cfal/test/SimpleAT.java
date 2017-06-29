@@ -18,7 +18,7 @@ public class SimpleAT extends AbstractAT {
 
     @Test
     public void shouldReachDomainResource() throws Exception {
-        final PageableList<AuditEventDTO> events = service.listAuditEvents(domain);
+        final PageableList<AuditEventDTO> events = service.listAuditEvents(props.getDomain());
         assertThat(events, is(notNullValue()));
     }
 

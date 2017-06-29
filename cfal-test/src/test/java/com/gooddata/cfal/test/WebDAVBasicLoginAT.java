@@ -41,14 +41,14 @@ public class WebDAVBasicLoginAT extends AbstractAT {
     }
 
     private Sardine createSardine(final String pass) {
-        final Sardine sardine = new SardineImpl(user, pass);
-        sardine.enablePreemptiveAuthentication(host);
+        final Sardine sardine = new SardineImpl(props.getUser(), pass);
+        sardine.enablePreemptiveAuthentication(props.getHost());
         return sardine;
     }
 
     @BeforeClass
     public void shouldLoginUsingWebDAV() throws Exception {
-        final Sardine sardine = createSardine(pass);
+        final Sardine sardine = createSardine(props.getPass());
         final List<DavResource> list = sardine.list(path);
         assertThat(list, is(notNullValue()));
     }
