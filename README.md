@@ -1,19 +1,12 @@
 # Customer Facing Audit Log
 
-## Developer's machine recommended setup
-
-To ease you a first struggle with this app, these are recommended options you should have in `~/.spring-boot-devtools.properties`.
-
-These will enable output to CONSOLE (instead of SYSLOG) and disable Graphite monitoring (so you won't have console filled with)
-Graphite logger complaining about Graphite endpoints inaccessibility.
-
-```
-gdc.logging.appender=CONSOLE
-monitoring.graphite.reporting-enabled=false
-```
-## CFAL Event Catalog
-
-All audited events are listed in [confluence](https://confluence.intgdc.com/display/plat/CFAL+Event+Catalog).
+High level documentation:
+[Customer Facing Audit Log](https://confluence.intgdc.com/display/plat/CFAL+-+Customer+Facing+Audit+Log)
+including
+[Event Catalog](https://confluence.intgdc.com/display/plat/CFAL+Event+Catalog),
+[Operations Guide](https://confluence.intgdc.com/display/plat/CFAL+Operations+Guide),
+[User Help](https://help.gooddata.com/display/doc/Auditing+Platform+Events),
+[API Reference](https://help.gooddata.com/display/developer/API+Reference#/reference/audit-events).
 
 ## Build
 ```
@@ -28,6 +21,18 @@ mvn spring-boot:run
 curl localhost:8080/info
 ```
 
+### Developer's machine recommended setup
+
+To ease you a first struggle with this app, these are recommended options you should have in `~/.spring-boot-devtools.properties`.
+
+These will enable output to CONSOLE (instead of SYSLOG) and disable Graphite monitoring (so you won't have console filled with)
+Graphite logger complaining about Graphite endpoints inaccessibility.
+
+```
+gdc.logging.appender=CONSOLE
+monitoring.graphite.reporting-enabled=false
+```
+
 ## Release CFAL Java SDK
 ```
 mvn release:prepare -DautoVersionSubmodules=true -DpushChanges=false
@@ -40,18 +45,24 @@ and open pull request like https://github.com/gooddata/gdc-cfal/pull/80
 
 ## Enable CFAL for new component
 
-Define new source log file for affected component node types (eg. `hieradata/type/cl_msf_restapi.yaml`, but don't forget to include it in `hieradata/type/rat.yaml`):
-```
----
-fluentd::cfal_sources:
-  msfrestapi:
-    user: tomcat
-```
-CFAL (Fluentd) will create and monitor `/mnt/log/cfal/msfrestapi.log` after that.
+1. Add Puppet/Hiera configuration
 
-Fluentd itself is enabled on all cluster and RAT.
+   Define new source log file for affected component node types (eg. `hieradata/type/cl_msf_restapi.yaml`, but don't forget to include it in `hieradata/type/rat.yaml`):
+    ```
+    ---
+    fluentd::cfal_sources:
+      msfrestapi:
+        user: tomcat
+    ```
+    CFAL (Fluentd) will create and monitor `/mnt/log/cfal/msfrestapi.log` after that.
 
-There's a SELinux type `gdc_cfal_log_t` defined for accessing `/mnt/log/cfal/` logs called `gdc_cfal_log_t`, see [gdc-selinux](https://github.com/gooddata/gdc-selinux).
+    Fluentd itself is enabled on all cluster and RAT.
+
+2. Add SELinux rules
+
+   There's a SELinux type `gdc_cfal_log_t` defined for accessing `/mnt/log/cfal/` logs called `gdc_cfal_log_t`, see [gdc-selinux](https://github.com/gooddata/gdc-selinux).
+
+3. Add SGManager rules allowing to reach `cfal` subcluster from component's subcluster
 
 ## Tests
 
