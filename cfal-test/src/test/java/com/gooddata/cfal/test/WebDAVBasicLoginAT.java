@@ -11,6 +11,7 @@ import com.gooddata.UriPrefixer;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import org.apache.http.HttpStatus;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import java.net.URI;
@@ -27,10 +28,19 @@ public class WebDAVBasicLoginAT extends AbstractAT {
     private static final String MESSAGE_TYPE = "WEBDAV_BASIC_LOGIN";
 
     private final String path;
+    private final String host;
 
     public WebDAVBasicLoginAT() {
         final UriPrefixer prefixer = createUriPrefixer();
-        this.path = prefixer.getUriPrefix().toString();
+        final URI uri = prefixer.getUriPrefix();
+        this.host = uri.getHost();
+        this.path = uri.toString();
+    }
+
+    @BeforeSuite
+    @Override
+    public void logConnectionInfo() throws Exception {
+        logger.info("host={} user={} domain={} path={}", host, props.getUser(), props.getDomain(), path);
     }
 
     private UriPrefixer createUriPrefixer() {
@@ -42,7 +52,7 @@ public class WebDAVBasicLoginAT extends AbstractAT {
 
     private Sardine createSardine(final String pass) {
         final Sardine sardine = new SardineImpl(props.getUser(), pass);
-        sardine.enablePreemptiveAuthentication(props.getHost());
+        sardine.enablePreemptiveAuthentication(host);
         return sardine;
     }
 
