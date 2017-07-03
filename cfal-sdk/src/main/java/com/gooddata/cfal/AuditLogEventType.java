@@ -26,6 +26,8 @@ public enum AuditLogEventType {
     DATAWAREHOUSE_DATA_ACCESS,
     /** Add user to Datawarehouse */
     DATAWAREHOUSE_ADD_USER,
+    /** Remove user from Datawarehouse */
+    DATAWAREHOUSE_REMOVE_USER,
     /** ETL schedule change */
     ETL_SCHEDULE_CHANGE,
     /** ETL process manual execution **/
