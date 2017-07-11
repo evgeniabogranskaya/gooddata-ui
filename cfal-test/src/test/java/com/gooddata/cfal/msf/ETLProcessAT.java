@@ -38,82 +38,19 @@ public class ETLProcessAT extends AbstractProjectAT {
     private static final String SCRIPT_NAME = "test.rb";
 
     private DataloadProcess process;
+    private DataloadProcess processAppstore;
 
     @BeforeClass
-    public void createProcess() throws URISyntaxException {
-        final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
-        process = gd.getProcessService().createProcess(project, new DataloadProcess(getClass().getSimpleName(), ProcessType.RUBY), file);
-    }
-
-    @BeforeClass
-    public void badCreateProcess() throws URISyntaxException {
-        try {
-            final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
-            gd.getProcessService().createProcess(project, new DataloadProcess(getClass().getSimpleName(), ProcessType.GRAPH), file);
-            fail("should throw exception");
-        } catch (GoodDataException ignored) {
-        }
-    }
-
-    @BeforeClass(dependsOnMethods = "createProcess")
-    public void updateProcess() throws URISyntaxException {
-        final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
-
-        gd.getProcessService().updateProcess(process, file);
-    }
-
-    @BeforeClass(dependsOnMethods = "createProcess")
-    public void badUpdateProcess() throws IOException {
-        try {
-            final File tempFile = File.createTempFile("test", "test");
-
-            gd.getProcessService().updateProcess(process, tempFile);
-            fail("should throw exception");
-        } catch (GoodDataException ignored) {
-        }
-    }
-
-    @BeforeClass(dependsOnMethods = "createProcess")
-    public void executeProcess() {
-        final ProcessExecution execution = new ProcessExecution(process, SCRIPT_NAME);
-        final FutureResult<ProcessExecutionDetail> result = gd.getProcessService().executeProcess(execution);
-        logger.info("Process execution uri={}", result.getPollingUri());
-        result.get(props.getPollTimeoutMinutes(), props.getPollTimeoutUnit());
-    }
-
-    /**
-     * Executes process with bad executable so it fails on creation of execution
-     */
-    @BeforeClass(dependsOnMethods = "createProcess")
-    public void badExecuteProcess() throws NoSuchFieldException, IllegalAccessException {
-        try {
-            final Field executable = ProcessExecution.class.getDeclaredField("executable");
-            executable.setAccessible(true);
-
-            final ProcessExecution execution = new ProcessExecution(process, SCRIPT_NAME);
-            executable.set(execution, "nonExistentExecutable");
-
-            final FutureResult<ProcessExecutionDetail> result = gd.getProcessService().executeProcess(execution);
-            result.get(props.getPollTimeoutMinutes(), props.getPollTimeoutUnit());
-            fail("should throw exception");
-        } catch (GoodDataException ignored) {
-        }
-    }
-
-    @BeforeClass(dependsOnMethods = {"createProcess", "updateProcess", "badUpdateProcess", "executeProcess", "badExecuteProcess"})
-    public void removeProcess() {
-        gd.getProcessService().removeProcess(process);
-    }
-
-    @BeforeClass
-    public void badRemoveProcess() {
-        try {
-            final DataloadProcess badProcess = mock(DataloadProcess.class);
-            doReturn("/gdc/projects/" + project.getId() + "/dataload/processes/aaa").when(badProcess).getUri();
-            gd.getProcessService().removeProcess(badProcess);
-            fail("should throw exception");
-        } catch (GoodDataException ignored) {
-        }
+    public void setUp() throws Exception {
+        createProcessFromAppstore();
+        createProcess();
+        badCreateProcess();
+        updateProcess();
+        badUpdateProcess();
+        executeProcess();
+        badExecuteProcess();
+        removeProcess();
+        badRemoveProcess();
     }
 
     @Test(groups = EXECUTION_MESSAGE_TYPE)
@@ -196,7 +133,101 @@ public class ETLProcessAT extends AbstractProjectAT {
         doTestAdminApi(pageCheckPredicate(DELETE_MESSAGE_TYPE, false), DELETE_MESSAGE_TYPE);
     }
 
+    @Test(groups = CREATE_MESSAGE_TYPE)
+    public void testProcessCreateFromGitMessageUserApi() throws InterruptedException {
+        doTestUserApi(pageCheckPredicateCreateFromAppstore(CREATE_MESSAGE_TYPE), CREATE_MESSAGE_TYPE);
+    }
+
+    @Test(groups = CREATE_MESSAGE_TYPE)
+    public void testProcessCreateFromGitMessageAdminApi() throws InterruptedException {
+        doTestAdminApi(pageCheckPredicateCreateFromAppstore(CREATE_MESSAGE_TYPE), CREATE_MESSAGE_TYPE);
+    }
+
     private Predicate<List<AuditEventDTO>> pageCheckPredicate(final String messageType, final boolean isSuccess) {
         return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(account.getLogin()) && e.getType().equals(messageType) && e.isSuccess() == isSuccess);
+    }
+
+    private Predicate<List<AuditEventDTO>> pageCheckPredicateCreateFromAppstore(final String messageType) {
+        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(account.getLogin()) && e.getType().equals(messageType) &&
+                e.isSuccess() == true && processAppstore.getUri().equals(e.getLinks().get("process")));
+    }
+
+
+    private void createProcessFromAppstore() throws Exception {
+        processAppstore = gd.getProcessService().createProcessFromAppstore(project,
+                new DataloadProcess(getClass().getSimpleName() + "Appstore", ProcessType.RUBY.toString(),
+                        "${PUBLIC_APPSTORE}:branch/demo:/test/HelloApp")).get();
+
+        logger.info("deployed process_id={} from appstore", processAppstore.getId());
+    }
+
+    private void createProcess() throws URISyntaxException {
+        final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
+        process = gd.getProcessService().createProcess(project, new DataloadProcess(getClass().getSimpleName(), ProcessType.RUBY), file);
+    }
+
+    private void badCreateProcess() throws URISyntaxException {
+        try {
+            final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
+            gd.getProcessService().createProcess(project, new DataloadProcess(getClass().getSimpleName(), ProcessType.GRAPH), file);
+            fail("should throw exception");
+        } catch (GoodDataException ignored) {
+        }
+    }
+
+    private void updateProcess() throws URISyntaxException {
+        final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
+
+        gd.getProcessService().updateProcess(process, file);
+    }
+
+    private void badUpdateProcess() throws IOException {
+        try {
+            final File tempFile = File.createTempFile("test", "test");
+
+            gd.getProcessService().updateProcess(process, tempFile);
+            fail("should throw exception");
+        } catch (GoodDataException ignored) {
+        }
+    }
+
+    private void executeProcess() {
+        final ProcessExecution execution = new ProcessExecution(process, SCRIPT_NAME);
+        final FutureResult<ProcessExecutionDetail> result = gd.getProcessService().executeProcess(execution);
+        logger.info("Process execution uri={}", result.getPollingUri());
+        result.get(props.getPollTimeoutMinutes(), props.getPollTimeoutUnit());
+    }
+
+    /**
+     * Executes process with bad executable so it fails on creation of execution
+     */
+    private void badExecuteProcess() throws NoSuchFieldException, IllegalAccessException {
+        try {
+            final Field executable = ProcessExecution.class.getDeclaredField("executable");
+            executable.setAccessible(true);
+
+            final ProcessExecution execution = new ProcessExecution(process, SCRIPT_NAME);
+            executable.set(execution, "nonExistentExecutable");
+
+            final FutureResult<ProcessExecutionDetail> result = gd.getProcessService().executeProcess(execution);
+            result.get(props.getPollTimeoutMinutes(), props.getPollTimeoutUnit());
+            fail("should throw exception");
+        } catch (GoodDataException ignored) {
+        }
+    }
+
+    private void removeProcess() {
+        gd.getProcessService().removeProcess(process);
+        gd.getProcessService().removeProcess(processAppstore);
+    }
+
+    private void badRemoveProcess() {
+        try {
+            final DataloadProcess badProcess = mock(DataloadProcess.class);
+            doReturn("/gdc/projects/" + project.getId() + "/dataload/processes/aaa").when(badProcess).getUri();
+            gd.getProcessService().removeProcess(badProcess);
+            fail("should throw exception");
+        } catch (GoodDataException ignored) {
+        }
     }
 }
