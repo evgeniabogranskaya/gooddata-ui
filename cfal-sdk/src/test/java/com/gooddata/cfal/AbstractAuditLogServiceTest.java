@@ -28,7 +28,7 @@ public class AbstractAuditLogServiceTest {
         };
 
         spyInstance = Mockito.spy(instance);
-        auditEvent = new AuditLogEvent(AuditLogEventType.STANDARD_LOGIN, "login", "userIp", "domain", true);
+        auditEvent = new AuditLogEvent("FOO", "login", "userIp", "domain", true);
     }
 
     @Test(expected = NullPointerException.class)
@@ -78,7 +78,7 @@ public class AbstractAuditLogServiceTest {
 
     @Test
     public void doNoLogInvalidEvent() {
-        spyInstance.logEvent(new AuditLogEvent(AuditLogEventType.STANDARD_LOGIN, null, null, null));
+        spyInstance.logEvent(new AuditLogEvent("FOO", null, null, null));
         Mockito.verify(spyInstance, never()).doLogEvent(any());
     }
 }

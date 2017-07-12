@@ -15,7 +15,7 @@ public class ETLProcessAuditLogEvent extends AuditLogEvent {
     private static final String PROCESS = "process";
     private static final String PROJECT_URI_PREFIX = "/gdc/projects/";
 
-    public ETLProcessAuditLogEvent(final AuditLogEventType type,
+    public ETLProcessAuditLogEvent(final String type,
                                    final String userLogin,
                                    final String userIp,
                                    final String domainId,
@@ -35,7 +35,7 @@ public class ETLProcessAuditLogEvent extends AuditLogEvent {
      * @param success   was this event successful
      * @param process ETL process uri
      */
-    public ETLProcessAuditLogEvent(final AuditLogEventType type, final boolean success, final String process) {
+    public ETLProcessAuditLogEvent(final String type, final boolean success, final String process) {
         super(type, success);
         addLink(PROJECT, PROJECT_URI_PREFIX + GdcCallContext.getCurrentContext().getProjectId());
         addLink(PROCESS, process);

@@ -12,7 +12,7 @@ public class ETLScheduleExecutionAuditLogEvent extends ETLScheduleAuditLogEvent 
 
     private static final String EXECUTION = "execution";
 
-    public ETLScheduleExecutionAuditLogEvent(final AuditLogEventType type,
+    public ETLScheduleExecutionAuditLogEvent(final String type,
                                              final String userLogin,
                                              final String userIp,
                                              final String domainId,
@@ -35,7 +35,7 @@ public class ETLScheduleExecutionAuditLogEvent extends ETLScheduleAuditLogEvent 
      * @param schedule ETL schedule uri
      * @param execution ETL execution uri
      */
-    public ETLScheduleExecutionAuditLogEvent(final AuditLogEventType type, final boolean success, final String process, final String schedule, final String execution) {
+    public ETLScheduleExecutionAuditLogEvent(final String type, final boolean success, final String process, final String schedule, final String execution) {
         super(type, success, process, schedule);
         addLink(EXECUTION, execution);
     }

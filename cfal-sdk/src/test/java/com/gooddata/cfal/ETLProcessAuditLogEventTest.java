@@ -3,7 +3,7 @@
  */
 package com.gooddata.cfal;
 
-import static com.gooddata.cfal.AuditLogEventType.ETL_SCHEDULE_CHANGE;
+import static com.gooddata.cfal.ETLDataloadProcessExecutionAuditLogEvent.ETL_SCHEDULE_CHANGE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 

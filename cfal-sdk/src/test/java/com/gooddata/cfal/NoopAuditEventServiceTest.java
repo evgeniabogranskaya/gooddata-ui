@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 
-import static com.gooddata.cfal.AuditLogEventType.STANDARD_LOGIN;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -24,9 +23,9 @@ public class NoopAuditEventServiceTest {
 
     @Test
     public void shouldLogEventOnInfoLevel() throws Exception {
-        service.logEvent(new AuditLogEvent(STANDARD_LOGIN, "bear@gooddata.com", "1.2.3.4", "default", true));
+        service.logEvent(new AuditLogEvent("FOO", "bear@gooddata.com", "1.2.3.4", "default", true));
 
         verify(logger).info("component={} type={} userLogin={} userIp={} domainId={} success={}",
-                "test", STANDARD_LOGIN, "bear@gooddata.com", "1.2.3.4", "default", true);
+                "test", "FOO", "bear@gooddata.com", "1.2.3.4", "default", true);
     }
 }

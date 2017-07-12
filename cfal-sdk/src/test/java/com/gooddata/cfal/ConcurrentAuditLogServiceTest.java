@@ -17,7 +17,7 @@ import static org.mockito.Mockito.verify;
 
 public class ConcurrentAuditLogServiceTest {
 
-    private static final AuditLogEvent EVENT = new AuditLogEvent(AuditLogEventType.STANDARD_LOGIN, "bear@gooddata.com", "1.2.3.4", "default");
+    private static final AuditLogEvent EVENT = new AuditLogEvent("FOO", "bear@gooddata.com", "1.2.3.4", "default");
 
     private ConcurrentAuditLogService service;
     private AuditLogEventFileWriter writer;

@@ -10,9 +10,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public class ETLDataloadProcessExecutionAuditLogEvent extends ETLProcessExecutionAuditLogEvent {
 
+    public static final String ETL_SCHEDULE_CHANGE = "ETL_SCHEDULE_CHANGE";
+
     private static final String INSTANCE = "instance";
 
-    public ETLDataloadProcessExecutionAuditLogEvent(final AuditLogEventType type,
+    public ETLDataloadProcessExecutionAuditLogEvent(final String type,
                                             final String userLogin,
                                             final String userIp,
                                             final String domainId,
@@ -35,7 +37,7 @@ public class ETLDataloadProcessExecutionAuditLogEvent extends ETLProcessExecutio
      * @param execution ETL execution uri
      * @param instance ADS instance uri
      */
-    public ETLDataloadProcessExecutionAuditLogEvent(final AuditLogEventType type, final boolean success, final String process, final String execution, final String instance) {
+    public ETLDataloadProcessExecutionAuditLogEvent(final String type, final boolean success, final String process, final String execution, final String instance) {
         super(type, success, process, execution);
 
         addLink(INSTANCE, instance);
