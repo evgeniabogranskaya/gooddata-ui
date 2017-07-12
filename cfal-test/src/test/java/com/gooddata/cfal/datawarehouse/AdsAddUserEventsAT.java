@@ -12,12 +12,13 @@ import org.testng.annotations.Test;
  */
 public class AdsAddUserEventsAT extends AbstractAdsAT {
     private static final String MESSAGE_TYPE = "DATAWAREHOUSE_ADD_USER";
-    private static final String JANE_LOGIN = "jane@foodz.com";
-    public static final WarehouseUser JANE_DATA_ADMIN = new WarehouseUser(WarehouseUser.DATA_ADMIN_ROLE, null, JANE_LOGIN);
+
+    private WarehouseUser warehouseUser;
 
     @BeforeClass
     public void addUserToAds() throws Exception {
-        gd.getWarehouseService().addUserToWarehouse(getWarehouse(), JANE_DATA_ADMIN);
+        warehouseUser = new WarehouseUser(WarehouseUser.DATA_ADMIN_ROLE, null, anotherAccount.getLogin());
+        gd.getWarehouseService().addUserToWarehouse(getWarehouse(), warehouseUser);
     }
 
     @Test(groups = MESSAGE_TYPE)

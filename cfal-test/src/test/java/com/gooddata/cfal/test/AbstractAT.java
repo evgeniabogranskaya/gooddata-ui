@@ -6,6 +6,7 @@ package com.gooddata.cfal.test;
 import com.gooddata.CfalGoodData;
 import com.gooddata.GoodDataEndpoint;
 import com.gooddata.account.Account;
+import com.gooddata.auditlog.AccountService;
 import com.gooddata.auditlog.AdsService;
 import com.gooddata.auditlog.AuditLogService;
 import com.gooddata.auditlog.TestEnvironmentProperties;
@@ -16,6 +17,7 @@ import com.gooddata.collections.PageableList;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
 import java.util.Arrays;
@@ -46,6 +48,9 @@ public abstract class AbstractAT {
     private final DateTime startTime;
 
     protected final AdsService adsService;
+    protected final AccountService accountService;
+
+    protected static Account anotherAccount;
 
     public AbstractAT() {
         props = new TestEnvironmentProperties();
@@ -59,11 +64,25 @@ public abstract class AbstractAT {
         startTime = new DateTime();
 
         this.adsService = new AdsService(gd, props);
+        this.accountService = new AccountService(gd, props);
     }
 
     @BeforeSuite
     public void logConnectionInfo() throws Exception {
         logger.info("host={} user={} domain={}", props.getHost(), props.getUser(), props.getDomain());
+    }
+
+    @BeforeSuite
+    public void createTestUser() {
+        anotherAccount = accountService.createUser();
+    }
+
+    @AfterSuite
+    public void removeTestUser() {
+        if (anotherAccount != null) {
+            gd.getAccountService().removeAccount(anotherAccount);
+            logger.info("removed user_id={}", anotherAccount.getId());
+        }
     }
 
     /**
