@@ -4,28 +4,23 @@
 package com.gooddata.cfal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.gooddata.context.GdcCallContext;
 
 /**
  * ETL process AuditLogEvent
  */
-public class ETLProcessAuditLogEvent extends AuditLogEvent {
+public class ETLProcessAuditLogEvent extends ProjectAuditLogEvent {
 
-    private static final String PROJECT = "project";
     private static final String PROCESS = "process";
-    private static final String PROJECT_URI_PREFIX = "/gdc/projects/";
 
     public ETLProcessAuditLogEvent(final String type,
                                    final String userLogin,
                                    final String userIp,
                                    final String domainId,
                                    final boolean success,
-                                   final String project,
-                                   final String process) {
-        super(type, userLogin, userIp, domainId, success);
-
-        addLink(PROJECT, project);
-        addLink(PROCESS, process);
+                                   final String projectUri,
+                                   final String processUri) {
+        super(type, userLogin, userIp, domainId, projectUri, success);
+        addLink(PROCESS, processUri);
     }
 
     /**
@@ -33,21 +28,11 @@ public class ETLProcessAuditLogEvent extends AuditLogEvent {
      *
      * @param type      event type
      * @param success   was this event successful
-     * @param process ETL process uri
+     * @param processUri ETL process uri
      */
-    public ETLProcessAuditLogEvent(final String type, final boolean success, final String process) {
+    public ETLProcessAuditLogEvent(final String type, final boolean success, final String processUri) {
         super(type, success);
-        addLink(PROJECT, PROJECT_URI_PREFIX + GdcCallContext.getCurrentContext().getProjectId());
-        addLink(PROCESS, process);
-    }
-
-    /**
-     *
-     * @return project uri
-     */
-    @JsonIgnore
-    public String getProject() {
-        return getLink(PROJECT);
+        addLink(PROCESS, processUri);
     }
 
     /**
