@@ -16,13 +16,12 @@ public class AdsUserEventsAT extends AbstractAdsAT {
     private static final String MESSAGE_TYPE_ADD = "DATAWAREHOUSE_ADD_USER";
     private static final String MESSAGE_TYPE_REMOVE = "DATAWAREHOUSE_REMOVE_USER";
 
-    private WarehouseUser warehouseUser;
-
     @BeforeClass
     public void addUserToAds() throws Exception {
-        warehouseUser = WarehouseUser.createWithlogin(anotherAccount.getLogin(),DATA_ADMIN);
-        gd.getWarehouseService().addUserToWarehouse(getWarehouse(), warehouseUser);
-        gd.getWarehouseService().removeUserFromWarehouse(warehouseUser);
+        final WarehouseUser tmpUser = WarehouseUser.createWithlogin(anotherAccount.getLogin(), DATA_ADMIN);
+
+        final WarehouseUser warehouseUser = gd.getWarehouseService().addUserToWarehouse(getWarehouse(), tmpUser).get();
+        gd.getWarehouseService().removeUserFromWarehouse(warehouseUser).get();
     }
 
     @Test(groups = MESSAGE_TYPE_ADD)
