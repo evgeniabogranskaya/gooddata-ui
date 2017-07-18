@@ -15,7 +15,6 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 
-import static com.gooddata.cfal.AuditLogEventType.STANDARD_LOGIN;
 import static java.nio.file.Files.readAllLines;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -36,7 +35,7 @@ public class AuditLogEventFileWriterTest {
     @Before
     public void setUp() throws Exception {
         DateTimeUtils.setCurrentMillisFixed(new DateTime(2017, 3, 10, 9, 47, 3, 547, DateTimeZone.UTC).getMillis());
-        event = new AuditLogEvent(STANDARD_LOGIN, "user@example.com", "1.2.3.4", "default");
+        event = new AuditLogEvent("FOO", "user@example.com", "1.2.3.4", "default");
         event.setComponent("foo");
     }
 

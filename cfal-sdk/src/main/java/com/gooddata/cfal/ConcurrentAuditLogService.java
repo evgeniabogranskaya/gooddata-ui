@@ -19,7 +19,7 @@ import static org.apache.commons.lang3.Validate.notNull;
  */
 public class ConcurrentAuditLogService extends SimpleAuditLogService {
 
-    static final AuditLogEvent POISON_PILL = new AuditLogEvent(AuditLogEventType.STANDARD_LOGIN, "poison", "pill", "die");
+    static final AuditLogEvent POISON_PILL = new AuditLogEvent("PP", "poison", "pill", "die");
 
     private static final int DEFAULT_BACKLOG_SIZE = 1024;
 

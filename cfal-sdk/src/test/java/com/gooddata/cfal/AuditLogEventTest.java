@@ -3,7 +3,6 @@
  */
 package com.gooddata.cfal;
 
-import static com.gooddata.cfal.AuditLogEventType.STANDARD_LOGIN;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -35,9 +34,9 @@ public class AuditLogEventTest {
 
     @Test
     public void shouldSetValuesFromGdcCallContext() {
-        final AuditLogEvent event = new AuditLogEvent(STANDARD_LOGIN, true);
+        final AuditLogEvent event = new AuditLogEvent("FOO", true);
 
-        assertThat(event.getType(), is(STANDARD_LOGIN));
+        assertThat(event.getType(), is("FOO"));
         assertThat(event.isSuccess(), is(true));
         assertThat(event.getUserLogin(), is(USER_LOGIN));
         assertThat(event.getUserIp(), is(USER_IP));

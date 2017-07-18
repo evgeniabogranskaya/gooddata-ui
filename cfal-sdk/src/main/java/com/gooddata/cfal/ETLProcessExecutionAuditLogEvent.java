@@ -12,7 +12,7 @@ public class ETLProcessExecutionAuditLogEvent extends ETLProcessAuditLogEvent {
 
     private static final String EXECUTION = "execution";
 
-    public ETLProcessExecutionAuditLogEvent(final AuditLogEventType type,
+    public ETLProcessExecutionAuditLogEvent(final String type,
                                             final String userLogin,
                                             final String userIp,
                                             final String domainId,
@@ -33,7 +33,7 @@ public class ETLProcessExecutionAuditLogEvent extends ETLProcessAuditLogEvent {
      * @param process ETL process uri
      * @param execution ETL execution uri
      */
-    public ETLProcessExecutionAuditLogEvent(final AuditLogEventType type, final boolean success, final String process, final String execution) {
+    public ETLProcessExecutionAuditLogEvent(final String type, final boolean success, final String process, final String execution) {
         super(type, success, process);
         
         addLink(EXECUTION, execution);

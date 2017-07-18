@@ -12,9 +12,7 @@ import org.junit.Test;
 
 import java.io.StringWriter;
 
-import static com.gooddata.cfal.AuditLogEventType.ETL_SCHEDULE_CHANGE;
 import static com.gooddata.cfal.AuditLogEventWriterBase.format;
-import static com.gooddata.cfal.AuditLogEventType.STANDARD_LOGIN;
 import static net.javacrumbs.jsonunit.JsonMatchers.jsonEquals;
 import static net.javacrumbs.jsonunit.core.util.ResourceUtils.resource;
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -28,7 +26,7 @@ public class AuditLogEventWriterBaseTest {
     @Before
     public void setUp() throws Exception {
         DateTimeUtils.setCurrentMillisFixed(new DateTime(2017, 3, 10, 9, 47, 3, 547, DateTimeZone.UTC).getMillis());
-        event = new AuditLogEvent(STANDARD_LOGIN, "user@example.com", "1.2.3.4", "default");
+        event = new AuditLogEvent("FOO", "user@example.com", "1.2.3.4", "default");
         event.setComponent("foo");
     }
 
@@ -40,7 +38,7 @@ public class AuditLogEventWriterBaseTest {
     @Test
     public void shouldSerialize() throws Exception {
         final String json = format(event);
-        assertThat(json, jsonEquals(resource("login.json")));
+        assertThat(json, jsonEquals(resource("foo.json")));
         assertThat(json, endsWith("\n"));
         assertThat(json, not(endsWith("\n\n")));
     }
@@ -51,7 +49,7 @@ public class AuditLogEventWriterBaseTest {
         final AuditLogEventWriterBase writer = new AuditLogEventWriterBase(sw);
         writer.logEvent(event);
 
-        assertThat(sw.toString(), jsonEquals(resource("login.json")));
+        assertThat(sw.toString(), jsonEquals(resource("foo.json")));
     }
 
     @Test(expected = NullPointerException.class)
@@ -69,7 +67,7 @@ public class AuditLogEventWriterBaseTest {
 
     @Test
     public void shouldSerializeLinksField() throws Exception {
-        ETLScheduleAuditLogEvent event = new ETLScheduleAuditLogEvent(ETL_SCHEDULE_CHANGE, "user@example.com", "1.2.3.4", "default",
+        ETLScheduleAuditLogEvent event = new ETLScheduleAuditLogEvent("ETL_SCHEDULE_CHANGE", "user@example.com", "1.2.3.4", "default",
                 true, "/gdc/projects/project", "/gdc/projects/project/dataload/process/process",
                 "/gdc/projects/project/schedules/schedule");
         event.setComponent("foo");

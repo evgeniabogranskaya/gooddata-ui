@@ -11,6 +11,7 @@ import com.gooddata.util.ISODateTimeSerializer;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
+import static org.apache.commons.lang3.Validate.notBlank;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.util.HashMap;
@@ -21,7 +22,7 @@ import java.util.Map;
  */
 public class AuditLogEvent {
 
-    private final AuditLogEventType type;
+    private final String type;
 
     private final String userLogin;
 
@@ -49,7 +50,7 @@ public class AuditLogEvent {
      * @param type type
      * @param success was this event successful
      */
-    public AuditLogEvent(final AuditLogEventType type, final boolean success) {
+    public AuditLogEvent(final String type, final boolean success) {
         this(type,
              GdcCallContext.getCurrentContext().getUserLogin(),
              GdcCallContext.getCurrentContext().getClientIp(),
@@ -64,20 +65,20 @@ public class AuditLogEvent {
      * @param userIp user's IP address
      * @param domainId domain ID
      */
-    public AuditLogEvent(final AuditLogEventType type, final String userLogin, final String userIp,
+    public AuditLogEvent(final String type, final String userLogin, final String userIp,
                          final String domainId) {
         this(type, userLogin, userIp, domainId, true);
     }
 
 
-    public AuditLogEvent(final AuditLogEventType type, final String userLogin, final String userIp,
+    public AuditLogEvent(final String type, final String userLogin, final String userIp,
                          final String domainId, final boolean success) {
         this(type, userLogin, userIp, domainId, new DateTime(), success);
     }
 
-    public AuditLogEvent(final AuditLogEventType type, final String userLogin, final String userIp,
+    public AuditLogEvent(final String type, final String userLogin, final String userIp,
                          final String domainId, final DateTime occurred, final boolean success) {
-        this.type = notNull(type, "type");
+        this.type = notBlank(type, "type");
         this.userLogin = userLogin;
         this.userIp = userIp;
         this.domainId = domainId;
@@ -85,7 +86,7 @@ public class AuditLogEvent {
         this.success = success;
     }
 
-    public AuditLogEventType getType() {
+    public String getType() {
         return type;
     }
 
