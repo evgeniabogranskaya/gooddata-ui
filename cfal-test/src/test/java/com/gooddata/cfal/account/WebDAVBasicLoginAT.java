@@ -38,7 +38,7 @@ public class WebDAVBasicLoginAT extends AbstractAT {
         this.path = uri.toString();
     }
 
-    @BeforeSuite
+    @BeforeSuite(groups = MESSAGE_TYPE)
     @Override
     public void logConnectionInfo() throws Exception {
         logger.info("host={} user={} domain={} path={}", host, props.getUser(), props.getDomain(), path);
@@ -57,14 +57,14 @@ public class WebDAVBasicLoginAT extends AbstractAT {
         return sardine;
     }
 
-    @BeforeClass
+    @BeforeClass(groups = MESSAGE_TYPE)
     public void shouldLoginUsingWebDAV() throws Exception {
         final Sardine sardine = createSardine(props.getPass());
         final List<DavResource> list = sardine.list(path);
         assertThat(list, is(notNullValue()));
     }
 
-    @BeforeClass
+    @BeforeClass(groups = MESSAGE_TYPE)
     public void shouldFailLoginUsingWebDAV() throws Exception {
         final Sardine sardine = createSardine("certainly invalid password");
         try {
