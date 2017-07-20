@@ -4,14 +4,13 @@
 package com.gooddata.cfal.project;
 
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import com.gooddata.cfal.test.AbstractProjectAT;
+import com.gooddata.cfal.AbstractProjectAT;
 import com.gooddata.project.Invitation;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 public class ProjectAT extends AbstractProjectAT {

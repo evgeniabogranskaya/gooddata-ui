@@ -1,10 +1,11 @@
 /*
  * Copyright (C) 2007-2017, GoodData(R) Corporation. All rights reserved.
  */
-package com.gooddata.cfal.test;
+package com.gooddata.cfal.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gooddata.GoodDataEndpoint;
+import com.gooddata.cfal.AbstractAT;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.sso.SSOLogin;
 import com.gooddata.security.pgp.PgpEncryptor;

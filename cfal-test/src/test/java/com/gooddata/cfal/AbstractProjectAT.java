@@ -1,9 +1,10 @@
 /*
  * Copyright (C) 2007-2017, GoodData(R) Corporation. All rights reserved.
  */
-package com.gooddata.cfal.test;
+package com.gooddata.cfal;
 
 import com.gooddata.FutureResult;
+import com.gooddata.cfal.AbstractAT;
 import com.gooddata.project.Project;
 import com.gooddata.project.ProjectEnvironment;
 import org.testng.annotations.AfterSuite;

@@ -4,7 +4,7 @@
 package com.gooddata.cfal.account;
 
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import com.gooddata.cfal.test.AbstractAT;
+import com.gooddata.cfal.AbstractAT;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

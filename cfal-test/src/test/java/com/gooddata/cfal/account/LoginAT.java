@@ -1,31 +1,34 @@
 /*
  * Copyright (C) 2007-2017, GoodData(R) Corporation. All rights reserved.
  */
-package com.gooddata.cfal.test;
+package com.gooddata.cfal.account;
 
+import com.gooddata.cfal.AbstractAT;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-public class LogoutAT extends AbstractAT {
+public class LoginAT extends AbstractAT {
 
-    private static final String MESSAGE_TYPE = "STANDARD_LOGOUT";
+    private static final String MESSAGE_TYPE = "STANDARD_LOGIN";
 
-    @BeforeClass
+    @BeforeMethod
     public void setUp() {
         gd.getAccountService().logout();
+
+        gd.getAccountService().getCurrent(); // do log
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void testLogoutMessageUserApi() throws InterruptedException {
+    public void testLoginMessageUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void testLogoutMessageAdminApi() throws InterruptedException {
+    public void testLoginMessageAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(), MESSAGE_TYPE);
     }
 

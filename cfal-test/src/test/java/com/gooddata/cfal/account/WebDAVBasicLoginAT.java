@@ -1,13 +1,14 @@
 /*
  * Copyright (C) 2007-2017, GoodData(R) Corporation. All rights reserved.
  */
-package com.gooddata.cfal.test;
+package com.gooddata.cfal.account;
 
 import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 import com.github.sardine.impl.SardineException;
 import com.github.sardine.impl.SardineImpl;
 import com.gooddata.UriPrefixer;
+import com.gooddata.cfal.AbstractAT;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import org.apache.http.HttpStatus;
 import org.testng.annotations.BeforeClass;

@@ -10,7 +10,7 @@ import static org.testng.Assert.fail;
 import com.gooddata.FutureResult;
 import com.gooddata.GoodDataException;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import com.gooddata.cfal.test.AbstractProjectAT;
+import com.gooddata.cfal.AbstractProjectAT;
 import com.gooddata.dataload.processes.DataloadProcess;
 import com.gooddata.dataload.processes.ProcessExecution;
 import com.gooddata.dataload.processes.ProcessExecutionDetail;
