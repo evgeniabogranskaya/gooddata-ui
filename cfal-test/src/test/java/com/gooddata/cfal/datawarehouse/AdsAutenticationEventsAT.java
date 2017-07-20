@@ -4,6 +4,7 @@
 package com.gooddata.cfal.datawarehouse;
 
 import org.testng.annotations.AfterGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -15,17 +16,28 @@ public class AdsAutenticationEventsAT extends AbstractAdsAT {
     private static final String MESSAGE_TYPE_LOGIN = "DATAWAREHOUSE_USERNAME_PASSWORD_LOGIN";
     private static final String MESSAGE_TYPE_LOGOUT = "DATAWAREHOUSE_LOGOUT";
 
-    @Test(groups = MESSAGE_TYPE_LOGIN)
-    public void testUsernamePasswordAuthUserApi() throws InterruptedException {
+    @BeforeClass
+    public void setUp() {
         getJdbcTemplate().execute(TEST_QUERY);
-        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_LOGIN), MESSAGE_TYPE_LOGIN);
-        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_LOGOUT), MESSAGE_TYPE_LOGOUT);
     }
 
     @Test(groups = MESSAGE_TYPE_LOGIN)
-    public void testUsernamePasswordAuthAdminApi() throws InterruptedException {
-        getJdbcTemplate().execute(TEST_QUERY);
+    public void testUsernamePasswordLoginUserApi() throws InterruptedException {
+        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_LOGIN), MESSAGE_TYPE_LOGIN);
+    }
+
+    @Test(groups = MESSAGE_TYPE_LOGIN)
+    public void testUsernamePasswordLoginAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_LOGIN), MESSAGE_TYPE_LOGIN);
+    }
+
+    @Test(groups = MESSAGE_TYPE_LOGOUT)
+    public void testDatawarehouseLogoutUserApi() throws Exception {
+        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_LOGOUT), MESSAGE_TYPE_LOGOUT);
+    }
+
+    @Test(groups = MESSAGE_TYPE_LOGOUT)
+    public void testDatawarehouseLogoutAdminApi() throws Exception {
         doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_LOGOUT), MESSAGE_TYPE_LOGOUT);
     }
 
