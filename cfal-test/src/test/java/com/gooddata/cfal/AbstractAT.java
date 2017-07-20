@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2007-2017, GoodData(R) Corporation. All rights reserved.
  */
-package com.gooddata.cfal.test;
+package com.gooddata.cfal;
 
 import com.gooddata.CfalGoodData;
 import com.gooddata.GoodDataEndpoint;

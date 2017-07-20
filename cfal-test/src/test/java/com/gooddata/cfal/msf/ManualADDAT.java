@@ -10,7 +10,7 @@ import static org.hamcrest.core.IsNot.not;
 
 import com.gooddata.FutureResult;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import com.gooddata.cfal.test.AbstractProjectAT;
+import com.gooddata.cfal.AbstractProjectAT;
 import com.gooddata.dataload.OutputStage;
 import com.gooddata.dataload.processes.DataloadProcess;
 import com.gooddata.dataload.processes.Schedule;

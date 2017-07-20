@@ -4,7 +4,7 @@
 package com.gooddata.cfal.datawarehouse;
 
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import com.gooddata.cfal.test.AbstractAT;
+import com.gooddata.cfal.AbstractAT;
 import com.gooddata.warehouse.Warehouse;
 import org.springframework.jdbc.core.JdbcTemplate;
 
