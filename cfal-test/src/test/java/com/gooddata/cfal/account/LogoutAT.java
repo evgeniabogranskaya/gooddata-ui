@@ -15,7 +15,7 @@ public class LogoutAT extends AbstractAT {
 
     private static final String MESSAGE_TYPE = "STANDARD_LOGOUT";
 
-    @BeforeClass
+    @BeforeClass(groups = MESSAGE_TYPE)
     public void setUp() {
         gd.getAccountService().logout();
     }

@@ -7,6 +7,7 @@ import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.AbstractAT;
 import com.gooddata.warehouse.Warehouse;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.testng.annotations.AfterSuite;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -17,14 +18,8 @@ import java.util.function.Predicate;
  */
 abstract class AbstractAdsAT extends AbstractAT {
 
-    private final JdbcTemplate jdbcTemplate;
-    private final Warehouse warehouse;
-
-    AbstractAdsAT() {
-        super();
-        this.warehouse = adsService.createWarehouse();
-        this.jdbcTemplate = adsService.createJdbcTemplate(warehouse);
-    }
+    private static JdbcTemplate jdbcTemplate;
+    private static Warehouse warehouse;
 
     protected Predicate<List<AuditEventDTO>> pageCheckPredicate(final String eventType) {
         return (auditEvents) -> auditEvents.stream().anyMatch(e -> matchEvent(eventType, e));
@@ -37,17 +32,33 @@ abstract class AbstractAdsAT extends AbstractAT {
                 warehouse.getUri().equals(e.getLinks().get("datawarehouse"));
     }
 
-    protected void safelyDeleteAds() {
+    private void safelyDeleteAds() {
         if (warehouse != null) {
-            gd.getWarehouseService().removeWarehouse(warehouse);
+            try {
+                gd.getWarehouseService().removeWarehouse(warehouse);
+            } catch (Exception ignored) {
+            }
         }
     }
 
     protected JdbcTemplate getJdbcTemplate() {
-        return jdbcTemplate;
+        if (jdbcTemplate != null) {
+            return jdbcTemplate;
+        }
+
+        return jdbcTemplate = adsService.createJdbcTemplate(getWarehouse());
     }
 
     protected Warehouse getWarehouse() {
-        return warehouse;
+        if (warehouse != null) {
+            return warehouse;
+        }
+
+        return warehouse = adsService.createWarehouse();
+    }
+
+    @AfterSuite(alwaysRun = true)
+    public void tearDownWarehouse() {
+        safelyDeleteAds();
     }
 }

@@ -4,7 +4,6 @@
 package com.gooddata.cfal;
 
 import com.gooddata.FutureResult;
-import com.gooddata.cfal.AbstractAT;
 import com.gooddata.project.Project;
 import com.gooddata.project.ProjectEnvironment;
 import org.testng.annotations.AfterSuite;
@@ -37,7 +36,7 @@ public abstract class AbstractProjectAT extends AbstractAT {
         }
     }
 
-    @BeforeSuite
+    @BeforeSuite(alwaysRun = true)
     public void getOrCreateProject() throws Exception {
         if (existingProjectId == null) {
             project = createProject(props.getProjectToken());
@@ -56,7 +55,7 @@ public abstract class AbstractProjectAT extends AbstractAT {
         return result.get(props.getPollTimeoutMinutes(), props.getPollTimeoutUnit());
     }
 
-    @AfterSuite
+    @AfterSuite(alwaysRun = true)
     public void tearDownProject() throws Exception {
         if (project != null) {
             if (keepProject) {

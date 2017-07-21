@@ -16,7 +16,7 @@ public class AdsUserEventsAT extends AbstractAdsAT {
     private static final String MESSAGE_TYPE_ADD = "DATAWAREHOUSE_ADD_USER";
     private static final String MESSAGE_TYPE_REMOVE = "DATAWAREHOUSE_REMOVE_USER";
 
-    @BeforeClass
+    @BeforeClass(groups = {MESSAGE_TYPE_ADD, MESSAGE_TYPE_REMOVE})
     public void addUserToAds() throws Exception {
         final WarehouseUser tmpUser = WarehouseUser.createWithlogin(anotherAccount.getLogin(), DATA_ADMIN);
 

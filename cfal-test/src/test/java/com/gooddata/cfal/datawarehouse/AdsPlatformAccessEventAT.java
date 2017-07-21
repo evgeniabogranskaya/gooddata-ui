@@ -3,7 +3,6 @@
  */
 package com.gooddata.cfal.datawarehouse;
 
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
 /**
@@ -25,10 +24,4 @@ public class AdsPlatformAccessEventAT extends AbstractAdsAT {
         getJdbcTemplate().execute(TEST_QUERY);
         doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_ACCESS), MESSAGE_TYPE_ACCESS);
     }
-
-    @AfterGroups(groups = MESSAGE_TYPE_ACCESS)
-    public void tearDown() {
-        safelyDeleteAds();
-    }
-
 }

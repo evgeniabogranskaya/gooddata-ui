@@ -40,7 +40,7 @@ public class ETLProcessAT extends AbstractProjectAT {
     private DataloadProcess process;
     private DataloadProcess processAppstore;
 
-    @BeforeClass
+    @BeforeClass(groups = {EXECUTION_MESSAGE_TYPE, CREATE_MESSAGE_TYPE, DELETE_MESSAGE_TYPE, UPDATE_MESSAGE_TYPE})
     public void setUp() throws Exception {
         createProcessFromAppstore();
         createProcess();

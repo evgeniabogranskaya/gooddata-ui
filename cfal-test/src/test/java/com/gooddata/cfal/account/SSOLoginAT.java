@@ -15,6 +15,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
@@ -51,9 +52,10 @@ public class SSOLoginAT extends AbstractAT {
     private static final String MESSAGE_TYPE = "SSO_LOGIN";
 
     private static final String URI = "/gdc/account/customerlogin?sessionId={sessionId}&serverURL={server}&targetURL=/gdc";
-    private final String session;
+    private String session;
 
-    public SSOLoginAT() throws Exception {
+    @BeforeClass(groups = MESSAGE_TYPE)
+    public void setUp() throws Exception {
         final PgpEncryptor encryptor = new PgpEncryptor.Builder()
                 .setPublicKeyForEncryption(new ClassPathResource("/sso/dev-gooddata.com.pub").getInputStream())
                 .setSecretKeyForSigning(new ClassPathResource("/sso/smurfs.priv").getInputStream())
@@ -70,7 +72,7 @@ public class SSOLoginAT extends AbstractAT {
         session = encryptedMessageOut.toString();
     }
 
-    @Test
+    @Test(groups = MESSAGE_TYPE)
     public void shouldLoginUserWithSSO() throws Exception {
         final RestTemplate rest = createRestTemplate(new GoodDataEndpoint(props.getHost()), HttpClientBuilder.create().build());
 
@@ -78,12 +80,12 @@ public class SSOLoginAT extends AbstractAT {
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
     }
 
-    @Test(dependsOnMethods = "shouldLoginUserWithSSO")
+    @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldLoginUserWithSSO")
     public void testLoginMessageUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(), MESSAGE_TYPE);
     }
 
-    @Test(dependsOnMethods = "shouldLoginUserWithSSO")
+    @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldLoginUserWithSSO")
     public void testLoginMessageAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(), MESSAGE_TYPE);
     }

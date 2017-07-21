@@ -34,36 +34,36 @@ public class BasicLoginAT extends AbstractAT {
     private static final String MESSAGE_TYPE = "BASIC_LOGIN";
     private static final String WRONG_PASS = "123";
 
-    @Test
+    @Test(groups = MESSAGE_TYPE)
     public void shouldLogUsingBasicAuth() throws IOException {
         final HttpResponse response = doBasicAuth(props.getPass());
 
         assertThat(response.getStatusLine().getStatusCode(), is(HttpStatus.SC_OK));
     }
 
-    @Test
+    @Test(groups = MESSAGE_TYPE)
     public void shouldNotLogWithBadPasswordUsingBasicAuth() throws IOException {
         final HttpResponse response = doBasicAuth(WRONG_PASS);
 
         assertThat(response.getStatusLine().getStatusCode(), is(HttpStatus.SC_UNAUTHORIZED));
     }
 
-    @Test(dependsOnMethods = "shouldLogUsingBasicAuth")
+    @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldLogUsingBasicAuth")
     public void testLoginMessageUserApi() throws InterruptedException, IOException {
         doTestUserApi(pageCheckPredicate(true), MESSAGE_TYPE);
     }
 
-    @Test(dependsOnMethods = "shouldLogUsingBasicAuth")
+    @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldLogUsingBasicAuth")
     public void testLoginMessageAdminApi() throws InterruptedException, IOException {
         doTestAdminApi(pageCheckPredicate(true), MESSAGE_TYPE);
     }
 
-    @Test(dependsOnMethods = "shouldNotLogWithBadPasswordUsingBasicAuth")
+    @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldNotLogWithBadPasswordUsingBasicAuth")
     public void testLoginBadPasswordMessageUserApi() throws InterruptedException, IOException {
         doTestUserApi(pageCheckPredicate(false), MESSAGE_TYPE);
     }
 
-    @Test(dependsOnMethods = "shouldNotLogWithBadPasswordUsingBasicAuth")
+    @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldNotLogWithBadPasswordUsingBasicAuth")
     public void testLoginBadPasswordMessageAdminApi() throws InterruptedException, IOException {
         doTestAdminApi(pageCheckPredicate(false), MESSAGE_TYPE);
     }
