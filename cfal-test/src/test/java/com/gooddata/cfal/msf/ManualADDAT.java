@@ -40,7 +40,7 @@ public class ManualADDAT extends AbstractProjectAT {
     private Warehouse warehouse;
     private JdbcTemplate jdbcTemplate;
 
-    @BeforeClass
+    @BeforeClass(groups = MESSAGE_TYPE)
     public void updateProjectModel() throws Exception {
         final ModelDiff projectModelDiff = gd.getModelService().getProjectModelDiff(project,
                 new InputStreamReader(getClass().getResourceAsStream("/model.json"))).get();
@@ -50,12 +50,12 @@ public class ManualADDAT extends AbstractProjectAT {
         logger.info("updated model of project_id={}", project.getId());
     }
 
-    @BeforeClass(dependsOnMethods = "updateProjectModel")
+    @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "updateProjectModel")
     public void createWarehouse() {
         warehouse = adsService.createWarehouse();
     }
 
-    @BeforeClass(dependsOnMethods = "createWarehouse")
+    @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "createWarehouse")
     public void setOutputStage() {
         final OutputStage outputStage = gd.getOutputStageService().getOutputStage(project);
         final WarehouseSchema schema = gd.getWarehouseService().getDefaultWarehouseSchema(warehouse);
@@ -67,12 +67,12 @@ public class ManualADDAT extends AbstractProjectAT {
 
     }
 
-    @BeforeClass(dependsOnMethods = "createWarehouse")
+    @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "createWarehouse")
     public void createTemplate() {
         jdbcTemplate = adsService.createJdbcTemplate(warehouse);
     }
 
-    @BeforeClass(dependsOnMethods = "createTemplate")
+    @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "createTemplate")
     public void executeSql() throws Exception {
         final File city = new File(getClass().getClassLoader().getResource("city.sql").toURI());
         final File person = new File(getClass().getClassLoader().getResource("person.sql").toURI());
@@ -86,7 +86,7 @@ public class ManualADDAT extends AbstractProjectAT {
         logger.info("executed sql scripts on warehouse_id={}", warehouse.getId());
     }
 
-    @BeforeClass(dependsOnMethods = {"setOutputStage", "executeSql"})
+    @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = {"setOutputStage", "executeSql"})
     public void executeDataloadProcess() {
         final DataloadProcess dataloadProcess = gd.getProcessService()
                 .listProcesses(project)
@@ -98,17 +98,17 @@ public class ManualADDAT extends AbstractProjectAT {
         createAndExecuteSchedule(dataloadProcess);
     }
 
-    @Test
+    @Test(groups = MESSAGE_TYPE)
     public void tesADDManualExecutionMessageUserAPI() throws Exception {
         doTestUserApi(pageCheckPredicate(true), MESSAGE_TYPE);
     }
 
-    @Test
+    @Test(groups = MESSAGE_TYPE)
     public void tesADDManualExecutionMessageAdminAPI() throws Exception {
         doTestAdminApi(pageCheckPredicate(true), MESSAGE_TYPE);
     }
 
-    @AfterClass
+    @AfterClass(groups = MESSAGE_TYPE)
     public void clearOutputStage() {
         final OutputStage outputStage = gd.getOutputStageService().getOutputStage(project);
 
@@ -117,7 +117,7 @@ public class ManualADDAT extends AbstractProjectAT {
         gd.getOutputStageService().updateOutputStage(outputStage);
     }
 
-    @AfterClass(dependsOnMethods = "clearOutputStage")
+    @AfterClass(groups = MESSAGE_TYPE, dependsOnMethods = "clearOutputStage")
     public void removeWarehouse() {
         if (warehouse != null) {
             gd.getWarehouseService().removeWarehouse(warehouse);

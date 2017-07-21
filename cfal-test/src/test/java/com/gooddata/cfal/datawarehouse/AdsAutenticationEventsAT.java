@@ -3,7 +3,6 @@
  */
 package com.gooddata.cfal.datawarehouse;
 
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -16,7 +15,7 @@ public class AdsAutenticationEventsAT extends AbstractAdsAT {
     private static final String MESSAGE_TYPE_LOGIN = "DATAWAREHOUSE_USERNAME_PASSWORD_LOGIN";
     private static final String MESSAGE_TYPE_LOGOUT = "DATAWAREHOUSE_LOGOUT";
 
-    @BeforeClass
+    @BeforeClass(groups = {MESSAGE_TYPE_LOGIN, MESSAGE_TYPE_LOGOUT})
     public void setUp() {
         getJdbcTemplate().execute(TEST_QUERY);
     }
@@ -39,10 +38,5 @@ public class AdsAutenticationEventsAT extends AbstractAdsAT {
     @Test(groups = MESSAGE_TYPE_LOGOUT)
     public void testDatawarehouseLogoutAdminApi() throws Exception {
         doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_LOGOUT), MESSAGE_TYPE_LOGOUT);
-    }
-
-    @AfterGroups(groups = MESSAGE_TYPE_LOGIN)
-    public void tearDown() {
-        safelyDeleteAds();
     }
 }

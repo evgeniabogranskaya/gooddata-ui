@@ -5,7 +5,6 @@ package com.gooddata.cfal;
 
 import com.gooddata.GoodDataRestException;
 import com.gooddata.account.Account;
-import com.gooddata.cfal.AbstractAT;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.collections.PageableList;
 import org.apache.http.HttpStatus;

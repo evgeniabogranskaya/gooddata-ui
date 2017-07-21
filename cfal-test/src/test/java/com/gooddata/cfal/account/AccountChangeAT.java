@@ -18,7 +18,7 @@ public class AccountChangeAT extends AbstractAT {
     private final String USER_PASSWORD_CHANGE = "USER_PASSWORD_CHANGE";
     private final String USER_IP_WHITELIST_CHANGE = "USER_IP_WHITELIST_CHANGE";
 
-    @BeforeClass
+    @BeforeClass(groups = {USER_PROFILE_CHANGE, USER_PASSWORD_CHANGE, USER_IP_WHITELIST_CHANGE})
     public void setUp() {
         updateUser();
     }

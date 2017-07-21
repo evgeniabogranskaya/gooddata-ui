@@ -5,7 +5,7 @@ package com.gooddata.cfal.account;
 
 import com.gooddata.cfal.AbstractAT;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public class LoginAT extends AbstractAT {
 
     private static final String MESSAGE_TYPE = "STANDARD_LOGIN";
 
-    @BeforeMethod
+    @BeforeClass(groups = MESSAGE_TYPE)
     public void setUp() {
         gd.getAccountService().logout();
 

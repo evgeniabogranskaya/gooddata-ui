@@ -18,7 +18,7 @@ public class ProjectAT extends AbstractProjectAT {
     private static final String MESSAGE_TYPE = "INVITATION_SENT";
     private final String email = "qa+" + RandomStringUtils.randomAlphanumeric(10) + "@gooddata.com";
 
-    @BeforeClass
+    @BeforeClass(groups = MESSAGE_TYPE)
     public void sendInvitation() throws Exception {
         final Invitation invitation = new Invitation(email);
         gd.getProjectService().sendInvitations(project, invitation);
