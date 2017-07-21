@@ -3,6 +3,7 @@
  */
 package com.gooddata.cfal.datawarehouse;
 
+import com.gooddata.account.Account;
 import com.gooddata.warehouse.WarehouseUser;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -18,6 +19,8 @@ public class AdsUserEventsAT extends AbstractAdsAT {
 
     @BeforeClass(groups = {MESSAGE_TYPE_ADD, MESSAGE_TYPE_REMOVE})
     public void addUserToAds() throws Exception {
+        final Account anotherAccount = accountService.getOrCreateUser();
+
         final WarehouseUser tmpUser = WarehouseUser.createWithlogin(anotherAccount.getLogin(), DATA_ADMIN);
 
         final WarehouseUser warehouseUser = gd.getWarehouseService().addUserToWarehouse(getWarehouse(), tmpUser).get();

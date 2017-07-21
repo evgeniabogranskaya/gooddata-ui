@@ -3,6 +3,7 @@
  */
 package com.gooddata.cfal.account;
 
+import com.gooddata.account.Account;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.AbstractAT;
 import org.testng.annotations.BeforeClass;
@@ -24,6 +25,8 @@ public class AccountChangeAT extends AbstractAT {
     }
 
     private void updateUser() {
+        final Account anotherAccount = accountService.getOrCreateUser();
+
         final String newPass = "alohaalohaaloha";
         anotherAccount.setPassword(newPass);
         anotherAccount.setVerifyPassword(newPass);

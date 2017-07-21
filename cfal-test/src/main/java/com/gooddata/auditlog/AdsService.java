@@ -13,8 +13,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Singleton for ADS related stuff. Not thread safe.
+ */
 public class AdsService {
+
+    private static AdsService instance;
+
+    private List<Warehouse> warehouses = new ArrayList<>();
 
     private static final Logger logger = LoggerFactory.getLogger(AdsService.class);
 
@@ -23,7 +32,14 @@ public class AdsService {
     private final GoodData gd;
     private final TestEnvironmentProperties props;
 
-    public AdsService(final GoodData gd, final TestEnvironmentProperties props) {
+    public static AdsService getInstance(final GoodData gd, final TestEnvironmentProperties props) {
+        if (instance != null) {
+            return instance;
+        }
+        return instance = new AdsService(gd, props);
+    }
+
+    private AdsService(final GoodData gd, final TestEnvironmentProperties props) {
         this.gd = gd;
         this.props = props;
     }
@@ -39,6 +55,18 @@ public class AdsService {
     }
 
     /**
+     * Get warehouse created before or create a new one
+     * @return Warehouse instance
+     */
+    public Warehouse getOrCreateWarehouse() {
+        if (warehouses.isEmpty()) {
+            return createWarehouse();
+        }
+        return warehouses.get(0);
+
+    }
+
+    /**
      * Create warehouse
      * @return warehouse instance
      */
@@ -49,7 +77,23 @@ public class AdsService {
 
         logger.info("Created warehouse_id={}", warehouse.getId());
 
+        warehouses.add(warehouse);
+
         return warehouse;
+    }
+
+    /**
+     * Removes all created warehouses
+     */
+    public void destroy() {
+        warehouses.stream().forEach(e -> {
+            try {
+                gd.getWarehouseService().removeWarehouse(e);
+                logger.info("removed warehouse_id={}", e.getId());
+            } catch (Exception ex) {
+                logger.warn("could not remove warehouse_id={}", e.getId());
+            }
+        });
     }
 
     private DriverManagerDataSource createDataSource(final Warehouse warehouse) {

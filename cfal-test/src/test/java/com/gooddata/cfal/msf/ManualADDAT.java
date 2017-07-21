@@ -52,7 +52,7 @@ public class ManualADDAT extends AbstractProjectAT {
 
     @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "updateProjectModel")
     public void createWarehouse() {
-        warehouse = adsService.createWarehouse();
+        warehouse = adsService.getOrCreateWarehouse();
     }
 
     @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "createWarehouse")
@@ -115,13 +115,6 @@ public class ManualADDAT extends AbstractProjectAT {
         outputStage.setSchemaUri(null);
 
         gd.getOutputStageService().updateOutputStage(outputStage);
-    }
-
-    @AfterClass(groups = MESSAGE_TYPE, dependsOnMethods = "clearOutputStage")
-    public void removeWarehouse() {
-        if (warehouse != null) {
-            gd.getWarehouseService().removeWarehouse(warehouse);
-        }
     }
 
     private void createAndExecuteSchedule(final DataloadProcess dataloadProcess) {
