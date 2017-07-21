@@ -50,8 +50,6 @@ public abstract class AbstractAT {
     protected final AdsService adsService;
     protected final AccountService accountService;
 
-    protected static Account anotherAccount;
-
     public AbstractAT() {
         props = new TestEnvironmentProperties();
 
@@ -63,8 +61,8 @@ public abstract class AbstractAT {
         account = gd.getAccountService().getCurrent();
         startTime = new DateTime();
 
-        this.adsService = new AdsService(gd, props);
-        this.accountService = new AccountService(gd, props);
+        this.adsService = AdsService.getInstance(gd, props);
+        this.accountService = AccountService.getInstance(gd, props);
     }
 
     @BeforeSuite(alwaysRun = true)
@@ -72,17 +70,10 @@ public abstract class AbstractAT {
         logger.info("host={} user={} domain={}", props.getHost(), props.getUser(), props.getDomain());
     }
 
-    @BeforeSuite(alwaysRun = true)
-    public void createTestUser() {
-        anotherAccount = accountService.createUser();
-    }
-
     @AfterSuite(alwaysRun = true)
-    public void removeTestUser() {
-        if (anotherAccount != null) {
-            gd.getAccountService().removeAccount(anotherAccount);
-            logger.info("removed user_id={}", anotherAccount.getId());
-        }
+    public void serviceTearDown() {
+        accountService.destroy();
+        adsService.destroy();
     }
 
     /**

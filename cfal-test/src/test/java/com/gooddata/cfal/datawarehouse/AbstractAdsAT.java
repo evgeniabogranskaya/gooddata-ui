@@ -7,7 +7,6 @@ import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.AbstractAT;
 import com.gooddata.warehouse.Warehouse;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.testng.annotations.AfterSuite;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -19,7 +18,6 @@ import java.util.function.Predicate;
 abstract class AbstractAdsAT extends AbstractAT {
 
     private static JdbcTemplate jdbcTemplate;
-    private static Warehouse warehouse;
 
     protected Predicate<List<AuditEventDTO>> pageCheckPredicate(final String eventType) {
         return (auditEvents) -> auditEvents.stream().anyMatch(e -> matchEvent(eventType, e));
@@ -29,16 +27,7 @@ abstract class AbstractAdsAT extends AbstractAT {
         return e.getUserLogin().equals(account.getLogin()) &&
                 e.getType().equals(eventType) &&
                 e.getLinks() != null &&
-                warehouse.getUri().equals(e.getLinks().get("datawarehouse"));
-    }
-
-    private void safelyDeleteAds() {
-        if (warehouse != null) {
-            try {
-                gd.getWarehouseService().removeWarehouse(warehouse);
-            } catch (Exception ignored) {
-            }
-        }
+                getWarehouse().getUri().equals(e.getLinks().get("datawarehouse"));
     }
 
     protected JdbcTemplate getJdbcTemplate() {
@@ -50,15 +39,6 @@ abstract class AbstractAdsAT extends AbstractAT {
     }
 
     protected Warehouse getWarehouse() {
-        if (warehouse != null) {
-            return warehouse;
-        }
-
-        return warehouse = adsService.createWarehouse();
-    }
-
-    @AfterSuite(alwaysRun = true)
-    public void tearDownWarehouse() {
-        safelyDeleteAds();
+        return adsService.getOrCreateWarehouse();
     }
 }
