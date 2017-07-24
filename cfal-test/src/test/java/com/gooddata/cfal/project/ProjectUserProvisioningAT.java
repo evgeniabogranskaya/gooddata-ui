@@ -3,6 +3,7 @@
  */
 package com.gooddata.cfal.project;
 
+import com.gooddata.account.Account;
 import com.gooddata.cfal.AbstractProjectAT;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.project.User;
@@ -17,9 +18,12 @@ public class ProjectUserProvisioningAT extends AbstractProjectAT {
     private static final String USER_ADD_MESSAGE_TYPE = "PROJECT_USER_ADD";
     private static final String STATUS_CHANGE_MESSAGE_TYPE = "PROJECT_USER_STATUS_CHANGE";
 
+    private Account addedUser;
+
     @BeforeClass(groups = {USER_ADD_MESSAGE_TYPE, STATUS_CHANGE_MESSAGE_TYPE})
     public void setUp() {
-        final User user = gd.getProjectService().addUserToProject(project, accountService.getOrCreateUser());
+        addedUser = accountService.getOrCreateUser();
+        final User user = gd.getProjectService().addUserToProject(project, addedUser);
 
         user.setStatus("DISABLED");
 
@@ -51,7 +55,7 @@ public class ProjectUserProvisioningAT extends AbstractProjectAT {
                 .anyMatch(e ->
                         account.getLogin().equals(e.getUserLogin()) &&
                                 messageType.equals(e.getType()) &&
-                                account.getUri().equals(e.getParams().get("profile"))
+                                addedUser.getUri().equals(e.getLinks().get("profile"))
                 );
     }
 }
