@@ -165,6 +165,18 @@
                                 </configuration>
                             </execution>
                         </executions>
+                        <configuration>
+                            <excludedClasses>
+                                <param>com.gooddata.cfal.restapi.config.*</param>
+                            </excludedClasses>
+                            <avoidCallsTo>
+                                <avoidCallsTo>java.util.logging</avoidCallsTo>
+                                <avoidCallsTo>org.apache.log4j</avoidCallsTo>
+                                <avoidCallsTo>org.slf4j</avoidCallsTo>
+                                <avoidCallsTo>org.apache.commons.logging</avoidCallsTo>
+                                <avoidCallsTo>org.springframework.util.StopWatch</avoidCallsTo>
+                            </avoidCallsTo>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
