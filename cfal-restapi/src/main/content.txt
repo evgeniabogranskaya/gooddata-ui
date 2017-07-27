@@ -48,3 +48,4 @@ aopalliance-1.0.jar
 metrics-core-3.1.*.jar
 metrics-graphite-3.1.*.jar
 metrics-jvm-3.1.*.jar
+commons-httpclient-3.1.jar

@@ -44,6 +44,11 @@
             <version>${monitoring.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.gooddata.commons.monitoring</groupId>
+            <artifactId>monitoring-servlet</artifactId>
+            <version>${monitoring.version}</version>
+        </dependency>
+        <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
         </dependency>
