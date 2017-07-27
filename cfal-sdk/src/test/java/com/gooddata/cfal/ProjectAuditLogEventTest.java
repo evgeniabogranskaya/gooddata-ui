@@ -5,10 +5,7 @@ package com.gooddata.cfal;
 
 import org.junit.Test;
 
-import static com.gooddata.cfal.ETLDataloadProcessExecutionAuditLogEvent.ETL_SCHEDULE_CHANGE;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.MatcherAssert.*;
 import static org.junit.Assert.assertThat;
 
 public class ProjectAuditLogEventTest extends AbstractProjectAuditLogEventTest {

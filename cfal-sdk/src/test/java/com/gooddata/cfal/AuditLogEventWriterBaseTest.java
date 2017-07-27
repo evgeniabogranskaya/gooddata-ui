@@ -67,13 +67,12 @@ public class AuditLogEventWriterBaseTest {
 
     @Test
     public void shouldSerializeLinksField() throws Exception {
-        ETLScheduleAuditLogEvent event = new ETLScheduleAuditLogEvent("ETL_SCHEDULE_CHANGE", "user@example.com", "1.2.3.4", "default",
-                true, "/gdc/projects/project", "/gdc/projects/project/dataload/process/process",
-                "/gdc/projects/project/schedules/schedule");
+        final ProjectAuditLogEvent event = new ProjectAuditLogEvent("type", "user@example.com", "1.2.3.4", "default",
+                "/gdc/projects/project", true);
         event.setComponent("foo");
 
         final String json = format(event);
-        assertThat(json, jsonEquals(resource("scheduleChange.json")));
+        assertThat(json, jsonEquals(resource("projectEvent.json")));
     }
 
 }
