@@ -7,6 +7,8 @@ import com.codahale.metrics.MetricRegistry;
 import com.gooddata.cfal.restapi.exception.AuditlogExceptionTranslatorAdvice;
 import com.gooddata.cfal.restapi.util.StringToUTCDateTimeConverter;
 import com.gooddata.commons.monitoring.rest.RequestMonitoringInterceptor;
+import com.gooddata.commons.monitoring.servlet.ResponseMonitoringFilter;
+import com.gooddata.commons.monitoring.servlet.ResponseMonitoringService;
 import com.gooddata.commons.web.filter.LoggingContextSetupFilter;
 import com.gooddata.context.GdcCallContextFilter;
 import com.gooddata.exception.servlet.HttpExceptionTranslator;
@@ -16,6 +18,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.BindException;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -32,6 +35,14 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     public static final String COMPONENT_NAME = "auditlog";
 
+    private static final String URL_PATTERN = GDC_URI + "/*";
+
+    private static final String GDC_FILTER_NAME = "GDC_FILTER";
+    private static final String GDC_LOGGING_CONTEXT_FILTER_NAME = "GDC_LOGGING_CONTEXT_FILTER";
+    private static final String RESPONSE_MONITORING_FILTER_NAME = "RESPONSE_MONITORING_FILTER";
+
+    private static final String DISPATCHER_SERVLET = "dispatcherServlet";
+
     @Autowired
     private RequestMonitoringInterceptor requestMonitoringInterceptor;
 
@@ -42,8 +53,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public FilterRegistrationBean gdcCallContextFilterRegistration() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new GdcCallContextFilter());
-        registration.addUrlPatterns(GDC_URI + "/*");
-        registration.setName("GDC_FILTER");
+        registration.addUrlPatterns(URL_PATTERN);
+        registration.setName(GDC_FILTER_NAME);
         registration.setOrder(1);
         return registration;
     }
@@ -55,10 +66,30 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public FilterRegistrationBean gdcRequestIdHandlingFilterRegistration() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new LoggingContextSetupFilter());
-        registration.addUrlPatterns(GDC_URI + "/*");
-        registration.setName("GDC_LOGGING_CONTEXT_FILTER");
+        registration.addUrlPatterns(URL_PATTERN);
+        registration.setName(GDC_LOGGING_CONTEXT_FILTER_NAME);
         registration.setOrder(2);
         return registration;
+    }
+
+    /**
+     * register ResponseMonitoringFilter as Filter
+     */
+    @Bean
+    public FilterRegistrationBean responseMonitoringFilter(final ResponseMonitoringService responseMonitoringService) {
+        final ResponseMonitoringFilter filter = new ResponseMonitoringFilter(responseMonitoringService);
+        final DelegatingFilterProxy proxy = new DelegatingFilterProxy(filter);
+        proxy.setTargetFilterLifecycle(true);
+        final FilterRegistrationBean registrationBean = new FilterRegistrationBean(proxy);
+        registrationBean.setName(RESPONSE_MONITORING_FILTER_NAME);
+        registrationBean.setOrder(3);
+        registrationBean.addServletNames(DISPATCHER_SERVLET);
+        return registrationBean;
+    }
+
+    @Bean
+    public ResponseMonitoringService responseMonitoringService(final MetricRegistry metricRegistry) {
+        return new ResponseMonitoringService(true, metricRegistry);
     }
 
     /**
