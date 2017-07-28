@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
@@ -22,6 +23,8 @@ class AuditLogEventWriterBase implements AuditLogEventWriter {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final BufferedWriter writer;
+
+    private AtomicLong errorCounter = new AtomicLong();
 
     public AuditLogEventWriterBase(final Writer writer) {
         this.writer = new BufferedWriter(notNull(writer, "writer"));
@@ -36,6 +39,7 @@ class AuditLogEventWriterBase implements AuditLogEventWriter {
             return eventData.length();
         } catch (IOException e) {
             logger.error("Unable to write event={}", event.getType(), e);
+            errorCounter.incrementAndGet();
             return 0;
         }
     }
@@ -54,5 +58,13 @@ class AuditLogEventWriterBase implements AuditLogEventWriter {
     @Override
     public void close() throws Exception {
         writer.close();
+    }
+
+    /**
+     *
+     * @return Number of errors during write operation
+     */
+    public long getErrorCounter() {
+        return errorCounter.get();
     }
 }

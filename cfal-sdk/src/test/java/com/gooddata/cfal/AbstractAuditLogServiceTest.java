@@ -25,6 +25,11 @@ public class AbstractAuditLogServiceTest {
             @Override
             protected void doLogEvent(AuditLogEvent event) {
             }
+
+            @Override
+            public long getErrorCount() {
+                return 0;
+            }
         };
 
         spyInstance = Mockito.spy(instance);
@@ -37,6 +42,11 @@ public class AbstractAuditLogServiceTest {
             @Override
             protected void doLogEvent(AuditLogEvent event) {
             }
+
+            @Override
+            public long getErrorCount() {
+                return 0;
+            }
         };
     }
 
@@ -45,6 +55,11 @@ public class AbstractAuditLogServiceTest {
         new AbstractAuditLogService("") {
             @Override
             protected void doLogEvent(AuditLogEvent event) {
+            }
+
+            @Override
+            public long getErrorCount() {
+                return 0;
             }
         };
     }

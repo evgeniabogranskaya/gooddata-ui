@@ -73,6 +73,11 @@ class AuditLogEventFileWriter implements AuditLogEventWriter {
         return bytes;
     }
 
+    @Override
+    public long getErrorCounter() {
+        return writer.getErrorCounter();
+    }
+
     private void rotate() {
         logger.info("action=rotate status=start file={}", logFile);
 

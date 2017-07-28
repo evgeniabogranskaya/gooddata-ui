@@ -6,6 +6,9 @@ package com.gooddata.cfal;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -26,6 +29,13 @@ public class SimpleAuditLogServiceTest {
     public void shouldLogEvent() throws Exception {
         service.logEvent(EVENT);
         verify(writer).logEvent(EVENT);
+    }
+
+    @Test
+    public void shouldGetErrorCount() throws Exception {
+        doReturn(1L).when(writer).getErrorCounter();
+
+        assertThat(service.getErrorCount(), is(1L));
     }
 
     @Test
