@@ -3,6 +3,8 @@
  */
 package com.gooddata.cfal.restapi.task;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,8 @@ import org.springframework.util.StopWatch;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Task for index creation
  */
@@ -21,13 +25,23 @@ import static org.apache.commons.lang3.Validate.notNull;
 @ManagedResource
 public class CreateIndexTask {
 
+    static final String TTL_INDEX_TIMER_NAME = "ttlIndexTimer";
+    static final String LOGIN_INDEX_TIMER_NAME = "loginIndexTimer";
+
+    private final Timer ttlIndexTimer;
+    private final Timer loginIndexTimer;
+
     private static final Logger logger = LoggerFactory.getLogger(CreateIndexTask.class);
     private final AuditLogEventRepository repository;
 
-    public CreateIndexTask(final AuditLogEventRepository repository) {
+    public CreateIndexTask(final AuditLogEventRepository repository, final MetricRegistry metricRegistry) {
         notNull(repository, "repository cannot be null");
+        notNull(metricRegistry, "metricRegistry cannot be null");
 
         this.repository = repository;
+
+        ttlIndexTimer = metricRegistry.timer(MetricRegistry.name(getClass(), TTL_INDEX_TIMER_NAME));
+        loginIndexTimer = metricRegistry.timer(MetricRegistry.name(getClass(), LOGIN_INDEX_TIMER_NAME));
     }
 
     /**
@@ -53,6 +67,9 @@ public class CreateIndexTask {
             stopWatch.stop();
             logger.warn("action=create_ttl_indexes action=error time=" + stopWatch.getTotalTimeMillis(), e);
         }
+        finally {
+            ttlIndexTimer.update(stopWatch.getTotalTimeMillis(), TimeUnit.MILLISECONDS);
+        }
     }
 
     @Scheduled(cron = "${gdc.cfal.mongo.task.user-login-index.cron}")
@@ -69,6 +86,9 @@ public class CreateIndexTask {
         } catch (Exception e) {
             stopWatch.stop();
             logger.warn("action=create_user_login_indexes action=error time=" + stopWatch.getTotalTimeMillis(), e);
+        }
+        finally {
+            loginIndexTimer.update(stopWatch.getTotalTimeMillis(), TimeUnit.MILLISECONDS);
         }
     }
 }
