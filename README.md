@@ -21,6 +21,12 @@ mvn spring-boot:run
 curl localhost:8080/info
 ```
 
+### Run REST API Locally from IntelliJ IDEA
+
+Sometime it might be useful to be able to run CFAL RestAPI directly from IDE. However because of current setup of the dependencies, you cannot simply run `com.gooddata.cfal.restapi.AuditlogApplication` (in case you try this, you'll get load of `ClassNotFoundeEception`s).
+
+You can use Maven profile `local-development` to fix this and run CFAL REST API from IDE. 
+
 ### Developer's machine recommended setup
 
 To ease you a first struggle with this app, these are recommended options you should have in `~/.spring-boot-devtools.properties`.
