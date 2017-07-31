@@ -29,6 +29,11 @@ public class SimpleAuditLogService extends AbstractAuditLogService {
         writer.logEvent(event);
     }
 
+    @Override
+    public long getErrorCount() {
+        return writer.getErrorCounter();
+    }
+
     @PreDestroy
     public void destroy() throws Exception {
         writer.close();

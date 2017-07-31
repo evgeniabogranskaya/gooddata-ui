@@ -10,14 +10,19 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 
 import static com.gooddata.cfal.AuditLogEventWriterBase.format;
 import static net.javacrumbs.jsonunit.JsonMatchers.jsonEquals;
 import static net.javacrumbs.jsonunit.core.util.ResourceUtils.resource;
 import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 
 public class AuditLogEventWriterBaseTest {
 
@@ -73,6 +78,19 @@ public class AuditLogEventWriterBaseTest {
 
         final String json = format(event);
         assertThat(json, jsonEquals(resource("projectEvent.json")));
+    }
+
+    @Test
+    public void shouldFailOnWrite() throws Exception {
+        final Writer badWriter = mock(Writer.class);
+
+        doThrow(IOException.class).when(badWriter).flush();
+
+        final AuditLogEventWriterBase auditLogEventWriterBase = new AuditLogEventWriterBase(badWriter);
+        final int written = auditLogEventWriterBase.logEvent(event);
+
+        assertThat(written, is(0));
+        assertThat(auditLogEventWriterBase.getErrorCounter(), is(1L));
     }
 
 }

@@ -37,4 +37,9 @@ public class NoopAuditEventService extends AbstractAuditLogService {
             logger.error("Unable to write event={}", event.getType(), e);
         }
     }
+
+    @Override
+    public long getErrorCount() {
+        return 0;
+    }
 }

@@ -60,12 +60,20 @@ public class ConcurrentAuditLogServiceTest {
 
         final CountDownLatch lock = new CountDownLatch(1);
 
-        service = new ConcurrentAuditLogService("foo", event -> {
-            try {
-                lock.await();
-            } catch (InterruptedException ignore) {
+        service = new ConcurrentAuditLogService("foo", new AuditLogEventWriter() {
+            @Override
+            public int logEvent(final AuditLogEvent event) {
+                try {
+                    lock.await();
+                } catch (InterruptedException ignore) {
+                }
+                return 0;
             }
-            return 0;
+
+            @Override
+            public long getErrorCounter() {
+                return 0;
+            }
         }, 1, rejectionHandler);
 
         service.logEvent(EVENT);
