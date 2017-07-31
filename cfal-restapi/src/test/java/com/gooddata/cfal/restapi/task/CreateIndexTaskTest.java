@@ -3,48 +3,47 @@
  */
 package com.gooddata.cfal.restapi.task;
 
+import static com.gooddata.cfal.restapi.task.CreateIndexTask.LOGIN_INDEX_TIMER_NAME;
+import static com.gooddata.cfal.restapi.task.CreateIndexTask.TTL_INDEX_TIMER_NAME;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.contains;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static com.gooddata.cfal.restapi.task.CreateIndexTask.LOGIN_INDEX_TIMER_NAME;
-import static com.gooddata.cfal.restapi.task.CreateIndexTask.TTL_INDEX_TIMER_NAME;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.contains;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
-import java.util.concurrent.TimeUnit;
-
 public class CreateIndexTaskTest {
 
-    @Mock
-    private Timer ttlTimer;
-    @Mock
-    private Timer loginTimer;
     @Mock
     private AuditLogEventRepository repository;
     @Mock
     private MetricRegistry metricRegistry;
 
     private CreateIndexTask instance;
+    private Timer ttlTimer;
+    private Timer loginTimer;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        doReturn(ttlTimer).when(metricRegistry).timer(contains(TTL_INDEX_TIMER_NAME));
-        doReturn(loginTimer).when(metricRegistry).timer(contains(LOGIN_INDEX_TIMER_NAME));
-
         this.instance = new CreateIndexTask(repository, metricRegistry);
+
+        final ArgumentCaptor<Timer> argument = ArgumentCaptor.forClass(Timer.class);
+
+        verify(metricRegistry, times(1)).register(contains(TTL_INDEX_TIMER_NAME), argument.capture());
+        ttlTimer = argument.getValue();
+        verify(metricRegistry, times(1)).register(contains(LOGIN_INDEX_TIMER_NAME), argument.capture());
+        loginTimer = argument.getValue();
     }
 
     @Test(expected = NullPointerException.class)
@@ -62,8 +61,8 @@ public class CreateIndexTaskTest {
         instance.createTtlIndexes();
 
         verify(repository).createTtlIndexes();
-        verify(ttlTimer).update(anyLong(), eq(TimeUnit.MILLISECONDS));
-        verify(loginTimer, never()).update(anyLong(), any());
+        assertThat(ttlTimer.getCount(), is(1L));
+        assertThat(loginTimer.getCount(), is(0L));
     }
 
     @Test
@@ -79,8 +78,9 @@ public class CreateIndexTaskTest {
         instance.createUserLoginIndexes();
 
         verify(repository).createUserLoginIndexes();
-        verify(loginTimer).update(anyLong(), eq(TimeUnit.MILLISECONDS));
-        verify(ttlTimer, never()).update(anyLong(), any());
+
+        assertThat(loginTimer.getCount(), is(1L));
+        assertThat(ttlTimer.getCount(), is(0L));
     }
 
     @Test
