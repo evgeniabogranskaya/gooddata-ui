@@ -112,9 +112,10 @@ public abstract class AbstractAT {
         int count = 1;
         while (count++ <= POLL_LIMIT) {
             if (hasMessage(serviceCall, pageCheckPredicate, type)) {
+                logger.info("{}(): message {} found", testMethodName, type);
                 return;
             }
-            logger.info("{}(): message not found, waiting {} seconds", testMethodName, POLL_INTERVAL_SECONDS);
+            logger.info("{}(): message {} not found, waiting {} seconds", testMethodName, type, POLL_INTERVAL_SECONDS);
             TimeUnit.SECONDS.sleep(POLL_INTERVAL_SECONDS);
         }
 
