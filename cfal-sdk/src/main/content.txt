@@ -8,4 +8,6 @@ slf4j-api-1.7.*.jar
 spring-beans-4.3.*.RELEASE.jar
 spring-core-4.3.*.RELEASE.jar
 spring-context-4.3.*.RELEASE.jar
+spring-boot-autoconfigure-1.5.4.RELEASE.jar
+spring-boot-1.5.4.RELEASE.jar
 commons-lang-2.6.jar
