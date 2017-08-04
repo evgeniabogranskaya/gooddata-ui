@@ -9,13 +9,14 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 
 import com.gooddata.FutureResult;
+import com.gooddata.cfal.AbstractAT;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import com.gooddata.cfal.AbstractProjectAT;
 import com.gooddata.dataload.OutputStage;
 import com.gooddata.dataload.processes.DataloadProcess;
 import com.gooddata.dataload.processes.Schedule;
 import com.gooddata.dataload.processes.ScheduleExecution;
 import com.gooddata.model.ModelDiff;
+import com.gooddata.project.Project;
 import com.gooddata.warehouse.Warehouse;
 import com.gooddata.warehouse.WarehouseSchema;
 import org.apache.commons.io.FileUtils;
@@ -31,7 +32,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class ManualADDAT extends AbstractProjectAT {
+public class ManualADDAT extends AbstractAT {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -42,6 +43,7 @@ public class ManualADDAT extends AbstractProjectAT {
 
     @BeforeClass(groups = MESSAGE_TYPE)
     public void updateProjectModel() throws Exception {
+        final Project project = projectService.getOrCreateProject();
         final ModelDiff projectModelDiff = gd.getModelService().getProjectModelDiff(project,
                 new InputStreamReader(getClass().getResourceAsStream("/model.json"))).get();
         if (!projectModelDiff.getUpdateMaql().isEmpty()) {
@@ -57,6 +59,7 @@ public class ManualADDAT extends AbstractProjectAT {
 
     @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "createWarehouse")
     public void setOutputStage() {
+        final Project project = projectService.getOrCreateProject();
         final OutputStage outputStage = gd.getOutputStageService().getOutputStage(project);
         final WarehouseSchema schema = gd.getWarehouseService().getDefaultWarehouseSchema(warehouse);
 
@@ -89,7 +92,7 @@ public class ManualADDAT extends AbstractProjectAT {
     @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = {"setOutputStage", "executeSql"})
     public void executeDataloadProcess() {
         final DataloadProcess dataloadProcess = gd.getProcessService()
-                .listProcesses(project)
+                .listProcesses(projectService.getOrCreateProject())
                 .stream()
                 .filter(e -> e.getType().equals(DATALOAD.name()))
                 .findFirst()
@@ -110,7 +113,7 @@ public class ManualADDAT extends AbstractProjectAT {
 
     @AfterClass(groups = MESSAGE_TYPE)
     public void clearOutputStage() {
-        final OutputStage outputStage = gd.getOutputStageService().getOutputStage(project);
+        final OutputStage outputStage = gd.getOutputStageService().getOutputStage(projectService.getOrCreateProject());
 
         outputStage.setSchemaUri(null);
 
@@ -121,7 +124,7 @@ public class ManualADDAT extends AbstractProjectAT {
         final Schedule schedule = new Schedule(dataloadProcess, null, "0 0 * * *");
         schedule.addParam("GDC_DE_SYNCHRONIZE_ALL", "true");
 
-        Schedule createdSchedule = gd.getProcessService().createSchedule(project, schedule);
+        Schedule createdSchedule = gd.getProcessService().createSchedule(projectService.getOrCreateProject(), schedule);
 
         FutureResult<ScheduleExecution> futureResult = gd.getProcessService().executeSchedule(createdSchedule);
         final ScheduleExecution scheduleExecution = futureResult.get();

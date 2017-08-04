@@ -9,6 +9,7 @@ import com.gooddata.account.Account;
 import com.gooddata.auditlog.AccountService;
 import com.gooddata.auditlog.AdsService;
 import com.gooddata.auditlog.AuditLogService;
+import com.gooddata.auditlog.ProjectService;
 import com.gooddata.auditlog.TestEnvironmentProperties;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
@@ -49,6 +50,7 @@ public abstract class AbstractAT {
 
     protected final AdsService adsService;
     protected final AccountService accountService;
+    protected final ProjectService projectService;
 
     public AbstractAT() {
         props = new TestEnvironmentProperties();
@@ -63,6 +65,7 @@ public abstract class AbstractAT {
 
         this.adsService = AdsService.getInstance(gd, props);
         this.accountService = AccountService.getInstance(gd, props);
+        this.projectService = ProjectService.getInstance(gd, props);
     }
 
     @BeforeSuite(alwaysRun = true)
@@ -71,9 +74,10 @@ public abstract class AbstractAT {
     }
 
     @AfterSuite(alwaysRun = true)
-    public void serviceTearDown() {
+    public void serviceTearDown() throws Exception {
         accountService.destroy();
         adsService.destroy();
+        projectService.destroy();
     }
 
     /**

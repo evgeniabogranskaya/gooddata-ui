@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 /**
  * Singleton for account related stuff. Not thread safe.
  */
@@ -34,8 +36,8 @@ public class AccountService {
     }
 
     private AccountService(final GoodData gd, final TestEnvironmentProperties props) {
-        this.gd = gd;
-        this.props = props;
+        this.gd = notNull(gd, "gd");
+        this.props = notNull(props, "props");
     }
 
     /**
