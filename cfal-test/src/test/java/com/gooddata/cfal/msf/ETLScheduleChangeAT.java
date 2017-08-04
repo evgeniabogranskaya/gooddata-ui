@@ -10,7 +10,6 @@ import com.gooddata.dataload.processes.ProcessType;
 import com.gooddata.dataload.processes.Schedule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -59,7 +58,7 @@ public class ETLScheduleChangeAT extends AbstractProjectAT {
     }
 
     private Predicate<List<AuditEventDTO>> pageCheckPredicate() {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(account.getLogin()) && e.getType().equals(MESSAGE_TYPE));
+        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE));
     }
 
 }

@@ -37,7 +37,7 @@ public class ProjectAT extends AbstractProjectAT {
     private Predicate<List<AuditEventDTO>> pageCheckPredicate(final String messageType) {
         return (auditEvents) -> auditEvents.stream()
                 .anyMatch(e ->
-                        account.getLogin().equals(e.getUserLogin()) &&
+                        getAccount().getLogin().equals(e.getUserLogin()) &&
                         messageType.equals(e.getType()) &&
                         e.isSuccess() &&
                         email.equals(e.getParams().get("invited")) &&

@@ -24,7 +24,7 @@ abstract class AbstractAdsAT extends AbstractAT {
     }
 
     private boolean matchEvent(String eventType, AuditEventDTO e) {
-        return e.getUserLogin().equals(account.getLogin()) &&
+        return e.getUserLogin().equals(getAccount().getLogin()) &&
                 e.getType().equals(eventType) &&
                 e.getLinks() != null &&
                 getWarehouse().getUri().equals(e.getLinks().get("datawarehouse"));

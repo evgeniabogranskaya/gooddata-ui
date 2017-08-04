@@ -132,7 +132,7 @@ public class ManualADDAT extends AbstractProjectAT {
     }
 
     private Predicate<List<AuditEventDTO>> pageCheckPredicate(final boolean isSuccess) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(account.getLogin()) && e.getType().equals(MESSAGE_TYPE) && e.isSuccess() == isSuccess);
+        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE) && e.isSuccess() == isSuccess);
     }
 
 }

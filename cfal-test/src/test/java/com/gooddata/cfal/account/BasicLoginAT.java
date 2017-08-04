@@ -81,7 +81,7 @@ public class BasicLoginAT extends AbstractAT {
 
         final HttpClient httpClient = HttpClientBuilder.create().build();
 
-        final HttpGet get = new HttpGet(getUrl(account.getUri()));
+        final HttpGet get = new HttpGet(getUrl(getAccount().getUri()));
         try {
             return httpClient.execute(get, context);
         } finally {
@@ -94,6 +94,6 @@ public class BasicLoginAT extends AbstractAT {
     }
 
     private Predicate<List<AuditEventDTO>> pageCheckPredicate(final boolean success) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(account.getLogin()) && e.getType().equals(MESSAGE_TYPE) && e.isSuccess() == success);
+        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE) && e.isSuccess() == success);
     }
 }

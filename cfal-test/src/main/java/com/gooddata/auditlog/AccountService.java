@@ -19,6 +19,8 @@ public class AccountService {
 
     private static AccountService instance;
 
+    private Account currentAccount;
+
     private List<Account> accounts = new ArrayList<>();
 
     private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
@@ -36,6 +38,14 @@ public class AccountService {
     private AccountService(final GoodData gd, final TestEnvironmentProperties props) {
         this.gd = gd;
         this.props = props;
+    }
+
+    /**
+     * Get current account
+     * @return current account
+     */
+    public Account getCurrentAccount() {
+        return currentAccount != null ? currentAccount : (currentAccount = gd.getAccountService().getCurrent());
     }
 
     /**

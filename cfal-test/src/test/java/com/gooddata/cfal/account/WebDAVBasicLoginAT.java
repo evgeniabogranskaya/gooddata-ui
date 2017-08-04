@@ -96,7 +96,7 @@ public class WebDAVBasicLoginAT extends AbstractAT {
     }
 
     private Predicate<List<AuditEventDTO>> pageCheckPredicate(final boolean success) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(account.getLogin()) && e.getType().equals(MESSAGE_TYPE) && e.isSuccess() == success);
+        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE) && e.isSuccess() == success);
     }
 
 }
