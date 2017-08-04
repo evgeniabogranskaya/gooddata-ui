@@ -21,8 +21,16 @@ public class NoopAuditEventService extends AbstractAuditLogService {
         this(LoggerFactory.getLogger(NoopAuditEventService.class));
     }
 
+    public NoopAuditEventService(final String component) {
+        this(component, LoggerFactory.getLogger(NoopAuditEventService.class));
+    }
+
     NoopAuditEventService(final Logger logger) {
-        super("test");
+        this("test", logger);
+    }
+
+    NoopAuditEventService(final String component, final Logger logger) {
+        super(component);
         this.logger = notNull(logger, "logger");
     }
 

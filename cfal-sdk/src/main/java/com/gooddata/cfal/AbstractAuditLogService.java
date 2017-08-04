@@ -57,4 +57,8 @@ public abstract class AbstractAuditLogService implements AuditLogService {
     public void setLoggingEnabled(boolean loggingEnabled) {
         this.loggingEnabled = loggingEnabled;
     }
+
+    public String getComponent() {
+        return component;
+    }
 }
