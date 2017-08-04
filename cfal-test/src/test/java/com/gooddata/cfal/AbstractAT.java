@@ -33,8 +33,8 @@ public abstract class AbstractAT {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private static final int POLL_LIMIT = 10;
-    private static final int POLL_INTERVAL_SECONDS = 30;
+    protected static final int POLL_LIMIT = 10;
+    protected static final int POLL_INTERVAL_SECONDS = 30;
 
     protected final CfalGoodData gd;
     protected final GoodDataEndpoint endpoint;
@@ -99,11 +99,7 @@ public abstract class AbstractAT {
     private void doTest(final Function<Page, PageableList<AuditEventDTO>> serviceCall,
                         final Predicate<List<AuditEventDTO>> pageCheckPredicate,
                         final String type) throws InterruptedException {
-        final String testMethodName = Arrays.stream(Thread.currentThread().getStackTrace())
-                .filter(e -> Objects.equals(e.getClassName(), getClass().getName()))
-                .map(StackTraceElement::getMethodName)
-                .findFirst()
-                .orElse("unknown");
+        final String testMethodName = getTestMethodName();
 
         //poll until message is found in audit log or poll limit is hit
         int count = 1;
@@ -117,6 +113,14 @@ public abstract class AbstractAT {
         }
 
         fail("message not found");
+    }
+
+    protected String getTestMethodName() {
+        return Arrays.stream(Thread.currentThread().getStackTrace())
+                    .filter(e -> Objects.equals(e.getClassName(), getClass().getName()))
+                    .map(StackTraceElement::getMethodName)
+                    .findFirst()
+                    .orElse("unknown");
     }
 
     /**
