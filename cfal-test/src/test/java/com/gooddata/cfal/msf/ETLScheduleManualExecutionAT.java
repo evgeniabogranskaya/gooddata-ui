@@ -6,8 +6,8 @@ package com.gooddata.cfal.msf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.gooddata.cfal.AbstractAT;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import com.gooddata.cfal.AbstractProjectAT;
 import com.gooddata.dataload.processes.DataloadProcess;
 import com.gooddata.dataload.processes.ProcessType;
 import com.gooddata.dataload.processes.Schedule;
@@ -20,7 +20,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class ETLScheduleManualExecutionAT extends AbstractProjectAT {
+public class ETLScheduleManualExecutionAT extends AbstractAT {
 
     private static final String MESSAGE_TYPE = "ETL_SCHEDULE_MANUAL_EXECUTION";
     private static final String SCRIPT_NAME = "test.rb";
@@ -31,12 +31,12 @@ public class ETLScheduleManualExecutionAT extends AbstractProjectAT {
     @Test(groups = MESSAGE_TYPE)
     public void createProcess() throws URISyntaxException {
         final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
-        process = gd.getProcessService().createProcess(project, new DataloadProcess(getClass().getSimpleName(), ProcessType.RUBY), file);
+        process = gd.getProcessService().createProcess(projectService.getOrCreateProject(), new DataloadProcess(getClass().getSimpleName(), ProcessType.RUBY), file);
     }
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "createProcess")
     public void createSchedule() throws Exception {
-        schedule = gd.getProcessService().createSchedule(project, new Schedule(process, SCRIPT_NAME, "0 0 * * *"));
+        schedule = gd.getProcessService().createSchedule(projectService.getOrCreateProject(), new Schedule(process, SCRIPT_NAME, "0 0 * * *"));
     }
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "createSchedule")
@@ -47,7 +47,7 @@ public class ETLScheduleManualExecutionAT extends AbstractProjectAT {
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "executeSchedule", expectedExceptions = ScheduleExecutionException.class)
     public void badExecuteSchedule() {
         final Schedule mock = mock(Schedule.class);
-        final String nonExistentScheduleUri = Schedule.TEMPLATE.expand(project.getId(), "fail").toString();
+        final String nonExistentScheduleUri = Schedule.TEMPLATE.expand(projectService.getOrCreateProject().getId(), "fail").toString();
         when(mock.getExecutionsUri()).thenReturn(nonExistentScheduleUri + "/executions");
         gd.getProcessService().executeSchedule(mock);
     }

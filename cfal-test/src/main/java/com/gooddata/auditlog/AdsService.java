@@ -16,6 +16,8 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 /**
  * Singleton for ADS related stuff. Not thread safe.
  */
@@ -40,8 +42,8 @@ public class AdsService {
     }
 
     private AdsService(final GoodData gd, final TestEnvironmentProperties props) {
-        this.gd = gd;
-        this.props = props;
+        this.gd = notNull(gd, "gd");
+        this.props = notNull(props, "props");
     }
 
     /**
