@@ -144,11 +144,11 @@ public class ETLProcessAT extends AbstractProjectAT {
     }
 
     private Predicate<List<AuditEventDTO>> pageCheckPredicate(final String messageType, final boolean isSuccess) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(account.getLogin()) && e.getType().equals(messageType) && e.isSuccess() == isSuccess);
+        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(messageType) && e.isSuccess() == isSuccess);
     }
 
     private Predicate<List<AuditEventDTO>> pageCheckPredicateCreateFromAppstore(final String messageType) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(account.getLogin()) && e.getType().equals(messageType) &&
+        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(messageType) &&
                 e.isSuccess() == true && processAppstore.getUri().equals(e.getLinks().get("process")));
     }
 

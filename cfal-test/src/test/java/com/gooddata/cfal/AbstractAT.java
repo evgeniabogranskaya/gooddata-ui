@@ -43,8 +43,6 @@ public abstract class AbstractAT {
 
     protected final TestEnvironmentProperties props;
 
-    protected final Account account;
-
     private final DateTime startTime;
 
     protected final AdsService adsService;
@@ -58,7 +56,6 @@ public abstract class AbstractAT {
         gd = new CfalGoodData(endpoint, props.getUser(), props.getPass());
         service = gd.getAuditLogService();
 
-        account = gd.getAccountService().getCurrent();
         startTime = new DateTime();
 
         this.adsService = AdsService.getInstance(gd, props);
@@ -84,7 +81,7 @@ public abstract class AbstractAT {
      * @throws InterruptedException
      */
     public void doTestUserApi(Predicate<List<AuditEventDTO>> pageCheckPredicate, String type) throws InterruptedException {
-        doTest((Page page) -> service.listAuditEvents(account, page), pageCheckPredicate, type);
+        doTest((Page page) -> service.listAuditEvents(getAccount(), page), pageCheckPredicate, type);
 
     }
 
@@ -144,5 +141,9 @@ public abstract class AbstractAT {
             }
         }
         return false;
+    }
+
+    public Account getAccount() {
+        return accountService.getCurrentAccount();
     }
 }

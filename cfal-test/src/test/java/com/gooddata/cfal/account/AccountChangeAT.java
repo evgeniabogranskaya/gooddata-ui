@@ -71,6 +71,6 @@ public class AccountChangeAT extends AbstractAT {
     }
 
     private Predicate<List<AuditEventDTO>> pageCheckPredicate(final String messageType) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(account.getLogin()) && e.getType().equals(messageType));
+        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(messageType));
     }
 }

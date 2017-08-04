@@ -53,7 +53,7 @@ public class ProjectUserProvisioningAT extends AbstractProjectAT {
     private Predicate<List<AuditEventDTO>> pageCheckPredicate(final String messageType) {
         return (auditEvents) -> auditEvents.stream()
                 .anyMatch(e ->
-                        account.getLogin().equals(e.getUserLogin()) &&
+                        getAccount().getLogin().equals(e.getUserLogin()) &&
                                 messageType.equals(e.getType()) &&
                                 addedUser.getUri().equals(e.getLinks().get("profile"))
                 );
