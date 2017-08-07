@@ -97,6 +97,14 @@ parameter               | default                 | example
 `keepProject`           | `true` for FoodMartDemo | `-DprojectToken=pgroup2`
 `datawarehouseToken`    | `vertica`               | `-DdatawarehouseToken=vertica`
 `pollTimeoutMinutes`    | `5`                     | `-DpollTimeoutMinutes=5`
+`sshKey`                | `~/.ssh/id_rsa`         | `-DsshKey=/path/to/key`
+`sshKeyPass`            | _none_                  | `-DsshKeyPass=mykeypass`
+`sshUser`               | OS user                 | `-DsshUser=martin.caslavsky`
+
+#### Test using SSH
+
+Skip them with `-DexcludeGroups=ssh`
+
 
 ### Manual tests
 

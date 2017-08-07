@@ -3,8 +3,13 @@
  */
 package com.gooddata.auditlog;
 
-import static java.lang.System.getProperty;
+import com.gooddata.test.ssh.Authentication;
 
+import static com.gooddata.test.ssh.Authentication.pubKeyAuth;
+import static java.lang.System.getProperty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,6 +28,7 @@ public class TestEnvironmentProperties {
     private final String datawarehouseToken;
     private final Boolean keepProject;
     private final Integer pollTimeoutMinutes;
+    private final Authentication sshAuth;
 
     public TestEnvironmentProperties() {
         host = getProperty("host", "localhost");
@@ -34,6 +40,12 @@ public class TestEnvironmentProperties {
         datawarehouseToken = getProperty("datawarehouseToken", "vertica");
         keepProject = Boolean.getBoolean("keepProject");
         pollTimeoutMinutes = Integer.getInteger("pollTimeoutMinutes", 5);
+
+        final String sshKey = getProperty("sshKey", null);
+        final File sshKeyFile = isEmpty(sshKey) ? new File(getProperty("user.home"), ".ssh/id_rsa") : new File(sshKey);
+        final String sshKeyPass = getProperty("sshKeyPass", null);
+        final String sshUser = getProperty("sshUser", getProperty("user.name"));
+        sshAuth = isEmpty(sshKeyPass) ? pubKeyAuth(sshUser, sshKeyFile) : pubKeyAuth(sshUser, sshKeyFile, sshKeyPass);
     }
 
     public String getHost() {
@@ -74,5 +86,9 @@ public class TestEnvironmentProperties {
 
     public TimeUnit getPollTimeoutUnit() {
         return POLL_TIMEOUT_UNIT;
+    }
+
+    public Authentication getSshAuth() {
+        return sshAuth;
     }
 }
