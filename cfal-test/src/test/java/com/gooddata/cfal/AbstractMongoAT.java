@@ -4,10 +4,13 @@
 package com.gooddata.cfal;
 
 import com.gooddata.test.ssh.Authentication;
+import com.gooddata.test.ssh.CommandResult;
 import com.gooddata.test.ssh.SshClient;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.web.util.UriTemplate;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
@@ -28,8 +31,20 @@ public abstract class AbstractMongoAT extends AbstractAT {
         final Authentication auth = props.getSshAuth();
         ssh = new SshClient(endpoint.getHostname(), auth).open();
 
+        final String mongoPass = obtainMongoPass(ssh);
         final int mongoPort = ssh.createLocalPortForwarder(MONGO_PORT);
-        mongo = new MongoTemplate(new MongoClient("localhost", mongoPort), "cfal");
+        final String uri = new UriTemplate("mongodb://gdc_root:{pass}@localhost:{port}")
+                .expand(mongoPass, mongoPort)
+                .toString();
+        mongo = new MongoTemplate(new MongoClient(new MongoClientURI(uri)), "cfal");
+    }
+
+    private String obtainMongoPass(final SshClient ssh) {
+        final CommandResult result = ssh.execCmd("sudo cat /etc/gdc/etc/mongo");
+        if (result.getExitCode() != 0) {
+            throw new IllegalStateException("Unable to obtain mongo password: " + result.toString());
+        }
+        return result.getStdout();
     }
 
     @AfterClass
