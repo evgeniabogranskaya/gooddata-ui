@@ -63,7 +63,7 @@ public abstract class AbstractAuditLogService implements AuditLogService, Metric
     @Override
     public Map<String, Metric> getMetrics() {
         final HashMap<String, Metric> gauges = new HashMap<>();
-        final Gauge<Long> gaugeLogEventCount = () -> getLogEventCount();
+        final Gauge<Long> gaugeLogEventCount = this::getLogEventCount;
 
         gauges.put(LOG_CALL_COUNT, gaugeLogEventCount);
 

@@ -25,7 +25,7 @@ public class AdsService {
 
     private static AdsService instance;
 
-    private List<Warehouse> warehouses = new ArrayList<>();
+    private final List<Warehouse> warehouses = new ArrayList<>();
 
     private static final Logger logger = LoggerFactory.getLogger(AdsService.class);
 

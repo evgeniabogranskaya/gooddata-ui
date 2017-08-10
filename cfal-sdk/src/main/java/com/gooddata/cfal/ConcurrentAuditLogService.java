@@ -80,8 +80,8 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService implements 
 
         final Map<String, Metric> gauges = super.getMetrics();
 
-        final Gauge<Long> gaugeQueueSize = () -> getQueueSize();
-        final Gauge<Long> gaugeEnqueueErrorCount = () -> getEnqueueErrors();
+        final Gauge<Long> gaugeQueueSize = this::getQueueSize;
+        final Gauge<Long> gaugeEnqueueErrorCount = this::getEnqueueErrors;
 
         gauges.put(QUEUE_SIZE, gaugeQueueSize);
         gauges.put(QUEUE_REJECTED_COUNT, gaugeEnqueueErrorCount);

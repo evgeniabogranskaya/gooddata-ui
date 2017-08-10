@@ -9,9 +9,9 @@ import static org.apache.commons.lang3.Validate.notEmpty;
  * Info about user
  */
 public class UserInfo {
-    private String userId;
-    private String userLogin;
-    private String domainId;
+    private final String userId;
+    private final String userLogin;
+    private final String domainId;
 
     public UserInfo(final String userId, final String userLogin, final String domainId) {
         this.userId = notEmpty(userId, "userId cannot be empty");
