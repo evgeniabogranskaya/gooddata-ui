@@ -13,21 +13,4 @@ public interface AuditLogService {
      * @param event the event
      */
     void logEvent(AuditLogEvent event);
-
-    /**
-     * Number of errors during write.
-     *
-     * This method can be used for getting number of errors
-     * and reporting them to the to grafana using Gauge
-     * like this:
-     * <code>
-     * Gauge gauge = new Gauge() {
-     *              @Override
-     *              public Object getValue() {
-     *                  return auditLogService.getErrorCount();
-     *              }
-     *}
-     * </code>
-     */
-    long getErrorCount();
 }

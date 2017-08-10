@@ -64,7 +64,7 @@ class AuditLogEventWriterBase implements AuditLogEventWriter {
      *
      * @return Number of errors during write operation
      */
-    public long getErrorCounter() {
+    public long getErrorCount() {
         return errorCounter.get();
     }
 }

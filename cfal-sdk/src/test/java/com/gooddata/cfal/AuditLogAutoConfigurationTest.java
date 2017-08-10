@@ -14,9 +14,11 @@ import static com.gooddata.cfal.CfalProperties.CfalServiceType.SIMPLE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class AuditLogAutoConfigurationTest {
     private static final String COMPONENT = "meh";
+    private static final AuditLogEventWriter MOCK = mock(AuditLogEventWriter.class);
     private AuditLogAutoConfiguration instance;
 
     @Rule
@@ -29,27 +31,34 @@ public class AuditLogAutoConfigurationTest {
 
     @Test
     public void testEnabled() throws Exception {
-        assertThat(this.instance.cfalAuditLogService(props(false, NOOP)).isLoggingEnabled(), is(false));
-        assertThat(this.instance.cfalAuditLogService(props(false, SIMPLE)).isLoggingEnabled(), is(false));
-        assertThat(this.instance.cfalAuditLogService(props(false, CONCURRENT)).isLoggingEnabled(), is(false));
+        assertThat(this.instance.cfalAuditLogService(props(false, NOOP), MOCK).isLoggingEnabled(), is(false));
+        assertThat(this.instance.cfalAuditLogService(props(false, SIMPLE), MOCK).isLoggingEnabled(), is(false));
+        assertThat(this.instance.cfalAuditLogService(props(false, CONCURRENT), MOCK).isLoggingEnabled(), is(false));
 
-        assertThat(this.instance.cfalAuditLogService(props(true, NOOP)).isLoggingEnabled(), is(true));
-        assertThat(this.instance.cfalAuditLogService(props(true, SIMPLE)).isLoggingEnabled(), is(true));
-        assertThat(this.instance.cfalAuditLogService(props(true, CONCURRENT)).isLoggingEnabled(), is(true));
+        assertThat(this.instance.cfalAuditLogService(props(true, NOOP), MOCK).isLoggingEnabled(), is(true));
+        assertThat(this.instance.cfalAuditLogService(props(true, SIMPLE), MOCK).isLoggingEnabled(), is(true));
+        assertThat(this.instance.cfalAuditLogService(props(true, CONCURRENT), MOCK).isLoggingEnabled(), is(true));
     }
 
     @Test
     public void testLoggerType() throws Exception {
-        assertThat(this.instance.cfalAuditLogService(props(false, NOOP)), instanceOf(NoopAuditEventService.class));
-        assertThat(this.instance.cfalAuditLogService(props(false, SIMPLE)), instanceOf(SimpleAuditLogService.class));
-        assertThat(this.instance.cfalAuditLogService(props(false, CONCURRENT)), instanceOf(ConcurrentAuditLogService.class));
+        assertThat(this.instance.cfalAuditLogService(props(false, NOOP), MOCK), instanceOf(SimpleAuditLogService.class));
+        assertThat(this.instance.cfalAuditLogService(props(false, SIMPLE), MOCK), instanceOf(SimpleAuditLogService.class));
+        assertThat(this.instance.cfalAuditLogService(props(false, CONCURRENT), MOCK), instanceOf(ConcurrentAuditLogService.class));
     }
 
     @Test
     public void testComponent() throws Exception {
-        assertThat(this.instance.cfalAuditLogService(props(false, NOOP)).getComponent(), is(COMPONENT));
-        assertThat(this.instance.cfalAuditLogService(props(false, SIMPLE)).getComponent(), is(COMPONENT));
-        assertThat(this.instance.cfalAuditLogService(props(false, CONCURRENT)).getComponent(), is(COMPONENT));
+        assertThat(this.instance.cfalAuditLogService(props(false, NOOP), MOCK).getComponent(), is(COMPONENT));
+        assertThat(this.instance.cfalAuditLogService(props(false, SIMPLE), MOCK).getComponent(), is(COMPONENT));
+        assertThat(this.instance.cfalAuditLogService(props(false, CONCURRENT), MOCK).getComponent(), is(COMPONENT));
+    }
+
+    @Test
+    public void testAuditLogEventWriter() throws Exception {
+        assertThat(instance.auditLogEventWriter(props(true, NOOP)), instanceOf(Slf4jAuditLogEventWriter.class));
+        assertThat(instance.auditLogEventWriter(props(true, SIMPLE)), instanceOf(AuditLogEventFileWriter.class));
+        assertThat(instance.auditLogEventWriter(props(true, CONCURRENT)), instanceOf(AuditLogEventFileWriter.class));
     }
 
     private CfalProperties props(boolean enabled, CfalProperties.CfalServiceType service) {

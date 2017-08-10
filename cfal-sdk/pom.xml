@@ -92,6 +92,10 @@
             <groupId>com.gooddata.commons</groupId>
             <artifactId>gdc-lang</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>

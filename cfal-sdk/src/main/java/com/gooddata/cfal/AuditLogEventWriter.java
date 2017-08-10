@@ -15,11 +15,6 @@ interface AuditLogEventWriter extends AutoCloseable {
      */
     int logEvent(AuditLogEvent event);
 
-    /**
-     * Number of errors during write
-     */
-    long getErrorCounter();
-
     @Override
     default void close() throws Exception {}
 }

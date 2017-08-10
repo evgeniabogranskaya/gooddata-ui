@@ -32,13 +32,6 @@ public class SimpleAuditLogServiceTest {
     }
 
     @Test
-    public void shouldGetErrorCount() throws Exception {
-        doReturn(1L).when(writer).getErrorCounter();
-
-        assertThat(service.getErrorCount(), is(1L));
-    }
-
-    @Test
     public void shouldCloseWriter() throws Exception {
         service.destroy();
         verify(writer).close();
