@@ -34,11 +34,11 @@ public class AuditLogEvent {
 
     @JsonProperty("params")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private Map<String, String> params = new HashMap<>();
+    private final Map<String, String> params = new HashMap<>();
 
     @JsonProperty("links")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private Map<String, String> links = new HashMap<>();
+    private final Map<String, String> links = new HashMap<>();
 
     @JsonSerialize(using = ISODateTimeSerializer.class)
     private final DateTime occurred;

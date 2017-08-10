@@ -6,7 +6,6 @@ package com.gooddata.cfal.restapi;
 import com.gooddata.boot.autoconfigure.GdcBootApplication;
 import com.gooddata.c4.boot.EnableC4Client;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 

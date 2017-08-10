@@ -24,7 +24,7 @@ class AuditLogEventWriterBase implements AuditLogEventWriter {
 
     private final BufferedWriter writer;
 
-    private AtomicLong errorCounter = new AtomicLong();
+    private final AtomicLong errorCounter = new AtomicLong();
 
     public AuditLogEventWriterBase(final Writer writer) {
         this.writer = new BufferedWriter(notNull(writer, "writer"));

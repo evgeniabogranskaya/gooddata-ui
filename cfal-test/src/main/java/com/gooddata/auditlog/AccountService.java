@@ -23,7 +23,7 @@ public class AccountService {
 
     private Account currentAccount;
 
-    private List<Account> accounts = new ArrayList<>();
+    private final List<Account> accounts = new ArrayList<>();
 
     private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
 

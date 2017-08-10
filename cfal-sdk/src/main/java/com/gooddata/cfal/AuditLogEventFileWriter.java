@@ -95,8 +95,8 @@ class AuditLogEventFileWriter implements AuditLogEventWriter, MetricSet {
 
         final Map<String, Metric> gauges = new HashMap<>();
 
-        final Gauge<Long> gaugeWriteErrorCount = () -> getErrorCount();
-        final Gauge gaugeRotateErrorCount = () -> getRotateErrorCount();
+        final Gauge<Long> gaugeWriteErrorCount = this::getErrorCount;
+        final Gauge gaugeRotateErrorCount = this::getRotateErrorCount;
 
         gauges.put(WRITE_ERROR_COUNT, gaugeWriteErrorCount);
         gauges.put(ROTATE_ERROR_COUNT, gaugeRotateErrorCount);

@@ -4,7 +4,6 @@
 package com.gooddata.cfal;
 
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 
 /**
  * Single threaded blocking per-process file audit log writing service. Suitable for old GCF workers.
