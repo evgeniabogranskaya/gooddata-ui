@@ -11,12 +11,7 @@ import java.lang.management.ManagementFactory;
  */
 public class ProcessAuditLogService extends SimpleAuditLogService {
 
-    public ProcessAuditLogService(final String component) throws IOException {
-        super(component, new AuditLogEventFileWriter(component, getCurrentPid()));
+    public ProcessAuditLogService(final String component, final AuditLogEventWriter auditLogEventWriter) throws IOException {
+        super(component, auditLogEventWriter);
     }
-
-    private static String getCurrentPid() {
-        return ManagementFactory.getRuntimeMXBean().getName();
-    }
-
 }

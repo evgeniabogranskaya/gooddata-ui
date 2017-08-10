@@ -5,17 +5,26 @@ package com.gooddata.cfal;
 
 import javax.annotation.PreDestroy;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static com.gooddata.cfal.CfalMonitoringMetricConstants.QUEUE_REJECTED_COUNT;
+import static com.gooddata.cfal.CfalMonitoringMetricConstants.QUEUE_SIZE;
+
+import com.codahale.metrics.Gauge;
+import com.codahale.metrics.Metric;
+import com.codahale.metrics.MetricSet;
 
 /**
  * Multi-threaded non-blocking audit log writing service. Suitable for using in REST APIs.
  */
-public class ConcurrentAuditLogService extends SimpleAuditLogService {
+public class ConcurrentAuditLogService extends SimpleAuditLogService implements MetricSet {
 
     static final AuditLogEvent POISON_PILL = new AuditLogEvent("PP", "poison", "pill", "die");
 
@@ -29,32 +38,20 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService {
 
     private final RejectionHandler rejectionHandler;
 
+    private final AtomicLong enqueueErrorCounter = new AtomicLong();
+
     private final Future<?> future;
 
-    /**
-     * Creates a new instance of multi-threaded non-blocking audit log writing service
-     * @param component component name
-     * @throws IOException if output file can't be created
-     */
-    public ConcurrentAuditLogService(final String component) throws IOException {
-        this(component, DEFAULT_BACKLOG_SIZE);
-    }
-
-    /**
-     * Creates a new instance of multi-threaded non-blocking audit log writing service
-     * @param component component name
-     * @param backlogSize size of queue
-     * @throws IOException if output file can't be created
-     */
-    public ConcurrentAuditLogService(final String component, final int backlogSize) throws IOException {
-        this(component, new AuditLogEventFileWriter(component), backlogSize, null);
-    }
-
-    ConcurrentAuditLogService(final String component, final AuditLogEventWriter writer) throws IOException {
+    public ConcurrentAuditLogService(final String component, final AuditLogEventWriter writer) throws IOException {
         this(component, writer, DEFAULT_BACKLOG_SIZE, null);
     }
 
-    ConcurrentAuditLogService(final String component, final AuditLogEventWriter writer, final int backlogSize,
+    public ConcurrentAuditLogService(final String component, final AuditLogEventWriter writer,
+                                     final int backlogSize) throws IOException {
+        this(component, writer, backlogSize, null);
+    }
+
+    public ConcurrentAuditLogService(final String component, final AuditLogEventWriter writer, final int backlogSize,
                               final RejectionHandler rejectionHandler) throws IOException {
         super(component, writer);
 
@@ -62,6 +59,34 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService {
         this.queue = new LinkedBlockingQueue<>(backlogSize);
         this.executorService = Executors.newSingleThreadExecutor();
         this.future = createConsumerTask(writer);
+    }
+
+    /**
+     * @return Size of internal queue used for buffering events before writing
+     */
+    public long getQueueSize() {
+        return queue.size();
+    }
+
+    /**
+     * @return Number of errors caused by putting events into queue which was full
+     */
+    public long getEnqueueErrors() {
+        return enqueueErrorCounter.get();
+    }
+
+    @Override
+    public Map<String, Metric> getMetrics() {
+
+        final Map<String, Metric> gauges = super.getMetrics();
+
+        final Gauge<Long> gaugeQueueSize = () -> getQueueSize();
+        final Gauge<Long> gaugeEnqueueErrorCount = () -> getEnqueueErrors();
+
+        gauges.put(QUEUE_SIZE, gaugeQueueSize);
+        gauges.put(QUEUE_REJECTED_COUNT, gaugeEnqueueErrorCount);
+
+        return gauges;
     }
 
     private Future<?> createConsumerTask(final AuditLogEventWriter writer) {
@@ -83,6 +108,7 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService {
     @Override
     protected void doLogEvent(final AuditLogEvent event) {
         if (!queue.offer(event)) {
+            enqueueErrorCounter.incrementAndGet();
             rejectionHandler.handle(event);
         }
     }
@@ -100,10 +126,6 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService {
         } finally {
             writer.close();
         }
-    }
-
-    public int getQueueSize() {
-        return queue.size();
     }
 
     private class DefaultRejectionHandler implements RejectionHandler {

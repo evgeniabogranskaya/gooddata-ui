@@ -11,3 +11,4 @@ spring-context-4.3.*.RELEASE.jar
 spring-boot-autoconfigure-1.5.4.RELEASE.jar
 spring-boot-1.5.4.RELEASE.jar
 commons-lang-2.6.jar
+metrics-core-3.1.4.jar

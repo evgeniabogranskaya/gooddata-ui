@@ -15,11 +15,7 @@ public class SimpleAuditLogService extends AbstractAuditLogService {
 
     protected final AuditLogEventWriter writer;
 
-    public SimpleAuditLogService(final String component) throws IOException {
-        this(component, new AuditLogEventFileWriter(component));
-    }
-
-    protected SimpleAuditLogService(final String component, final AuditLogEventWriter writer) throws IOException {
+    public SimpleAuditLogService(final String component, final AuditLogEventWriter writer) throws IOException {
         super(component);
         this.writer = notNull(writer, "writer");
     }
@@ -27,11 +23,6 @@ public class SimpleAuditLogService extends AbstractAuditLogService {
     @Override
     protected void doLogEvent(final AuditLogEvent event) {
         writer.logEvent(event);
-    }
-
-    @Override
-    public long getErrorCount() {
-        return writer.getErrorCounter();
     }
 
     @PreDestroy

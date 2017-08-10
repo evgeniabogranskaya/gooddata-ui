@@ -3,6 +3,9 @@
  */
 package com.gooddata.cfal;
 
+import com.codahale.metrics.Gauge;
+import com.codahale.metrics.Metric;
+import com.codahale.metrics.MetricSet;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +15,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
+import static com.gooddata.cfal.CfalMonitoringMetricConstants.ROTATE_ERROR_COUNT;
+import static com.gooddata.cfal.CfalMonitoringMetricConstants.WRITE_ERROR_COUNT;
 import static org.apache.commons.lang3.Validate.noNullElements;
 import static org.apache.commons.lang3.Validate.notNull;
 
@@ -21,7 +28,7 @@ import static org.apache.commons.lang3.Validate.notNull;
  * <p>
  * This class is not internally synchronized, if accessed from multiple threads it must be synchronized externally.
  */
-class AuditLogEventFileWriter implements AuditLogEventWriter {
+class AuditLogEventFileWriter implements AuditLogEventWriter, MetricSet {
 
     private static final File DEFAULT_DIR = new File("/mnt/log/cfal");
     private static final String ROTATED_FILE_NAME_SUFFIX = "-old";
@@ -35,18 +42,20 @@ class AuditLogEventFileWriter implements AuditLogEventWriter {
     private long maxBytes;
     private long writtenBytes;
 
-    AuditLogEventFileWriter(final File logFile, final int maxBytes) throws IOException {
+    private long rotateErrorCount = 0L;
+
+    public AuditLogEventFileWriter(final File logFile, final int maxBytes) throws IOException {
         this.writer = createWriter(logFile);
         this.logFile = logFile;
         this.writtenBytes = logFile.length();
         this.maxBytes = maxBytes;
     }
 
-    AuditLogEventFileWriter(final File logFile) throws IOException {
+    public AuditLogEventFileWriter(final File logFile) throws IOException {
         this(logFile, DEFAULT_MAX_BYTES);
     }
 
-    AuditLogEventFileWriter(final File directory, final String... component) throws IOException {
+    public AuditLogEventFileWriter(final File directory, final String... component) throws IOException {
         this(createLogFileName(directory, component));
     }
 
@@ -57,7 +66,7 @@ class AuditLogEventFileWriter implements AuditLogEventWriter {
      * @throws IOException if the file can't be created
      * @see #createLogFileName(File, String...)
      */
-    AuditLogEventFileWriter(final String... component) throws IOException {
+    public AuditLogEventFileWriter(final String... component) throws IOException {
         this(DEFAULT_DIR, component);
     }
 
@@ -73,9 +82,26 @@ class AuditLogEventFileWriter implements AuditLogEventWriter {
         return bytes;
     }
 
+    public long getErrorCount() {
+        return writer.getErrorCount();
+    }
+
+    public long getRotateErrorCount() {
+        return rotateErrorCount;
+    }
+
     @Override
-    public long getErrorCounter() {
-        return writer.getErrorCounter();
+    public Map<String, Metric> getMetrics() {
+
+        final Map<String, Metric> gauges = new HashMap<>();
+
+        final Gauge<Long> gaugeWriteErrorCount = () -> getErrorCount();
+        final Gauge gaugeRotateErrorCount = () -> getRotateErrorCount();
+
+        gauges.put(WRITE_ERROR_COUNT, gaugeWriteErrorCount);
+        gauges.put(ROTATE_ERROR_COUNT, gaugeRotateErrorCount);
+
+        return gauges;
     }
 
     private void rotate() {
@@ -86,6 +112,7 @@ class AuditLogEventFileWriter implements AuditLogEventWriter {
             if (oldFile.delete()) {
                 logger.debug("action=rotate subaction=delete_old file={}", oldFile);
             } else {
+                rotateErrorCount++;
                 logger.error("action=rotate status=error subaction=delete_old file={}", oldFile);
                 return;
             }
@@ -94,6 +121,7 @@ class AuditLogEventFileWriter implements AuditLogEventWriter {
         if (logFile.renameTo(oldFile)) {
             logger.debug("action=rotate subaction=rename source={} target={}", logFile, oldFile);
         } else {
+            rotateErrorCount++;
             logger.error("action=rotate status=error subaction=rename source={} target={}", logFile, oldFile);
             return;
         }
@@ -102,6 +130,7 @@ class AuditLogEventFileWriter implements AuditLogEventWriter {
         try {
             newWriter = createWriter(logFile);
         } catch (IOException e) {
+            rotateErrorCount++;
             logger.error("action=rotate status=error create newfile={}", logFile, e);
             return;
         }

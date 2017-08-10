@@ -27,8 +27,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 public class AuditLogAutoConfiguration {
 
     @Bean
-    public AbstractAuditLogService cfalAuditLogService(final CfalProperties cfalProperties) throws IOException {
-        final AbstractAuditLogService auditLogService = createAuditLogService(cfalProperties);
+    public AbstractAuditLogService cfalAuditLogService(final CfalProperties cfalProperties, final AuditLogEventWriter auditLogEventWriter) throws IOException {
+        final AbstractAuditLogService auditLogService = createAuditLogService(cfalProperties, auditLogEventWriter);
         auditLogService.setLoggingEnabled(cfalProperties.isEnabled());
 
         return auditLogService;
@@ -37,7 +37,11 @@ public class AuditLogAutoConfiguration {
     /**
      * Creates a new {@link AuditLogEventWriter} based on given configuration
      */
-    private AuditLogEventWriter auditLogEventWriter(final CfalProperties props) throws IOException {
+    @Bean
+    public AuditLogEventWriter auditLogEventWriter(final CfalProperties props) throws IOException {
+        if (props.getServiceType() == CfalServiceType.NOOP) {
+            return new Slf4jAuditLogEventWriter();
+        }
         if (isEmpty(props.getCfalDir())) {
             return new AuditLogEventFileWriter(props.getComponent());
         } else {
@@ -48,15 +52,16 @@ public class AuditLogAutoConfiguration {
     /**
      * Creates new instance of the {@link AuditLogService} based on given configuration
      */
-    private AbstractAuditLogService createAuditLogService(CfalProperties cfalProperties) throws IOException {
+    private AbstractAuditLogService createAuditLogService(final CfalProperties cfalProperties,
+                                                          final AuditLogEventWriter auditLogEventWriter) throws IOException {
         final CfalServiceType serviceType = cfalProperties.getServiceType();
         switch (serviceType) {
             case NOOP:
-                return new NoopAuditEventService(cfalProperties.getComponent());
+                return new SimpleAuditLogService(cfalProperties.getComponent(), auditLogEventWriter);
             case CONCURRENT:
-                return new ConcurrentAuditLogService(cfalProperties.getComponent(), auditLogEventWriter(cfalProperties));
+                return new ConcurrentAuditLogService(cfalProperties.getComponent(), auditLogEventWriter);
             case SIMPLE:
-                return new SimpleAuditLogService(cfalProperties.getComponent(), auditLogEventWriter(cfalProperties));
+                return new SimpleAuditLogService(cfalProperties.getComponent(), auditLogEventWriter);
             default:
                 throw new IllegalStateException("Unable to create audit log service with type: " + serviceType);
         }

@@ -3,13 +3,24 @@
  */
 package com.gooddata.cfal;
 
+import com.codahale.metrics.Gauge;
+import com.codahale.metrics.Metric;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+import static com.gooddata.cfal.CfalMonitoringMetricConstants.LOG_CALL_COUNT;
+import static com.gooddata.cfal.CfalMonitoringMetricConstants.QUEUE_REJECTED_COUNT;
+import static com.gooddata.cfal.CfalMonitoringMetricConstants.QUEUE_SIZE;
 import static com.gooddata.cfal.ConcurrentAuditLogService.POISON_PILL;
-import static org.mockito.Matchers.any;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -30,7 +41,7 @@ public class ConcurrentAuditLogServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailWithEmptyComponent() throws Exception {
-        new ConcurrentAuditLogService("");
+        new ConcurrentAuditLogService("", writer);
     }
 
     @Test(expected = NullPointerException.class)
@@ -60,20 +71,12 @@ public class ConcurrentAuditLogServiceTest {
 
         final CountDownLatch lock = new CountDownLatch(1);
 
-        service = new ConcurrentAuditLogService("foo", new AuditLogEventWriter() {
-            @Override
-            public int logEvent(final AuditLogEvent event) {
-                try {
-                    lock.await();
-                } catch (InterruptedException ignore) {
-                }
-                return 0;
+        service = new ConcurrentAuditLogService("foo", event -> {
+            try {
+                lock.await();
+            } catch (InterruptedException ignore) {
             }
-
-            @Override
-            public long getErrorCounter() {
-                return 0;
-            }
+            return 0;
         }, 1, rejectionHandler);
 
         service.logEvent(EVENT);
@@ -83,7 +86,20 @@ public class ConcurrentAuditLogServiceTest {
         verify(rejectionHandler, atLeastOnce()).handle(EVENT);
 
         lock.countDown();
+
+        assertThat(service.getEnqueueErrors(), is(not(0L)));
+
         service.destroy();
+    }
+
+    @Test
+    public void testGetQueueSize() throws Exception {
+        assertThat(service.getQueueSize(), is(0L));
+    }
+
+    @Test
+    public void testGetEnueueErrors() throws Exception {
+        assertThat(service.getQueueSize(), is(0L));
     }
 
     @Test
@@ -95,5 +111,14 @@ public class ConcurrentAuditLogServiceTest {
         service.destroy();
 
         verify(auditLogEventWriter, times(0)).logEvent(POISON_PILL);
+    }
+
+    @Test
+    public void testGetMetrics() throws Exception {
+        final Map<String, Metric> metrics = service.getMetrics();
+
+        assertThat(metrics, hasEntry(equalTo(QUEUE_SIZE), instanceOf(Gauge.class)));
+        assertThat(metrics, hasEntry(equalTo(QUEUE_REJECTED_COUNT), instanceOf(Gauge.class)));
+        assertThat(metrics, hasEntry(equalTo(LOG_CALL_COUNT), instanceOf(Gauge.class)));
     }
 }
