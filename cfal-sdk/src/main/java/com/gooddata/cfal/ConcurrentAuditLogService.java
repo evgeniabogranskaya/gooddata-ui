@@ -12,8 +12,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.apache.commons.lang3.Validate.notNull;
-
 /**
  * Multi-threaded non-blocking audit log writing service. Suitable for using in REST APIs.
  */
@@ -21,7 +19,7 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService {
 
     static final AuditLogEvent POISON_PILL = new AuditLogEvent("PP", "poison", "pill", "die");
 
-    private static final int DEFAULT_BACKLOG_SIZE = 1024;
+    static final int DEFAULT_BACKLOG_SIZE = 1024;
 
     private final AtomicBoolean run = new AtomicBoolean(true);
 
@@ -49,18 +47,18 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService {
      * @throws IOException if output file can't be created
      */
     public ConcurrentAuditLogService(final String component, final int backlogSize) throws IOException {
-        this(component, new AuditLogEventFileWriter(component), backlogSize, event -> {});
+        this(component, new AuditLogEventFileWriter(component), backlogSize, null);
     }
 
     ConcurrentAuditLogService(final String component, final AuditLogEventWriter writer) throws IOException {
-        this(component, writer, DEFAULT_BACKLOG_SIZE, event -> {});
+        this(component, writer, DEFAULT_BACKLOG_SIZE, null);
     }
 
     ConcurrentAuditLogService(final String component, final AuditLogEventWriter writer, final int backlogSize,
                               final RejectionHandler rejectionHandler) throws IOException {
         super(component, writer);
 
-        this.rejectionHandler = notNull(rejectionHandler, "rejection handler");
+        this.rejectionHandler = rejectionHandler != null ? rejectionHandler : new DefaultRejectionHandler();
         this.queue = new LinkedBlockingQueue<>(backlogSize);
         this.executorService = Executors.newSingleThreadExecutor();
         this.future = createConsumerTask(writer);
@@ -85,7 +83,6 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService {
     @Override
     protected void doLogEvent(final AuditLogEvent event) {
         if (!queue.offer(event)) {
-            logger.error("action=cfal status=error Maximum queue length={} reached, unable to log event={}", queue.size(), event.getType());
             rejectionHandler.handle(event);
         }
     }
@@ -105,4 +102,15 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService {
         }
     }
 
+    public int getQueueSize() {
+        return queue.size();
+    }
+
+    private class DefaultRejectionHandler implements RejectionHandler {
+
+        @Override
+        public void handle(final AuditLogEvent event) {
+            logger.error("action=cfal status=error Maximum queue length={} reached, unable to log event={}", queue.size(), event.getType());
+        }
+    }
 }
