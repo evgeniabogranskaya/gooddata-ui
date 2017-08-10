@@ -65,7 +65,7 @@ class AuditLogEventFileWriter implements AuditLogEventWriter {
     public int logEvent(final AuditLogEvent event) {
         if (writtenBytes > maxBytes) {
             rotate();
-            writtenBytes = 0;
+            writtenBytes = 0; // zero no matter rotate was successful or not
         }
 
         final int bytes = writer.logEvent(event);

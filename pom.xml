@@ -168,6 +168,7 @@
                         <configuration>
                             <excludedClasses>
                                 <param>com.gooddata.cfal.restapi.config.*</param>
+                                <param>com.gooddata.cfal.ConcurrentAuditLogServicePerformance</param>
                             </excludedClasses>
                             <avoidCallsTo>
                                 <avoidCallsTo>java.util.logging</avoidCallsTo>
