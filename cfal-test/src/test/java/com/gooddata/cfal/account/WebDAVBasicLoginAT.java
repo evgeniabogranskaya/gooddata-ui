@@ -7,12 +7,10 @@ import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 import com.github.sardine.impl.SardineException;
 import com.github.sardine.impl.SardineImpl;
-import com.gooddata.GoodDataEndpoint;
 import com.gooddata.UriPrefixer;
 import com.gooddata.cfal.AbstractAT;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import org.apache.http.HttpStatus;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -49,21 +47,8 @@ public class WebDAVBasicLoginAT extends AbstractAT {
     private UriPrefixer createUriPrefixer() {
         final String userStaging = gd.getGdcService().getRootLinks().getUserStagingUri();
         final URI userStagingUri = URI.create(userStaging);
-
-        final URI uri = URI.create(endpoint.toUri());
-        final URI endpointUri = removePortNumber(uri); // remove after WA-7576
-
+        final URI endpointUri = URI.create(endpoint.toUri());
         return new UriPrefixer(userStagingUri.isAbsolute() ? userStagingUri : endpointUri.resolve(userStaging));
-    }
-
-    private static URI removePortNumber(final URI uri) {
-        if (uri.getPort() != GoodDataEndpoint.PORT) {
-            throw new IllegalArgumentException("Unable to connect to nonstandard port: " + uri.getPort());
-        }
-
-        return UriComponentsBuilder.fromUri(uri)
-                .port(-1) // clear port number
-                .build().toUri();
     }
 
     private Sardine createSardine(final String pass) {
