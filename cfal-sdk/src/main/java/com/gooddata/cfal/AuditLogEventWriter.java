@@ -6,7 +6,7 @@ package com.gooddata.cfal;
 /**
  * Event writer.
  */
-interface AuditLogEventWriter extends AutoCloseable {
+public interface AuditLogEventWriter extends AutoCloseable {
 
     /**
      * Write a single event

@@ -28,7 +28,7 @@ import static org.apache.commons.lang3.Validate.notNull;
  * <p>
  * This class is not internally synchronized, if accessed from multiple threads it must be synchronized externally.
  */
-class AuditLogEventFileWriter implements AuditLogEventWriter, MetricSet {
+public class AuditLogEventFileWriter implements AuditLogEventWriter, MetricSet {
 
     private static final File DEFAULT_DIR = new File("/mnt/log/cfal");
     private static final String ROTATED_FILE_NAME_SUFFIX = "-old";
