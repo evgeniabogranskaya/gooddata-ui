@@ -3,9 +3,12 @@
  */
 package com.gooddata.cfal;
 
+import static org.apache.commons.lang3.Validate.noNullElements;
+import static org.apache.commons.lang3.Validate.notNull;
+
 import com.codahale.metrics.Gauge;
-import com.codahale.metrics.Metric;
-import com.codahale.metrics.MetricSet;
+import com.gooddata.commons.monitoring.metrics.Measure;
+import com.gooddata.commons.monitoring.metrics.Monitored;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,24 +18,21 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.gooddata.cfal.CfalMonitoringMetricConstants.ROTATE_ERROR_COUNT;
-import static com.gooddata.cfal.CfalMonitoringMetricConstants.WRITE_ERROR_COUNT;
-import static org.apache.commons.lang3.Validate.noNullElements;
-import static org.apache.commons.lang3.Validate.notNull;
 
 /**
  * Formats Audit Events as one-line JSON and writes them into the given file/writer.
  * <p>
  * This class is not internally synchronized, if accessed from multiple threads it must be synchronized externally.
  */
-public class AuditLogEventFileWriter implements AuditLogEventWriter, MetricSet {
+@Monitored
+public class AuditLogEventFileWriter implements AuditLogEventWriter {
 
     private static final File DEFAULT_DIR = new File("/mnt/log/cfal");
     private static final String ROTATED_FILE_NAME_SUFFIX = "-old";
     private static final int DEFAULT_MAX_BYTES = 1024 * 1024 * 100;
+
+    private final Gauge<Long> gaugeWriteErrorCount = this::getWriteErrorCount;
+    private final Gauge<Long> gaugeRotateErrorCount = this::getRotateErrorCount;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -82,26 +82,22 @@ public class AuditLogEventFileWriter implements AuditLogEventWriter, MetricSet {
         return bytes;
     }
 
-    public long getErrorCount() {
-        return writer.getErrorCount();
+    public long getWriteErrorCount() {
+        return writer.getWriteErrorCount();
     }
 
     public long getRotateErrorCount() {
         return rotateErrorCount;
     }
 
-    @Override
-    public Map<String, Metric> getMetrics() {
+    @Measure("cfal.write.error.count")
+    public Gauge<Long> getGaugeWriteErrorCount() {
+        return gaugeWriteErrorCount;
+    }
 
-        final Map<String, Metric> gauges = new HashMap<>();
-
-        final Gauge<Long> gaugeWriteErrorCount = this::getErrorCount;
-        final Gauge gaugeRotateErrorCount = this::getRotateErrorCount;
-
-        gauges.put(WRITE_ERROR_COUNT, gaugeWriteErrorCount);
-        gauges.put(ROTATE_ERROR_COUNT, gaugeRotateErrorCount);
-
-        return gauges;
+    @Measure("cfal.rotate.error.count")
+    public Gauge getGaugeRotateErrorCount() {
+        return gaugeRotateErrorCount;
     }
 
     private void rotate() {

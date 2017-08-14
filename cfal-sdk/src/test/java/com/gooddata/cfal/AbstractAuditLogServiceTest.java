@@ -3,22 +3,15 @@
  */
 package com.gooddata.cfal;
 
-import com.codahale.metrics.Gauge;
-import com.codahale.metrics.Metric;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import static com.gooddata.cfal.CfalMonitoringMetricConstants.LOG_CALL_COUNT;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 
-import java.util.Map;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 public class AbstractAuditLogServiceTest {
 
@@ -92,18 +85,19 @@ public class AbstractAuditLogServiceTest {
     }
 
     @Test
-    public void testGetMetrics() throws Exception {
-        final Map<String, Metric> metrics = instance.getMetrics();
-
-        assertThat(metrics, hasEntry(equalTo(LOG_CALL_COUNT), instanceOf(Gauge.class)));
-    }
-
-    @Test
     public void getLogEventCount() throws Exception {
         instance.logEvent(auditEvent);
         instance.logEvent(auditEvent);
         instance.logEvent(auditEvent);
 
         assertThat(instance.getLogEventCount(), is(3L));
+    }
+
+    @Test
+    public void testGetLogEventCountGauge() throws Exception {
+        instance.logEvent(auditEvent);
+
+        assertThat(instance.getGaugeLogEventCount(), is(notNullValue()));
+        assertThat(instance.getGaugeLogEventCount().getValue(), is(1L));
     }
 }

@@ -3,21 +3,17 @@
  */
 package com.gooddata.cfal;
 
+import static org.apache.commons.lang3.Validate.notEmpty;
+import static org.apache.commons.lang3.Validate.notNull;
+
 import com.codahale.metrics.Gauge;
-import com.codahale.metrics.Metric;
-import com.codahale.metrics.MetricSet;
+import com.gooddata.commons.monitoring.metrics.Measure;
+import com.gooddata.commons.monitoring.metrics.Monitored;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
-
-import static com.gooddata.cfal.CfalMonitoringMetricConstants.LOG_CALL_COUNT;
-import static org.apache.commons.lang3.Validate.notEmpty;
-import static org.apache.commons.lang3.Validate.notNull;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Common parent for Audit Log Services.
@@ -25,7 +21,8 @@ import java.util.Map;
  * Provides ability to disable logging using JMX or <code>gdc.cfal.enabled</code> property.
  */
 @ManagedResource
-public abstract class AbstractAuditLogService implements AuditLogService, MetricSet {
+@Monitored
+public abstract class AbstractAuditLogService implements AuditLogService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -35,6 +32,8 @@ public abstract class AbstractAuditLogService implements AuditLogService, Metric
     private final String component;
 
     private long logEventCount = 0;
+
+    private final Gauge<Long> gaugeLogEventCount = this::getLogEventCount;
 
     AbstractAuditLogService(final String component) {
         this.component = notEmpty(component, "component");
@@ -60,14 +59,9 @@ public abstract class AbstractAuditLogService implements AuditLogService, Metric
         return logEventCount;
     }
 
-    @Override
-    public Map<String, Metric> getMetrics() {
-        final HashMap<String, Metric> gauges = new HashMap<>();
-        final Gauge<Long> gaugeLogEventCount = this::getLogEventCount;
-
-        gauges.put(LOG_CALL_COUNT, gaugeLogEventCount);
-
-        return gauges;
+    @Measure("cfal.log.call.count")
+    public Gauge<Long> getGaugeLogEventCount() {
+        return gaugeLogEventCount;
     }
 
     protected abstract void doLogEvent(final AuditLogEvent event);

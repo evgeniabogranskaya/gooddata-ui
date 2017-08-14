@@ -62,6 +62,11 @@
                 <artifactId>gdc-lang</artifactId>
                 <version>4.1.1</version>
             </dependency>
+            <dependency>
+                <groupId>com.gooddata.commons.monitoring</groupId>
+                <artifactId>monitoring-metrics</artifactId>
+                <version>3.3.2</version>
+            </dependency>
             <!-- TODO: Temporary httpclient version override since 4.5.3
             (imported from spring-boot-dependencies) contains bug
             https://issues.apache.org/jira/browse/HTTPCLIENT-1836 causing
