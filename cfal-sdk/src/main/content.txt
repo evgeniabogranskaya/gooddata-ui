@@ -12,3 +12,11 @@ spring-boot-autoconfigure-1.5.4.RELEASE.jar
 spring-boot-1.5.4.RELEASE.jar
 commons-lang-2.6.jar
 metrics-core-3.1.4.jar
+commons-codec-1.10.jar
+metrics-graphite-3.1.4.jar
+commons-httpclient-3.1.jar
+spring-aop-4.3.*.RELEASE.jar
+jackson-core-asl-1.9.12.jar
+commons-io-2.4.jar
+jackson-mapper-asl-1.9.12.jar
+spring-web-4.3.*.RELEASE.jar

@@ -3,9 +3,12 @@
  */
 package com.gooddata.cfal;
 
+import com.codahale.metrics.Gauge;
+import com.gooddata.commons.monitoring.metrics.Measure;
+import com.gooddata.commons.monitoring.metrics.Monitored;
+
 import javax.annotation.PreDestroy;
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,17 +17,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static com.gooddata.cfal.CfalMonitoringMetricConstants.QUEUE_REJECTED_COUNT;
-import static com.gooddata.cfal.CfalMonitoringMetricConstants.QUEUE_SIZE;
-
-import com.codahale.metrics.Gauge;
-import com.codahale.metrics.Metric;
-import com.codahale.metrics.MetricSet;
-
 /**
  * Multi-threaded non-blocking audit log writing service. Suitable for using in REST APIs.
  */
-public class ConcurrentAuditLogService extends SimpleAuditLogService implements MetricSet {
+@Monitored
+public class ConcurrentAuditLogService extends SimpleAuditLogService {
 
     static final AuditLogEvent POISON_PILL = new AuditLogEvent("PP", "poison", "pill", "die");
 
@@ -40,6 +37,9 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService implements 
 
     private final AtomicLong enqueueErrorCounter = new AtomicLong();
 
+    private final Gauge<Long> gaugeQueueSize = this::getQueueSize;
+    private final Gauge<Long> gaugeEnqueueErrorCount = this::getEnqueueErrors;
+
     private final Future<?> future;
 
     public ConcurrentAuditLogService(final String component, final AuditLogEventWriter writer) throws IOException {
@@ -52,7 +52,7 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService implements 
     }
 
     public ConcurrentAuditLogService(final String component, final AuditLogEventWriter writer, final int backlogSize,
-                              final RejectionHandler rejectionHandler) throws IOException {
+                                     final RejectionHandler rejectionHandler) throws IOException {
         super(component, writer);
 
         this.rejectionHandler = rejectionHandler != null ? rejectionHandler : new DefaultRejectionHandler();
@@ -75,18 +75,14 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService implements 
         return enqueueErrorCounter.get();
     }
 
-    @Override
-    public Map<String, Metric> getMetrics() {
+    @Measure("cfal.queue.size")
+    public Gauge<Long> getGaugeQueueSize() {
+        return gaugeQueueSize;
+    }
 
-        final Map<String, Metric> gauges = super.getMetrics();
-
-        final Gauge<Long> gaugeQueueSize = this::getQueueSize;
-        final Gauge<Long> gaugeEnqueueErrorCount = this::getEnqueueErrors;
-
-        gauges.put(QUEUE_SIZE, gaugeQueueSize);
-        gauges.put(QUEUE_REJECTED_COUNT, gaugeEnqueueErrorCount);
-
-        return gauges;
+    @Measure("cfal.queue.rejected.count")
+    public Gauge<Long> getGaugeEnqueueErrorCount() {
+        return gaugeEnqueueErrorCount;
     }
 
     private Future<?> createConsumerTask(final AuditLogEventWriter writer) {

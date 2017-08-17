@@ -3,8 +3,16 @@
  */
 package com.gooddata.cfal;
 
-import com.codahale.metrics.Gauge;
-import com.codahale.metrics.Metric;
+import static java.nio.file.Files.readAllLines;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.io.FileMatchers.anExistingFile;
+import static org.junit.Assert.fail;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.DateTimeZone;
@@ -16,22 +24,6 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-
-import static com.gooddata.cfal.CfalMonitoringMetricConstants.ROTATE_ERROR_COUNT;
-import static com.gooddata.cfal.CfalMonitoringMetricConstants.WRITE_ERROR_COUNT;
-import static java.nio.file.Files.readAllLines;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.io.FileMatchers.anExistingFile;
-import static org.junit.Assert.fail;
 
 public class AuditLogEventFileWriterTest {
 
@@ -166,15 +158,23 @@ public class AuditLogEventFileWriterTest {
     }
 
     @Test
-    public void testGetMetrics() throws Exception {
-        final Map<String, Metric> metrics = new AuditLogEventFileWriter(tmp.getRoot(), "foo", "bar").getMetrics();
-
-        assertThat(metrics, hasEntry(equalTo(WRITE_ERROR_COUNT), instanceOf(Gauge.class)));
-        assertThat(metrics, hasEntry(equalTo(ROTATE_ERROR_COUNT), instanceOf(Gauge.class)));
+    public void testGetWriteErrorCount() throws Exception {
+        assertThat(new AuditLogEventFileWriter(tmp.getRoot(), "foo", "bar").getWriteErrorCount(), is(0L));
     }
 
     @Test
-    public void testGetErrorCounter() throws Exception {
-        assertThat(new AuditLogEventFileWriter(tmp.getRoot(), "foo", "bar").getErrorCount(), is(0L));
+    public void testGetWriteErrorCountGauge() throws Exception {
+        final AuditLogEventFileWriter auditLogEventFileWriter = new AuditLogEventFileWriter(tmp.getRoot(), "foo", "bar");
+
+        assertThat(auditLogEventFileWriter.getGaugeRotateErrorCount(), is(notNullValue()));
+        assertThat(auditLogEventFileWriter.getGaugeRotateErrorCount().getValue(), is(0L));
+    }
+
+    @Test
+    public void testGetGaugeWriteErrorCount() throws Exception {
+        final AuditLogEventFileWriter auditLogEventFileWriter = new AuditLogEventFileWriter(tmp.getRoot(), "foo", "bar");
+
+        assertThat(auditLogEventFileWriter.getGaugeWriteErrorCount(), is(notNullValue()));
+        assertThat(auditLogEventFileWriter.getGaugeWriteErrorCount().getValue(), is(0L));
     }
 }

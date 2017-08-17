@@ -3,28 +3,20 @@
  */
 package com.gooddata.cfal;
 
-import com.codahale.metrics.Gauge;
-import com.codahale.metrics.Metric;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-
-import static com.gooddata.cfal.CfalMonitoringMetricConstants.LOG_CALL_COUNT;
-import static com.gooddata.cfal.CfalMonitoringMetricConstants.QUEUE_REJECTED_COUNT;
-import static com.gooddata.cfal.CfalMonitoringMetricConstants.QUEUE_SIZE;
 import static com.gooddata.cfal.ConcurrentAuditLogService.POISON_PILL;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.concurrent.CountDownLatch;
 
 public class ConcurrentAuditLogServiceTest {
 
@@ -114,11 +106,14 @@ public class ConcurrentAuditLogServiceTest {
     }
 
     @Test
-    public void testGetMetrics() throws Exception {
-        final Map<String, Metric> metrics = service.getMetrics();
+    public void testGetGaugeQueueSize() throws Exception {
+        assertThat(service.getGaugeQueueSize(), is(notNullValue()));
+        assertThat(service.getGaugeQueueSize().getValue(), is(0L));
+    }
 
-        assertThat(metrics, hasEntry(equalTo(QUEUE_SIZE), instanceOf(Gauge.class)));
-        assertThat(metrics, hasEntry(equalTo(QUEUE_REJECTED_COUNT), instanceOf(Gauge.class)));
-        assertThat(metrics, hasEntry(equalTo(LOG_CALL_COUNT), instanceOf(Gauge.class)));
+    @Test
+    public void testGetGaugeEnqueueErrorCount() throws Exception {
+        assertThat(service.getGaugeEnqueueErrorCount(), is(notNullValue()));
+        assertThat(service.getGaugeEnqueueErrorCount().getValue(), is(0L));
     }
 }

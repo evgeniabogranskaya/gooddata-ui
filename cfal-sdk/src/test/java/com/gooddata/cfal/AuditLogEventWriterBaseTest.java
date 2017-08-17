@@ -90,7 +90,7 @@ public class AuditLogEventWriterBaseTest {
         final int written = auditLogEventWriterBase.logEvent(event);
 
         assertThat(written, is(0));
-        assertThat(auditLogEventWriterBase.getErrorCount(), is(1L));
+        assertThat(auditLogEventWriterBase.getWriteErrorCount(), is(1L));
     }
 
 }

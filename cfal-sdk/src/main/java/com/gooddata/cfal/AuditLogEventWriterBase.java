@@ -24,7 +24,7 @@ class AuditLogEventWriterBase implements AuditLogEventWriter {
 
     private final BufferedWriter writer;
 
-    private final AtomicLong errorCounter = new AtomicLong();
+    private final AtomicLong writeErrorCounter = new AtomicLong();
 
     public AuditLogEventWriterBase(final Writer writer) {
         this.writer = new BufferedWriter(notNull(writer, "writer"));
@@ -39,7 +39,7 @@ class AuditLogEventWriterBase implements AuditLogEventWriter {
             return eventData.length();
         } catch (IOException e) {
             logger.error("Unable to write event={}", event.getType(), e);
-            errorCounter.incrementAndGet();
+            writeErrorCounter.incrementAndGet();
             return 0;
         }
     }
@@ -64,7 +64,7 @@ class AuditLogEventWriterBase implements AuditLogEventWriter {
      *
      * @return Number of errors during write operation
      */
-    public long getErrorCount() {
-        return errorCounter.get();
+    public long getWriteErrorCount() {
+        return writeErrorCounter.get();
     }
 }
