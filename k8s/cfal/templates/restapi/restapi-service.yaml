@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ template "fullname" . }}-restapi
+  labels:
+    app: cfal
+    component: restapi
+    team: smurfs
+    chart: "{{ .Chart.Name }}"
+spec:
+  ports:
+  - name: http
+    nodePort: {{ .Values.cfal.restapi.service.nodePort }}
+    port: {{ .Values.cfal.restapi.service.externalPort }}
+    targetPort: 8080
+  selector:
+    app: cfal
+    component: restapi
+  type: NodePort

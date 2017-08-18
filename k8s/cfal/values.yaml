@@ -1,0 +1,25 @@
+# Default values for CFAL.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  pullPolicy: IfNotPresent
+
+cfal:
+  restapi:
+    replicaCount: 2
+    image:
+      repository: docker-registry.na.intgdc.com
+      userspace: gooddata
+      tag: latest
+    service:
+      externalPort: 40001
+      nodePort: 30310
+      reporting:
+        enabled: false
+
+c4:
+  c4_proxy:
+    service:
+      host: c3proxy.cps
+      password: a1907cfb69b228a94bd1ff60bb2abdfc

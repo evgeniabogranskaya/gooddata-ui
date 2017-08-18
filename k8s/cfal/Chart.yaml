@@ -1,0 +1,4 @@
+apiVersion: v1
+description: A CFAL application Helm chart for Kubernetes
+name: cfal
+version: 0.1.0
