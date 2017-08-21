@@ -3,17 +3,12 @@
  */
 package com.gooddata.cfal.account;
 
-import com.gooddata.cfal.AbstractAT;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.List;
-import java.util.function.Predicate;
+public class LoginAT extends AbstractLoginAT {
 
-public class LoginAT extends AbstractAT {
-
-    private static final String MESSAGE_TYPE = "STANDARD_LOGIN";
+    private static final String USERNAME_PASSWORD = "USERNAME_PASSWORD";
 
     @BeforeClass(groups = MESSAGE_TYPE)
     public void setUp() {
@@ -24,16 +19,11 @@ public class LoginAT extends AbstractAT {
 
     @Test(groups = MESSAGE_TYPE)
     public void testLoginMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(), MESSAGE_TYPE);
+        doTestUserApi(pageCheckPredicate(true, USERNAME_PASSWORD), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void testLoginMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(), MESSAGE_TYPE);
+        doTestAdminApi(pageCheckPredicate(true, USERNAME_PASSWORD), MESSAGE_TYPE);
     }
-
-    private Predicate<List<AuditEventDTO>> pageCheckPredicate() {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE));
-    }
-
 }

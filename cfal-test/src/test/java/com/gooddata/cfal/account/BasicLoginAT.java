@@ -6,8 +6,6 @@ package com.gooddata.cfal.account;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-import com.gooddata.cfal.AbstractAT;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -25,14 +23,12 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.function.Predicate;
 
-public class BasicLoginAT extends AbstractAT {
+public class BasicLoginAT extends AbstractLoginAT {
 
     private static final String HTTPS = "https://";
-    private static final String MESSAGE_TYPE = "BASIC_LOGIN";
     private static final String WRONG_PASS = "123";
+    private static final String BASIC = "BASIC";
 
     @Test(groups = MESSAGE_TYPE)
     public void shouldLogUsingBasicAuth() throws IOException {
@@ -50,22 +46,22 @@ public class BasicLoginAT extends AbstractAT {
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldLogUsingBasicAuth")
     public void testLoginMessageUserApi() throws InterruptedException, IOException {
-        doTestUserApi(pageCheckPredicate(true), MESSAGE_TYPE);
+        doTestUserApi(pageCheckPredicate(true, BASIC), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldLogUsingBasicAuth")
     public void testLoginMessageAdminApi() throws InterruptedException, IOException {
-        doTestAdminApi(pageCheckPredicate(true), MESSAGE_TYPE);
+        doTestAdminApi(pageCheckPredicate(true, BASIC), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldNotLogWithBadPasswordUsingBasicAuth")
     public void testLoginBadPasswordMessageUserApi() throws InterruptedException, IOException {
-        doTestUserApi(pageCheckPredicate(false), MESSAGE_TYPE);
+        doTestUserApi(pageCheckPredicate(false, BASIC), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldNotLogWithBadPasswordUsingBasicAuth")
     public void testLoginBadPasswordMessageAdminApi() throws InterruptedException, IOException {
-        doTestAdminApi(pageCheckPredicate(false), MESSAGE_TYPE);
+        doTestAdminApi(pageCheckPredicate(false, BASIC), MESSAGE_TYPE);
     }
 
     private HttpResponse doBasicAuth(final String password) throws IOException {
@@ -91,9 +87,5 @@ public class BasicLoginAT extends AbstractAT {
 
     private String getUrl(final String uri) {
         return HTTPS + props.getHost() + ":" + 443 + uri;
-    }
-
-    private Predicate<List<AuditEventDTO>> pageCheckPredicate(final boolean success) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE) && e.isSuccess() == success);
     }
 }

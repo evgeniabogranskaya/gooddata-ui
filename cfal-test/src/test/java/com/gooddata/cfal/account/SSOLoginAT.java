@@ -5,8 +5,6 @@ package com.gooddata.cfal.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gooddata.GoodDataEndpoint;
-import com.gooddata.cfal.AbstractAT;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.sso.SSOLogin;
 import com.gooddata.security.pgp.PgpEncryptor;
 import org.apache.commons.io.IOUtils;
@@ -20,8 +18,6 @@ import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.List;
-import java.util.function.Predicate;
 
 import static com.gooddata.CfalGoodData.createRestTemplate;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -47,11 +43,12 @@ gpg --armor --output sso.txt --encrypt --recipient test@gooddata.com signed.txt
  curl -i --insecure 'https://cfal.na.intgdc.com/gdc/account/customerlogin?sessionId=<sso.txt>&serverURL=smurfs&targetURL=/gdc'
  </pre>
  */
-public class SSOLoginAT extends AbstractAT {
+public class SSOLoginAT extends AbstractLoginAT {
 
-    private static final String MESSAGE_TYPE = "SSO_LOGIN";
 
     private static final String URI = "/gdc/account/customerlogin?sessionId={sessionId}&serverURL={server}&targetURL=/gdc";
+    private static final String SSO = "SSO";
+
     private String session;
 
     @BeforeClass(groups = MESSAGE_TYPE)
@@ -82,15 +79,11 @@ public class SSOLoginAT extends AbstractAT {
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldLoginUserWithSSO")
     public void testLoginMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(), MESSAGE_TYPE);
+        doTestUserApi(pageCheckPredicate(true, SSO), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldLoginUserWithSSO")
     public void testLoginMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(), MESSAGE_TYPE);
-    }
-
-    private Predicate<List<AuditEventDTO>> pageCheckPredicate() {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE));
+        doTestAdminApi(pageCheckPredicate(true, SSO), MESSAGE_TYPE);
     }
 }
