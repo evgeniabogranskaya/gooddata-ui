@@ -180,7 +180,7 @@
         <dependency>
             <groupId>com.gooddata</groupId>
             <artifactId>gdc-c4</artifactId>
-            <version>4.1.1</version>
+            <version>6.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.gooddata.commons</groupId>
@@ -228,6 +228,11 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.gooddata.commons.monitoring</groupId>
+            <artifactId>monitoring-http4</artifactId>
+            <version>${monitoring.version}</version>
         </dependency>
 
         <dependency>
