@@ -14,7 +14,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-import com.gooddata.cfal.restapi.config.MonitoringTestConfig;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.dto.UserInfo;
@@ -29,7 +28,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -39,7 +37,6 @@ import java.util.Map;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @TestPropertySource(locations="classpath:application-test.properties")
-@Import(MonitoringTestConfig.class)
 public class AuditEventServiceIT {
 
     private static final String DOMAIN = RandomStringUtils.randomAlphabetic(10);

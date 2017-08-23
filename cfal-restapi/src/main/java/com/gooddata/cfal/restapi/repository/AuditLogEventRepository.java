@@ -3,9 +3,12 @@
  */
 package com.gooddata.cfal.restapi.repository;
 
+import com.codahale.metrics.Timer;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
 import com.gooddata.cfal.restapi.dto.UserInfo;
 import com.gooddata.cfal.restapi.model.AuditEvent;
+import com.gooddata.commons.monitoring.metrics.Measure;
+import com.gooddata.commons.monitoring.metrics.Monitored;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +31,7 @@ import static org.apache.commons.lang3.Validate.notNull;
  * Repository for audit event management
  */
 @Repository
+@Monitored("cfal.AuditLogEventRepository")
 public class AuditLogEventRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(AuditLogEventRepository.class);
@@ -36,6 +40,10 @@ public class AuditLogEventRepository {
     private final String mongoCollectionPrefix;
 
     private final MongoTemplate mongoTemplate;
+
+    private final Timer findByDomainTimer = new Timer();
+
+    private final Timer findByUserTimer = new Timer();
 
     public AuditLogEventRepository(final MongoTemplate mongoTemplate,
                                    @Value("${gdc.cfal.mongo.collection.prefix}") final String mongoCollectionPrefix,
@@ -60,8 +68,15 @@ public class AuditLogEventRepository {
         notEmpty(domain, "domain cannot be empty");
         notNull(requestParameters, "requestParameters cannot be null");
 
-        final Query query = createQuery(requestParameters);
-        return mongoTemplate.find(query, AuditEvent.class, getMongoCollectionName(domain));
+        final Timer.Context time = findByDomainTimer.time();
+        try {
+            final Query query = createQuery(requestParameters);
+            final List<AuditEvent> auditEvents = mongoTemplate.find(query, AuditEvent.class, getMongoCollectionName(domain));
+            time.stop();
+            return auditEvents;
+        } finally {
+            time.stop();
+        }
     }
 
     /**
@@ -77,8 +92,15 @@ public class AuditLogEventRepository {
         notNull(userInfo, "userInfo cannot be empty");
         notNull(requestParameters, "requestParameters cannot be null");
 
-        final Query query = createQuery(requestParameters).addCriteria(Criteria.where("userLogin").is(userInfo.getUserLogin()));
-        return mongoTemplate.find(query, AuditEvent.class, getMongoCollectionName(userInfo.getDomainId()));
+        final Timer.Context time = findByUserTimer.time();
+        try {
+            final Query query = createQuery(requestParameters).addCriteria(Criteria.where("userLogin").is(userInfo.getUserLogin()));
+            final List<AuditEvent> auditEvents = mongoTemplate.find(query, AuditEvent.class, getMongoCollectionName(userInfo.getDomainId()));
+            time.stop();
+            return auditEvents;
+        } finally {
+            time.stop();
+        }
     }
 
     /**
@@ -156,6 +178,16 @@ public class AuditLogEventRepository {
         } catch (Exception e) {
             logger.warn("Unable to create index for a collection=" + collectionName, e);
         }
+    }
+
+    @Measure("find.by.domain.time")
+    public Timer getFindByDomainTimer() {
+        return findByDomainTimer;
+    }
+
+    @Measure("find.by.user.time")
+    public Timer getFindByUserTimer() {
+        return findByUserTimer;
     }
 
     /**

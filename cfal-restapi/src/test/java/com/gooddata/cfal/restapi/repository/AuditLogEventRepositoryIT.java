@@ -3,7 +3,6 @@
  */
 package com.gooddata.cfal.restapi.repository;
 
-import com.gooddata.cfal.restapi.config.MonitoringTestConfig;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
 import com.gooddata.cfal.restapi.dto.UserInfo;
 import com.gooddata.cfal.restapi.model.AuditEvent;
@@ -20,7 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
@@ -47,7 +45,6 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @TestPropertySource(locations = "classpath:application-test.properties")
-@Import(MonitoringTestConfig.class)
 public class AuditLogEventRepositoryIT {
 
     private static final String DOMAIN1 = RandomStringUtils.randomAlphabetic(10);
