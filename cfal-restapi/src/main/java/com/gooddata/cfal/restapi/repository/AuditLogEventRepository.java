@@ -72,7 +72,6 @@ public class AuditLogEventRepository {
         try {
             final Query query = createQuery(requestParameters);
             final List<AuditEvent> auditEvents = mongoTemplate.find(query, AuditEvent.class, getMongoCollectionName(domain));
-            time.stop();
             return auditEvents;
         } finally {
             time.stop();
@@ -96,7 +95,6 @@ public class AuditLogEventRepository {
         try {
             final Query query = createQuery(requestParameters).addCriteria(Criteria.where("userLogin").is(userInfo.getUserLogin()));
             final List<AuditEvent> auditEvents = mongoTemplate.find(query, AuditEvent.class, getMongoCollectionName(userInfo.getDomainId()));
-            time.stop();
             return auditEvents;
         } finally {
             time.stop();
