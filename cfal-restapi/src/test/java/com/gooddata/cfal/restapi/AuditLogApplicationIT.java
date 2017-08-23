@@ -4,9 +4,11 @@
 package com.gooddata.cfal.restapi;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 
+import com.codahale.metrics.JmxAttributeGauge;
 import com.codahale.metrics.MetricRegistry;
 import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import com.gooddata.cfal.restapi.service.AuditEventService;
@@ -37,5 +39,10 @@ public class AuditLogApplicationIT {
         assertThat(metricRegistry.getMetrics(), hasEntry(equalTo("cfal.AuditLogEventRepository.find.by.user.time"), equalTo(auditLogEventRepository.getFindByUserTimer())));
         assertThat(metricRegistry.getMetrics(), hasEntry(equalTo("cfal.AuditEventService.find.by.domain.time"), equalTo(auditEventService.getFindByDomainTimer())));
         assertThat(metricRegistry.getMetrics(), hasEntry(equalTo("cfal.AuditEventService.find.by.user.time"), equalTo(auditEventService.getFindByUserTimer())));
+        assertThat(metricRegistry.getMetrics(), hasEntry(equalTo("cfal.mongo.connection-pool.localhost.Size"), instanceOf(JmxAttributeGauge.class)));
+        assertThat(metricRegistry.getMetrics(), hasEntry(equalTo("cfal.mongo.connection-pool.localhost.WaitQueueSize"), instanceOf(JmxAttributeGauge.class)));
+        assertThat(metricRegistry.getMetrics(), hasEntry(equalTo("cfal.mongo.connection-pool.localhost.MaxSize"), instanceOf(JmxAttributeGauge.class)));
+        assertThat(metricRegistry.getMetrics(), hasEntry(equalTo("cfal.mongo.connection-pool.localhost.MinSize"), instanceOf(JmxAttributeGauge.class)));
+        assertThat(metricRegistry.getMetrics(), hasEntry(equalTo("cfal.mongo.connection-pool.localhost.CheckedOutCount"), instanceOf(JmxAttributeGauge.class)));
     }
 }
