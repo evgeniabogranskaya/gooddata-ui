@@ -155,7 +155,7 @@ public class ETLProcessAT extends AbstractAT {
 
 
     private void createProcessFromAppstore() throws Exception {
-        processAppstore = gd.getProcessService().createProcessFromAppstore(projectService.getOrCreateProject(),
+        processAppstore = gd.getProcessService().createProcessFromAppstore(projectHelper.getOrCreateProject(),
                 new DataloadProcess(getClass().getSimpleName() + "Appstore", ProcessType.RUBY.toString(),
                         "${PUBLIC_APPSTORE}:branch/demo:/test/HelloApp")).get();
 
@@ -164,13 +164,13 @@ public class ETLProcessAT extends AbstractAT {
 
     private void createProcess() throws URISyntaxException {
         final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
-        process = gd.getProcessService().createProcess(projectService.getOrCreateProject(), new DataloadProcess(getClass().getSimpleName(), ProcessType.RUBY), file);
+        process = gd.getProcessService().createProcess(projectHelper.getOrCreateProject(), new DataloadProcess(getClass().getSimpleName(), ProcessType.RUBY), file);
     }
 
     private void badCreateProcess() throws URISyntaxException {
         try {
             final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
-            final Project project = projectService.getOrCreateProject();
+            final Project project = projectHelper.getOrCreateProject();
             gd.getProcessService().createProcess(project, new DataloadProcess(getClass().getSimpleName(), ProcessType.GRAPH), file);
             fail("should throw exception");
         } catch (GoodDataException ignored) {
@@ -226,7 +226,7 @@ public class ETLProcessAT extends AbstractAT {
     private void badRemoveProcess() {
         try {
             final DataloadProcess badProcess = mock(DataloadProcess.class);
-            doReturn("/gdc/projects/" + projectService.getOrCreateProject().getId() + "/dataload/processes/aaa").when(badProcess).getUri();
+            doReturn("/gdc/projects/" + projectHelper.getOrCreateProject().getId() + "/dataload/processes/aaa").when(badProcess).getUri();
             gd.getProcessService().removeProcess(badProcess);
             fail("should throw exception");
         } catch (GoodDataException ignored) {

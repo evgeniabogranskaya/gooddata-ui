@@ -21,27 +21,27 @@ import static org.apache.commons.lang3.Validate.notNull;
 /**
  * Singleton for ADS related stuff. Not thread safe.
  */
-public class AdsService {
+public class AdsHelper {
 
-    private static AdsService instance;
+    private static AdsHelper instance;
 
     private final List<Warehouse> warehouses = new ArrayList<>();
 
-    private static final Logger logger = LoggerFactory.getLogger(AdsService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdsHelper.class);
 
     private static final String CFAL_INSTANCE_NAME = "CFAL test";
 
     private final GoodData gd;
     private final TestEnvironmentProperties props;
 
-    public static AdsService getInstance(final GoodData gd, final TestEnvironmentProperties props) {
+    public static AdsHelper getInstance(final GoodData gd, final TestEnvironmentProperties props) {
         if (instance != null) {
             return instance;
         }
-        return instance = new AdsService(gd, props);
+        return instance = new AdsHelper(gd, props);
     }
 
-    private AdsService(final GoodData gd, final TestEnvironmentProperties props) {
+    private AdsHelper(final GoodData gd, final TestEnvironmentProperties props) {
         this.gd = notNull(gd, "gd");
         this.props = notNull(props, "props");
     }

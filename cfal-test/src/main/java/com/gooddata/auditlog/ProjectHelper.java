@@ -17,11 +17,11 @@ import static org.apache.commons.lang3.Validate.notNull;
 /**
  * Common parent for all tests using a project. Uses an existing one or creates a new and optionally removes is.
  */
-public class ProjectService {
+public class ProjectHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProjectHelper.class);
 
-    private static ProjectService instance;
+    private static ProjectHelper instance;
 
     private final String existingProjectId; // may be null
     private final boolean keepProject;
@@ -29,14 +29,14 @@ public class ProjectService {
     private final TestEnvironmentProperties props;
     private Project project;
 
-    public static ProjectService getInstance(final GoodData gd, final TestEnvironmentProperties props) {
+    public static ProjectHelper getInstance(final GoodData gd, final TestEnvironmentProperties props) {
         if (instance != null) {
             return instance;
         }
-        return instance = new ProjectService(gd, props);
+        return instance = new ProjectHelper(gd, props);
     }
 
-    public ProjectService(final GoodData gd, final TestEnvironmentProperties props) {
+    public ProjectHelper(final GoodData gd, final TestEnvironmentProperties props) {
         this.gd = notNull(gd, "gd");
         this.props = notNull(props, "props");
 

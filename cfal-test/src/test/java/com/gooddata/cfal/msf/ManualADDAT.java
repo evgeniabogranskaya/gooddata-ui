@@ -43,7 +43,7 @@ public class ManualADDAT extends AbstractAT {
 
     @BeforeClass(groups = MESSAGE_TYPE)
     public void updateProjectModel() throws Exception {
-        final Project project = projectService.getOrCreateProject();
+        final Project project = projectHelper.getOrCreateProject();
         final ModelDiff projectModelDiff = gd.getModelService().getProjectModelDiff(project,
                 new InputStreamReader(getClass().getResourceAsStream("/model.json"))).get();
         if (!projectModelDiff.getUpdateMaql().isEmpty()) {
@@ -54,12 +54,12 @@ public class ManualADDAT extends AbstractAT {
 
     @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "updateProjectModel")
     public void createWarehouse() {
-        warehouse = adsService.getOrCreateWarehouse();
+        warehouse = adsHelper.getOrCreateWarehouse();
     }
 
     @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "createWarehouse")
     public void setOutputStage() {
-        final Project project = projectService.getOrCreateProject();
+        final Project project = projectHelper.getOrCreateProject();
         final OutputStage outputStage = gd.getOutputStageService().getOutputStage(project);
         final WarehouseSchema schema = gd.getWarehouseService().getDefaultWarehouseSchema(warehouse);
 
@@ -72,7 +72,7 @@ public class ManualADDAT extends AbstractAT {
 
     @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "createWarehouse")
     public void createTemplate() {
-        jdbcTemplate = adsService.createJdbcTemplate(warehouse);
+        jdbcTemplate = adsHelper.createJdbcTemplate(warehouse);
     }
 
     @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "createTemplate")
@@ -92,7 +92,7 @@ public class ManualADDAT extends AbstractAT {
     @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = {"setOutputStage", "executeSql"})
     public void executeDataloadProcess() {
         final DataloadProcess dataloadProcess = gd.getProcessService()
-                .listProcesses(projectService.getOrCreateProject())
+                .listProcesses(projectHelper.getOrCreateProject())
                 .stream()
                 .filter(e -> e.getType().equals(DATALOAD.name()))
                 .findFirst()
@@ -113,7 +113,7 @@ public class ManualADDAT extends AbstractAT {
 
     @AfterClass(groups = MESSAGE_TYPE)
     public void clearOutputStage() {
-        final OutputStage outputStage = gd.getOutputStageService().getOutputStage(projectService.getOrCreateProject());
+        final OutputStage outputStage = gd.getOutputStageService().getOutputStage(projectHelper.getOrCreateProject());
 
         outputStage.setSchemaUri(null);
 
@@ -124,7 +124,7 @@ public class ManualADDAT extends AbstractAT {
         final Schedule schedule = new Schedule(dataloadProcess, null, "0 0 * * *");
         schedule.addParam("GDC_DE_SYNCHRONIZE_ALL", "true");
 
-        Schedule createdSchedule = gd.getProcessService().createSchedule(projectService.getOrCreateProject(), schedule);
+        Schedule createdSchedule = gd.getProcessService().createSchedule(projectHelper.getOrCreateProject(), schedule);
 
         FutureResult<ScheduleExecution> futureResult = gd.getProcessService().executeSchedule(createdSchedule);
         final ScheduleExecution scheduleExecution = futureResult.get();

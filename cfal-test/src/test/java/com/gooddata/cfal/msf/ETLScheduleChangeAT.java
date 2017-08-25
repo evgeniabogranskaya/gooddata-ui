@@ -28,7 +28,7 @@ public class ETLScheduleChangeAT extends AbstractAT {
     @BeforeClass(groups = MESSAGE_TYPE)
     public void createProcessAndSchedule() throws URISyntaxException {
         final File file = new File(getClass().getClassLoader().getResource("test.rb").toURI());
-        final Project project = projectService.getOrCreateProject();
+        final Project project = projectHelper.getOrCreateProject();
         process = gd.getProcessService().createProcess(project, new DataloadProcess(getClass().getSimpleName(), ProcessType.RUBY), file);
         schedule = gd.getProcessService().createSchedule(project, new Schedule(process, "test.rb", "0 0 * * *"));
     }

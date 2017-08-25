@@ -35,10 +35,10 @@ abstract class AbstractAdsAT extends AbstractAT {
             return jdbcTemplate;
         }
 
-        return jdbcTemplate = adsService.createJdbcTemplate(getWarehouse());
+        return jdbcTemplate = adsHelper.createJdbcTemplate(getWarehouse());
     }
 
     protected Warehouse getWarehouse() {
-        return adsService.getOrCreateWarehouse();
+        return adsHelper.getOrCreateWarehouse();
     }
 }

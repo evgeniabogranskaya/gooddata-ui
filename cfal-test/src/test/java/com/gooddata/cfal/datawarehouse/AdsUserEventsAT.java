@@ -19,7 +19,7 @@ public class AdsUserEventsAT extends AbstractAdsAT {
 
     @BeforeClass(groups = {MESSAGE_TYPE_ADD, MESSAGE_TYPE_REMOVE})
     public void addUserToAds() throws Exception {
-        final Account anotherAccount = accountService.getOrCreateUser();
+        final Account anotherAccount = accountHelper.getOrCreateUser();
 
         final WarehouseUser tmpUser = WarehouseUser.createWithlogin(anotherAccount.getLogin(), DATA_ADMIN);
 

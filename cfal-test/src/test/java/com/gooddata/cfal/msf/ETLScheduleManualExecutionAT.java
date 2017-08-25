@@ -31,12 +31,12 @@ public class ETLScheduleManualExecutionAT extends AbstractAT {
     @Test(groups = MESSAGE_TYPE)
     public void createProcess() throws URISyntaxException {
         final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
-        process = gd.getProcessService().createProcess(projectService.getOrCreateProject(), new DataloadProcess(getClass().getSimpleName(), ProcessType.RUBY), file);
+        process = gd.getProcessService().createProcess(projectHelper.getOrCreateProject(), new DataloadProcess(getClass().getSimpleName(), ProcessType.RUBY), file);
     }
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "createProcess")
     public void createSchedule() throws Exception {
-        schedule = gd.getProcessService().createSchedule(projectService.getOrCreateProject(), new Schedule(process, SCRIPT_NAME, "0 0 * * *"));
+        schedule = gd.getProcessService().createSchedule(projectHelper.getOrCreateProject(), new Schedule(process, SCRIPT_NAME, "0 0 * * *"));
     }
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "createSchedule")
@@ -47,7 +47,7 @@ public class ETLScheduleManualExecutionAT extends AbstractAT {
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "executeSchedule", expectedExceptions = ScheduleExecutionException.class)
     public void badExecuteSchedule() {
         final Schedule mock = mock(Schedule.class);
-        final String nonExistentScheduleUri = Schedule.TEMPLATE.expand(projectService.getOrCreateProject().getId(), "fail").toString();
+        final String nonExistentScheduleUri = Schedule.TEMPLATE.expand(projectHelper.getOrCreateProject().getId(), "fail").toString();
         when(mock.getExecutionsUri()).thenReturn(nonExistentScheduleUri + "/executions");
         gd.getProcessService().executeSchedule(mock);
     }
