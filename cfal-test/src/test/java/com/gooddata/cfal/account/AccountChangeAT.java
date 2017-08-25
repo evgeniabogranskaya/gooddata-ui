@@ -25,7 +25,7 @@ public class AccountChangeAT extends AbstractAT {
     }
 
     private void updateUser() {
-        final Account anotherAccount = accountService.getOrCreateUser();
+        final Account anotherAccount = accountHelper.getOrCreateUser();
 
         final String newPass = "alohaalohaaloha";
         anotherAccount.setPassword(newPass);

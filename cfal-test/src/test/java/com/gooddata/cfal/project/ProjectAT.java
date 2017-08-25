@@ -22,7 +22,7 @@ public class ProjectAT extends AbstractAT {
     @BeforeClass(groups = MESSAGE_TYPE)
     public void sendInvitation() throws Exception {
         final Invitation invitation = new Invitation(email);
-        final Project project = projectService.getOrCreateProject();
+        final Project project = projectHelper.getOrCreateProject();
         gd.getProjectService().sendInvitations(project, invitation);
     }
 
@@ -37,7 +37,7 @@ public class ProjectAT extends AbstractAT {
     }
 
     private Predicate<List<AuditEventDTO>> pageCheckPredicate(final String messageType) {
-        final Project project = projectService.getOrCreateProject();
+        final Project project = projectHelper.getOrCreateProject();
         return (auditEvents) -> auditEvents.stream()
                 .anyMatch(e ->
                         getAccount().getLogin().equals(e.getUserLogin()) &&

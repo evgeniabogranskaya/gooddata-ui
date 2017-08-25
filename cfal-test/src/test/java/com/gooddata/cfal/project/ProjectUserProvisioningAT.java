@@ -23,8 +23,8 @@ public class ProjectUserProvisioningAT extends AbstractAT {
 
     @BeforeClass(groups = {USER_ADD_MESSAGE_TYPE, STATUS_CHANGE_MESSAGE_TYPE})
     public void setUp() {
-        addedUser = accountService.getOrCreateUser();
-        final Project project = projectService.getOrCreateProject();
+        addedUser = accountHelper.getOrCreateUser();
+        final Project project = projectHelper.getOrCreateProject();
         final User user = gd.getProjectService().addUserToProject(project, addedUser);
 
         user.setStatus("DISABLED");

@@ -6,10 +6,10 @@ package com.gooddata.cfal;
 import com.gooddata.CfalGoodData;
 import com.gooddata.GoodDataEndpoint;
 import com.gooddata.account.Account;
-import com.gooddata.auditlog.AccountService;
-import com.gooddata.auditlog.AdsService;
+import com.gooddata.auditlog.AccountHelper;
+import com.gooddata.auditlog.AdsHelper;
 import com.gooddata.auditlog.AuditLogService;
-import com.gooddata.auditlog.ProjectService;
+import com.gooddata.auditlog.ProjectHelper;
 import com.gooddata.auditlog.TestEnvironmentProperties;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
@@ -46,9 +46,9 @@ public abstract class AbstractAT {
 
     private final DateTime startTime;
 
-    protected final AdsService adsService;
-    protected final AccountService accountService;
-    protected final ProjectService projectService;
+    protected final AdsHelper adsHelper;
+    protected final AccountHelper accountHelper;
+    protected final ProjectHelper projectHelper;
 
     public AbstractAT() {
         props = new TestEnvironmentProperties();
@@ -60,9 +60,9 @@ public abstract class AbstractAT {
 
         startTime = new DateTime();
 
-        this.adsService = AdsService.getInstance(gd, props);
-        this.accountService = AccountService.getInstance(gd, props);
-        this.projectService = ProjectService.getInstance(gd, props);
+        this.adsHelper = AdsHelper.getInstance(gd, props);
+        this.accountHelper = AccountHelper.getInstance(gd, props);
+        this.projectHelper = ProjectHelper.getInstance(gd, props);
     }
 
     @BeforeSuite(alwaysRun = true)
@@ -72,9 +72,9 @@ public abstract class AbstractAT {
 
     @AfterSuite(alwaysRun = true)
     public void serviceTearDown() throws Exception {
-        accountService.destroy();
-        adsService.destroy();
-        projectService.destroy();
+        accountHelper.destroy();
+        adsHelper.destroy();
+        projectHelper.destroy();
     }
 
     /**
@@ -152,6 +152,6 @@ public abstract class AbstractAT {
     }
 
     public Account getAccount() {
-        return accountService.getCurrentAccount();
+        return accountHelper.getCurrentAccount();
     }
 }

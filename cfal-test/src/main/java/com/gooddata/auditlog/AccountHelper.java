@@ -17,27 +17,27 @@ import static org.apache.commons.lang3.Validate.notNull;
 /**
  * Singleton for account related stuff. Not thread safe.
  */
-public class AccountService {
+public class AccountHelper {
 
-    private static AccountService instance;
+    private static AccountHelper instance;
 
     private Account currentAccount;
 
     private final List<Account> accounts = new ArrayList<>();
 
-    private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AccountHelper.class);
 
     private final GoodData gd;
     private final TestEnvironmentProperties props;
 
-    public static AccountService getInstance(final GoodData gd, final TestEnvironmentProperties props) {
+    public static AccountHelper getInstance(final GoodData gd, final TestEnvironmentProperties props) {
         if (instance != null) {
             return instance;
         }
-        return instance = new AccountService(gd, props);
+        return instance = new AccountHelper(gd, props);
     }
 
-    private AccountService(final GoodData gd, final TestEnvironmentProperties props) {
+    private AccountHelper(final GoodData gd, final TestEnvironmentProperties props) {
         this.gd = notNull(gd, "gd");
         this.props = notNull(props, "props");
     }
