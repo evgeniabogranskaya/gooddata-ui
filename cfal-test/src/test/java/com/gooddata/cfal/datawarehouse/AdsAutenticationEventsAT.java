@@ -30,22 +30,22 @@ public class AdsAutenticationEventsAT extends AbstractAdsAT {
         getJdbcTemplate().execute(TEST_QUERY);
     }
 
-//    @Test(groups = MESSAGE_TYPE_LOGIN) after datawarehouse change passes through RT, uncomment
+    @Test(groups = MESSAGE_TYPE_LOGIN)
     public void testUsernamePasswordLoginUserApi() throws InterruptedException {
         doTestUserApi(loginPageCheckPredicate(), MESSAGE_TYPE_LOGIN);
     }
 
-//    @Test(groups = MESSAGE_TYPE_LOGIN)
+    @Test(groups = MESSAGE_TYPE_LOGIN)
     public void testUsernamePasswordLoginAdminApi() throws InterruptedException {
         doTestAdminApi(loginPageCheckPredicate(), MESSAGE_TYPE_LOGIN);
     }
 
-//    @Test(groups = MESSAGE_TYPE_CONNECTION)
+    @Test(groups = MESSAGE_TYPE_CONNECTION)
     public void testADSConnectionUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_CONNECTION), MESSAGE_TYPE_CONNECTION);
     }
 
-//    @Test(groups = MESSAGE_TYPE_CONNECTION)
+    @Test(groups = MESSAGE_TYPE_CONNECTION)
     public void testADSConnectionAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_CONNECTION), MESSAGE_TYPE_CONNECTION);
     }
