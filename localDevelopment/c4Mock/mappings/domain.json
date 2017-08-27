@@ -1,0 +1,27 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/gdc/c4/domain/default"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "domain": {
+        "name": "Default User Domain",
+        "security_setting": "/gdc/c4/domain/default/securitysetting",
+        "created_at": "2017-07-13 11:14:43",
+        "modified_at": "2017-07-13 11:14:43",
+        "owner": "/gdc/c4/user/876ec68f5630b38de65852ed5d6236ff",
+        "uri": "/gdc/c4/domain/default",
+        "isolated_domain": "/gdc/c4/domain/default",
+        "soft_domain": "/gdc/c4/domain/default",
+        "ip_whitelist": null,
+        "environment": "PRODUCTION",
+        "compliance_level": "REGULAR"
+      }
+    }
+  }
+}

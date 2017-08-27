@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/gdc/c4/user/876ec68f5630b38de65852ed5d6236ff/setting/cfal"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "setting": {
+        "uri": "/gdc/c4/user/876ec68f5630b38de65852ed5d6236ff/setting/cfal",
+        "parent_uri": "/gdc/c4/user/876ec68f5630b38de65852ed5d6236ff",
+        "source": "user",
+        "name": "cfal",
+        "value": "true"
+      }
+    }
+  }
+}

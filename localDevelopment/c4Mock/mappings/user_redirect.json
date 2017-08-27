@@ -1,0 +1,12 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/gdc/c4/user/876ec68f5630b38de65852ed5d6236ff"
+  },
+  "response": {
+    "status": 302,
+    "headers": {
+      "Location": "/gdc/c4/user/876ec68f5630b38de65852ed5d6236ff/version/4CE65F1D33997C00"
+    }
+  }
+}
