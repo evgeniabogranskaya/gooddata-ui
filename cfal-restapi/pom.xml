@@ -368,14 +368,10 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
-                            <!--should fail if some required dependency is missing since this can lead to serious problems,
-                                such as broken logging or NoClassDefFoundError-s
-                            -->
                             <failOnMissing>true</failOnMissing>
                             <directory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</directory>
                             <checkFilesPattern>**/*.jar</checkFilesPattern>
-                            <vendorId>com.gooddata</vendorId>
-                            <ignoreVendorArchives>true</ignoreVendorArchives>
+                            <ignoreVendorArchives>false</ignoreVendorArchives>
                             <skipPOMPackaging>true</skipPOMPackaging>
                         </configuration>
                     </execution>
