@@ -2,6 +2,16 @@
 
 This directory contains means how to ease development on the user machine.
 
+## Mongo & C4 mock
+As all you need for querying CFAL restapi is MongoDB and C4 (mock), we've prepared a simple way how to setup your environment to get both of these services running. Simply use
+```bash
+docker-compose up
+```
+to boot necessary services. Once this finished, you can run CFAL restapi from command-line / IDE and enjoy happy development. Once you're done, you can kill both C4 mock and MongoDB using
+```bash
+docker-compose down
+```
+
 ## C4 mock
 
 One of the things you need to have for proper CFAL API testing is C4, as we're using it from our app (as it contains information about domains/users).
