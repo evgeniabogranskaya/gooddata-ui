@@ -79,11 +79,11 @@ public class SSOLoginAT extends AbstractLoginAT {
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldLoginUserWithSSO")
     public void testLoginMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(true, SSO), MESSAGE_TYPE);
+        doTestUserApi(pageCheckPredicate(true, WEBAPP, SSO), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldLoginUserWithSSO")
     public void testLoginMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(true, SSO), MESSAGE_TYPE);
+        doTestAdminApi(pageCheckPredicate(true, WEBAPP, SSO), MESSAGE_TYPE);
     }
 }
