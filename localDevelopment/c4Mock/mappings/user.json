@@ -1,0 +1,51 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/gdc/c4/user/876ec68f5630b38de65852ed5d6236ff/version/4CE65F1D33997C00"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "user": {
+        "uri": "/gdc/c4/user/876ec68f5630b38de65852ed5d6236ff",
+        "serial": "4CE65F1D33997C00",
+        "id_uri": "/gdc/c4/user/id/1",
+        "id": "1",
+        "login": "bear@gooddata.com",
+        "email": "bear@gooddata.com",
+        "login_md5": "876ec68f5630b38de65852ed5d6236ff",
+        "password": "$5$H5XzRNemAZaJtIgn$vYoCcwLmzwqQjw4u.JJvKhf.oaysekU/8xYpuyDS/k5",
+        "failed_logins": "0",
+        "firstname": "GoodData",
+        "lastname": "Corporation",
+        "companyname": null,
+        "position": null,
+        "country": null,
+        "language": "en-US",
+        "timezone": null,
+        "phonenumber": null,
+        "auth_provider": "smurfs",
+        "state": "VERIFIED",
+        "projects": "/gdc/c4/user/876ec68f5630b38de65852ed5d6236ff/project",
+        "owned_projects": "/gdc/c4/user/876ec68f5630b38de65852ed5d6236ff/owned",
+        "user_settings": "/gdc/c4/user/876ec68f5630b38de65852ed5d6236ff/setting",
+        "created_by": "/gdc/c4/user/876ec68f5630b38de65852ed5d6236ff",
+        "created_by_id": "1",
+        "created_at": "2017-07-13 11:14:43",
+        "modified_by": "/gdc/c4/user/876ec68f5630b38de65852ed5d6236ff",
+        "modified_by_id": "1",
+        "modified_at": "2017-07-13 11:17:56",
+        "domain": "/gdc/c4/domain/default",
+        "isolated_domain": "/gdc/c4/domain/default",
+        "soft_domain": "/gdc/c4/domain/default",
+        "stage_dir": "/var/gdc/staging/users/a6/15e83578ad5cba95c442273ea20bfa",
+        "authentication_modes": [],
+        "ip_whitelist": null,
+        "effective_ip_whitelist": null
+      }
+    }
+  }
+}
