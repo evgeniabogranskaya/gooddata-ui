@@ -1,0 +1,10 @@
+version: '3'
+services:
+  c4-mock:
+    build: c4Mock
+    ports:
+     - "668:8080"
+  mongo:
+    image: "mongo"
+    ports:
+     - "27017:27017"
