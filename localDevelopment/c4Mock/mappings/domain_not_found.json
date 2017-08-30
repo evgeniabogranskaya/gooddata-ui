@@ -1,0 +1,24 @@
+{
+  "priority" : 5,
+  "request": {
+    "method": "GET",
+    "urlPattern": "/gdc/c4/domain/.*"
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "error": {
+        "component": "c4",
+        "errorCode": "gdc.c4.not_found.domain",
+        "errorClass": "GDC::Exception::NotFound",
+        "message": "%s",
+        "parameters": [
+          "domain"
+        ]
+      }
+    }
+  }
+}
