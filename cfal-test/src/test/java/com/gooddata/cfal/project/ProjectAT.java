@@ -11,7 +11,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 public class ProjectAT extends AbstractAT {
@@ -28,18 +27,17 @@ public class ProjectAT extends AbstractAT {
 
     @Test(groups = MESSAGE_TYPE)
     public void testAddUserEventUserApi() throws Exception {
-        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE), MESSAGE_TYPE);
+        doTestUserApi(eventCheck(MESSAGE_TYPE), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void testAddUserEventAdminApi() throws Exception {
-        doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE), MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(MESSAGE_TYPE), MESSAGE_TYPE);
     }
 
-    private Predicate<List<AuditEventDTO>> pageCheckPredicate(final String messageType) {
+    private Predicate<AuditEventDTO> eventCheck(final String messageType) {
         final Project project = projectHelper.getOrCreateProject();
-        return (auditEvents) -> auditEvents.stream()
-                .anyMatch(e ->
+        return (e ->
                         getAccount().getLogin().equals(e.getUserLogin()) &&
                         messageType.equals(e.getType()) &&
                         e.isSuccess() &&

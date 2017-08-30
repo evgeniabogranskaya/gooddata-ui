@@ -10,7 +10,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.Predicate;
 
 public class AccountChangeAT extends AbstractAT {
@@ -42,35 +41,35 @@ public class AccountChangeAT extends AbstractAT {
 
     @Test(groups = USER_PROFILE_CHANGE)
     public void testUserProfileChangeMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(USER_PROFILE_CHANGE), USER_PROFILE_CHANGE);
+        doTestUserApi(eventCheck(USER_PROFILE_CHANGE), USER_PROFILE_CHANGE);
     }
 
     @Test(groups = USER_PROFILE_CHANGE)
     public void testUserProfileChangeMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(USER_PROFILE_CHANGE), USER_PROFILE_CHANGE);
+        doTestAdminApi(eventCheck(USER_PROFILE_CHANGE), USER_PROFILE_CHANGE);
     }
 
     @Test(groups = USER_PASSWORD_CHANGE)
     public void testUserPasswordChangeMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(USER_PASSWORD_CHANGE), USER_PASSWORD_CHANGE);
+        doTestUserApi(eventCheck(USER_PASSWORD_CHANGE), USER_PASSWORD_CHANGE);
     }
 
     @Test(groups = USER_PASSWORD_CHANGE)
     public void testUserPasswordChangeMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(USER_PASSWORD_CHANGE), USER_PASSWORD_CHANGE);
+        doTestAdminApi(eventCheck(USER_PASSWORD_CHANGE), USER_PASSWORD_CHANGE);
     }
 
     @Test(groups = USER_IP_WHITELIST_CHANGE)
     public void testUserIpWhitelistChangeMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(USER_IP_WHITELIST_CHANGE), USER_IP_WHITELIST_CHANGE);
+        doTestUserApi(eventCheck(USER_IP_WHITELIST_CHANGE), USER_IP_WHITELIST_CHANGE);
     }
 
     @Test(groups = USER_IP_WHITELIST_CHANGE)
     public void testUserIpWhitelistChangeMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(USER_IP_WHITELIST_CHANGE), USER_IP_WHITELIST_CHANGE);
+        doTestAdminApi(eventCheck(USER_IP_WHITELIST_CHANGE), USER_IP_WHITELIST_CHANGE);
     }
 
-    private Predicate<List<AuditEventDTO>> pageCheckPredicate(final String messageType) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(messageType));
+    private Predicate<AuditEventDTO> eventCheck(final String messageType) {
+        return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(messageType));
     }
 }

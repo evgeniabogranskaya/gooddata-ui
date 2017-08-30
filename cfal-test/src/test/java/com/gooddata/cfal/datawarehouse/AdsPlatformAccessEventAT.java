@@ -16,12 +16,12 @@ public class AdsPlatformAccessEventAT extends AbstractAdsAT {
     @Test(groups = MESSAGE_TYPE_ACCESS)
     public void testSelectUserApi() throws InterruptedException {
         getJdbcTemplate().execute(TEST_QUERY);
-        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_ACCESS), MESSAGE_TYPE_ACCESS);
+        doTestUserApi(eventCheck(MESSAGE_TYPE_ACCESS), MESSAGE_TYPE_ACCESS);
     }
 
     @Test(groups = MESSAGE_TYPE_ACCESS)
     public void testSelectAdminApi() throws InterruptedException {
         getJdbcTemplate().execute(TEST_QUERY);
-        doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_ACCESS), MESSAGE_TYPE_ACCESS);
+        doTestAdminApi(eventCheck(MESSAGE_TYPE_ACCESS), MESSAGE_TYPE_ACCESS);
     }
 }

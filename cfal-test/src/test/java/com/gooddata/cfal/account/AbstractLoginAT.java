@@ -18,10 +18,10 @@ public class AbstractLoginAT extends AbstractAT {
     private static final String LOGIN_TYPE = "loginType";
     private static final String COMPONENT = "component";
 
-    protected Predicate<List<AuditEventDTO>> pageCheckPredicate(final boolean success,
-                                                                final String component,
-                                                                final String loginType) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e ->
+    protected Predicate<AuditEventDTO> eventCheck(final boolean success,
+                                                  final String component,
+                                                  final String loginType) {
+        return (e ->
                 e.getUserLogin().equals(getAccount().getLogin()) &&
                         e.getType().equals(MESSAGE_TYPE) &&
                         e.isSuccess() == success &&

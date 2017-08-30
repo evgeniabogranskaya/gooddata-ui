@@ -29,7 +29,6 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.InputStreamReader;
-import java.util.List;
 import java.util.function.Predicate;
 
 public class ManualADDAT extends AbstractAT {
@@ -103,12 +102,12 @@ public class ManualADDAT extends AbstractAT {
 
     @Test(groups = MESSAGE_TYPE)
     public void tesADDManualExecutionMessageUserAPI() throws Exception {
-        doTestUserApi(pageCheckPredicate(true), MESSAGE_TYPE);
+        doTestUserApi(eventCheck(true), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void tesADDManualExecutionMessageAdminAPI() throws Exception {
-        doTestAdminApi(pageCheckPredicate(true), MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(true), MESSAGE_TYPE);
     }
 
     @AfterClass(groups = MESSAGE_TYPE)
@@ -134,8 +133,8 @@ public class ManualADDAT extends AbstractAT {
         logger.info("executed schedule_id={} of dataload process={}", createdSchedule.getId(), dataloadProcess.getId());
     }
 
-    private Predicate<List<AuditEventDTO>> pageCheckPredicate(final boolean isSuccess) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE) && e.isSuccess() == isSuccess);
+    private Predicate<AuditEventDTO> eventCheck(final boolean isSuccess) {
+        return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE) && e.isSuccess() == isSuccess);
     }
 
 }

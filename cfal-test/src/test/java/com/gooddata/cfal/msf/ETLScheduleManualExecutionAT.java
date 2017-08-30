@@ -17,7 +17,6 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.function.Predicate;
 
 public class ETLScheduleManualExecutionAT extends AbstractAT {
@@ -54,22 +53,22 @@ public class ETLScheduleManualExecutionAT extends AbstractAT {
 
     @Test(dependsOnMethods = "executeSchedule", groups = MESSAGE_TYPE)
     public void testScheduleManualExecutionMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(true), MESSAGE_TYPE);
+        doTestUserApi(eventCheck(true), MESSAGE_TYPE);
     }
 
     @Test(dependsOnMethods = "executeSchedule", groups = MESSAGE_TYPE)
     public void testScheduleManualExecutionMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(true), MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(true), MESSAGE_TYPE);
     }
 
     @Test(dependsOnMethods = "badExecuteSchedule", groups = MESSAGE_TYPE)
     public void testScheduleManualExecutionMessageErrorUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(false), MESSAGE_TYPE);
+        doTestUserApi(eventCheck(false), MESSAGE_TYPE);
     }
 
     @Test(dependsOnMethods = "badExecuteSchedule", groups = MESSAGE_TYPE)
     public void testScheduleManualExecutionMessageErrorAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(false), MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(false), MESSAGE_TYPE);
     }
 
     @AfterGroups(groups = MESSAGE_TYPE)
@@ -82,7 +81,7 @@ public class ETLScheduleManualExecutionAT extends AbstractAT {
         }
     }
 
-    private Predicate<List<AuditEventDTO>> pageCheckPredicate(final boolean isSuccess) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE) && e.isSuccess() == isSuccess);
+    private Predicate<AuditEventDTO> eventCheck(final boolean isSuccess) {
+        return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE) && e.isSuccess() == isSuccess);
     }
 }

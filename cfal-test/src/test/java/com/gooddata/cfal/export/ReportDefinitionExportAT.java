@@ -26,12 +26,12 @@ public class ReportDefinitionExportAT extends AbstractExportAT {
 
     @Test(groups = MESSAGE_TYPE)
     public void testDefinitionMessageUserApi() throws Exception {
-        doTestUserApi(pageCheckPredicate(XLSX_CONTENT_TYPE), MESSAGE_TYPE);
+        doTestUserApi(eventCheck(XLSX_CONTENT_TYPE), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void testDefinitionMessageAdminApi() throws Exception {
-        doTestAdminApi(pageCheckPredicate(XLSX_CONTENT_TYPE), MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(XLSX_CONTENT_TYPE), MESSAGE_TYPE);
     }
 
 }

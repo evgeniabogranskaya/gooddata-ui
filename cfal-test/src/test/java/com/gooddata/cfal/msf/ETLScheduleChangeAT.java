@@ -15,7 +15,6 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.function.Predicate;
 
 public class ETLScheduleChangeAT extends AbstractAT {
@@ -51,16 +50,16 @@ public class ETLScheduleChangeAT extends AbstractAT {
 
     @Test(groups = MESSAGE_TYPE)
     public void testChangeETLScheduleUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(), MESSAGE_TYPE);
+        doTestUserApi(eventCheck(), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void testChangeETLScheduleAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(), MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(), MESSAGE_TYPE);
     }
 
-    private Predicate<List<AuditEventDTO>> pageCheckPredicate() {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE));
+    private Predicate<AuditEventDTO> eventCheck() {
+        return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE));
     }
 
 }

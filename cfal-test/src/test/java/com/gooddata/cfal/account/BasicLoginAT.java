@@ -46,22 +46,22 @@ public class BasicLoginAT extends AbstractLoginAT {
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldLogUsingBasicAuth")
     public void testLoginMessageUserApi() throws InterruptedException, IOException {
-        doTestUserApi(pageCheckPredicate(true, WEBAPP, BASIC), MESSAGE_TYPE);
+        doTestUserApi(eventCheck(true, WEBAPP, BASIC), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldLogUsingBasicAuth")
     public void testLoginMessageAdminApi() throws InterruptedException, IOException {
-        doTestAdminApi(pageCheckPredicate(true, WEBAPP, BASIC), MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(true, WEBAPP, BASIC), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldNotLogWithBadPasswordUsingBasicAuth")
     public void testLoginBadPasswordMessageUserApi() throws InterruptedException, IOException {
-        doTestUserApi(pageCheckPredicate(false, WEBAPP, BASIC), MESSAGE_TYPE);
+        doTestUserApi(eventCheck(false, WEBAPP, BASIC), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldNotLogWithBadPasswordUsingBasicAuth")
     public void testLoginBadPasswordMessageAdminApi() throws InterruptedException, IOException {
-        doTestAdminApi(pageCheckPredicate(false, WEBAPP, BASIC), MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(false, WEBAPP, BASIC), MESSAGE_TYPE);
     }
 
     private HttpResponse doBasicAuth(final String password) throws IOException {

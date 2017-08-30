@@ -78,41 +78,41 @@ public abstract class AbstractAT {
     /**
      * Tests whether message is contained in audit log via user API
      *
-     * @param pageCheckPredicate predicate used to checker whether list of audit events (page) contains required message
+     * @param predicate predicate used to checker whether list of audit events contains required message
      * @param type               type of the even you want to check on API
      * @throws InterruptedException
      */
-    public void doTestUserApi(Predicate<List<AuditEventDTO>> pageCheckPredicate, String type) throws InterruptedException {
+    public void doTestUserApi(final Predicate<AuditEventDTO> predicate, final String type) throws InterruptedException {
         final RequestParameters request = createRequestParameters(type);
 
         final PageableList<AuditEventDTO> events = service.listAuditEvents(getAccount(), request);
 
-        doTest(events, pageCheckPredicate, type);
+        doTest(events, predicate, type);
     }
 
     /**
      * Tests whether message is contained in audit log via admin API
      *
-     * @param pageCheckPredicate predicate used to checker whether list of audit events (page) contains required message
+     * @param predicate predicate used to checker whether list of audit events contains required message
      * @param type               type of the even you want to check on API
      */
-    public void doTestAdminApi(Predicate<List<AuditEventDTO>> pageCheckPredicate, String type) throws InterruptedException {
+    public void doTestAdminApi(final Predicate<AuditEventDTO> predicate, final String type) throws InterruptedException {
         final RequestParameters request = createRequestParameters(type);
 
         final PageableList<AuditEventDTO> events = service.listAuditEvents(props.getDomain(), request);
 
-        doTest(events, pageCheckPredicate, type);
+        doTest(events, predicate, type);
     }
 
     private void doTest(final PageableList<AuditEventDTO> events,
-                        final Predicate<List<AuditEventDTO>> pageCheckPredicate,
+                        final Predicate<AuditEventDTO> predicate,
                         final String type) throws InterruptedException {
         final String testMethodName = getTestMethodName();
 
         //poll until message is found in audit log or poll limit is hit
         int count = 1;
         while (count++ <= POLL_LIMIT) {
-            if (hasMessage(events, pageCheckPredicate)) {
+            if (hasMessage(events, predicate)) {
                 logger.info("{}(): message {} found", testMethodName, type);
                 return;
             }
@@ -131,8 +131,8 @@ public abstract class AbstractAT {
                     .orElse("unknown");
     }
 
-    private boolean hasMessage(final PageableList<AuditEventDTO> events, final Predicate<List<AuditEventDTO>> predicate) {
-        return predicate.test(events);
+    private boolean hasMessage(final PageableList<AuditEventDTO> events, final Predicate<AuditEventDTO> predicate) {
+        return events.stream().anyMatch(predicate);
     }
 
     private RequestParameters createRequestParameters(final String type) {
