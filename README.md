@@ -13,7 +13,9 @@ including
 mvn package
 ```
 
-## Run REST API Locally
+## Local development
+
+### Run REST API Locally
 ```
 mvn install -am -pl cfal-dto
 cd cfal-restapi
@@ -26,6 +28,9 @@ curl localhost:8080/info
 Sometime it might be useful to be able to run CFAL RestAPI directly from IDE. However because of current setup of the dependencies, you cannot simply run `com.gooddata.cfal.restapi.AuditlogApplication` (in case you try this, you'll get load of `ClassNotFoundeEception`s).
 
 You can use Maven profile `local-development` to fix this and run CFAL REST API from IDE. 
+
+### Mongo and C4
+For local development you could also need local mongoDB and C4, to ease you local development you can use docker-compose setup, see [localDevelopment](localDevelopment) 
 
 ### Developer's machine recommended setup
 
