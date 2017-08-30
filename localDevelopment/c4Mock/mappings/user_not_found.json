@@ -1,0 +1,24 @@
+{
+  "priority" : 5,
+  "request": {
+    "method": "GET",
+    "urlPattern": "/gdc/c4/user/.*"
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "error": {
+        "component": "c4",
+        "errorCode": "gdc.c4.not_found.user",
+        "errorClass": "GDC::Exception::NotFound",
+        "message": "User uid %s doesn't exist.",
+        "parameters": [
+          "008eb4371c70b15ad5c21c10d341c05"
+        ]
+      }
+    }
+  }
+}

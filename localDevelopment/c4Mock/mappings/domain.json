@@ -1,4 +1,5 @@
 {
+  "priority" : 1,
   "request": {
     "method": "GET",
     "url": "/gdc/c4/domain/default"

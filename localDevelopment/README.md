@@ -7,6 +7,11 @@ As all you need for querying CFAL restapi is MongoDB and C4 (mock), we've prepar
 ```bash
 docker-compose up
 ```
+or when in need to refresh images (because you added new c4mock mapping) use
+```bash
+docker-compose down && docker-compose build --no-cache && docker-compose up
+```
+
 to boot necessary services. Once this finished, you can run CFAL restapi from command-line / IDE and enjoy happy development. Once you're done, you can kill both C4 mock and MongoDB using
 ```bash
 docker-compose down
