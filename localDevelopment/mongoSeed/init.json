@@ -1,0 +1,172 @@
+[
+  {
+    "_id": ObjectId(
+    "59a69f35ccd27fae6a013017"
+    ),
+    "type": "CONNECTION",
+    "userLogin": "horizon-warnings+datawarehouse-monitoring@gooddata.com",
+    "userIp": "172.26.78.164",
+    "domainId": "default",
+    "component": "datawarehouse-jdbcproxy",
+    "occurred": "2017-08-30T11:19:00.061Z",
+    "success": true,
+    "datawarehouse": "/gdc/datawarehouse/instances/sa3263bbd7d0d34f5452fb4740a231b5",
+    "params": {
+      "component": "DATAWAREHOUSE",
+      "connection_id": "facc3516-469b-4e9a-95cf-fc6ef514fbe8"
+    },
+    "links": {
+      "datawarehouse": "/gdc/datawarehouse/instances/sa3263bbd7d0d34f5452fb4740a231b5"
+    },
+    "tag": "cfal.test.mnt.log.cfal.datawarehouse-jdbcproxy.log",
+    "hostname": "obe-cfal17.int.na.intgdc.com",
+    "cfalvalid": "true",
+    "eventdate": ISODate(
+    "2017-08-30T11:19:00Z"
+    )
+  },
+  {
+    "_id": ObjectId(
+    "59a69f35ccd27fae6a013018"
+    ),
+    "type": "DATAWAREHOUSE_DATA_ACCESS",
+    "userLogin": "horizon-warnings+datawarehouse-monitoring@gooddata.com",
+    "userIp": "172.26.78.164",
+    "domainId": "default",
+    "component": "datawarehouse-jdbcproxy",
+    "occurred": "2017-08-30T11:19:03.407Z",
+    "success": true,
+    "datawarehouse": "/gdc/datawarehouse/instances/sa3263bbd7d0d34f5452fb4740a231b5",
+    "params": {
+      "execution_id": "EkFBRdAUK4hkk2Gkx7a7I5eKsYDlIw",
+      "component": "DATAWAREHOUSE",
+      "connection_id": "300ed8df-6b08-4f7f-9d61-907ff170202a"
+    },
+    "links": {
+      "datawarehouse": "/gdc/datawarehouse/instances/sa3263bbd7d0d34f5452fb4740a231b5"
+    },
+    "tag": "cfal.test.mnt.log.cfal.datawarehouse-jdbcproxy.log",
+    "hostname": "obe-cfal17.int.na.intgdc.com",
+    "cfalvalid": "true",
+    "eventdate": ISODate(
+    "2017-08-30T11:19:03Z"
+    )
+  },
+  {
+    "_id": ObjectId(
+    "59a69f35ccd27fae6a01301a"
+    ),
+    "type": "DATAWAREHOUSE_LOGOUT",
+    "userLogin": "horizon-warnings+datawarehouse-monitoring@gooddata.com",
+    "userIp": "172.26.78.164",
+    "domainId": "default",
+    "component": "datawarehouse-jdbcproxy",
+    "occurred": "2017-08-30T11:19:06.558Z",
+    "success": true,
+    "datawarehouse": "/gdc/datawarehouse/instances/sa3263bbd7d0d34f5452fb4740a231b5",
+    "params": {
+      "component": "DATAWAREHOUSE",
+      "connection_id": "300ed8df-6b08-4f7f-9d61-907ff170202a",
+      "timeout": "false"
+    },
+    "links": {
+      "datawarehouse": "/gdc/datawarehouse/instances/sa3263bbd7d0d34f5452fb4740a231b5"
+    },
+    "tag": "cfal.test.mnt.log.cfal.datawarehouse-jdbcproxy.log",
+    "hostname": "obe-cfal17.int.na.intgdc.com",
+    "cfalvalid": "true",
+    "eventdate": ISODate(
+    "2017-08-30T11:19:06Z"
+    )
+  },
+  {
+    "_id": ObjectId(
+    "59a69f71ccd27fae6a01301d"
+    ),
+    "type": "LOGIN",
+    "userLogin": "bear@gooddata.com",
+    "userIp": "172.26.60.11",
+    "domainId": "default",
+    "component": "webapp",
+    "occurred": "2017-08-30T11:19:28.069Z",
+    "success": true,
+    "params": {
+      "component": "WEBAPP",
+      "loginType": "USERNAME_PASSWORD"
+    },
+    "tag": "cfal.test.mnt.log.cfal.webapp.log",
+    "hostname": "obe-cfal17.int.na.intgdc.com",
+    "cfalvalid": "true",
+    "eventdate": ISODate(
+    "2017-08-30T11:19:28Z"
+    )
+  },
+  {
+    "_id": ObjectId(
+    "59a69f7bccd27fae6a01301e"
+    ),
+    "type": "ETL_PROCESS_CREATION",
+    "userLogin": "bear@gooddata.com",
+    "userIp": "172.26.60.11",
+    "domainId": "default",
+    "component": "msfrestapi",
+    "occurred": "2017-08-30T11:19:45.297Z",
+    "success": true,
+    "links": {
+      "process": "/gdc/projects/th3h056anbx4bl67n12gm9fmh51zeo1r/dataload/processes/ace513c0-b5ad-4d11-9046-862002efe974",
+      "project": "/gdc/projects/th3h056anbx4bl67n12gm9fmh51zeo1r"
+    },
+    "tag": "cfal.test.mnt.log.cfal.msfrestapi.log",
+    "hostname": "obe-cfal17.int.na.intgdc.com",
+    "cfalvalid": "true",
+    "eventdate": ISODate(
+    "2017-08-30T11:19:45Z"
+    )
+  },
+  {
+    "_id": ObjectId(
+    "59a69f7bccd27fae6a01301f"
+    ),
+    "type": "ETL_SCHEDULE_MANUAL_EXECUTION",
+    "userLogin": "bear@gooddata.com",
+    "userIp": "172.26.60.11",
+    "domainId": "default",
+    "component": "msfrestapi",
+    "occurred": "2017-08-30T11:19:52.860Z",
+    "success": true,
+    "links": {
+      "schedule": "/gdc/projects/th3h056anbx4bl67n12gm9fmh51zeo1r/schedules/59a69f5660b2a8568e823f14",
+      "execution": "/gdc/projects/th3h056anbx4bl67n12gm9fmh51zeo1r/schedules/59a69f5660b2a8568e823f14/executions/59a69f5860b2a8568e823f15",
+      "process": "/gdc/projects/th3h056anbx4bl67n12gm9fmh51zeo1r/dataload/processes/ace513c0-b5ad-4d11-9046-862002efe974",
+      "project": "/gdc/projects/th3h056anbx4bl67n12gm9fmh51zeo1r"
+    },
+    "tag": "cfal.test.mnt.log.cfal.msfrestapi.log",
+    "hostname": "obe-cfal17.int.na.intgdc.com",
+    "cfalvalid": "true",
+    "eventdate": ISODate(
+    "2017-08-30T11:19:52Z"
+    )
+  },
+  {
+    "_id": ObjectId(
+    "59a6a025ccd27fae6a013032"
+    ),
+    "type": "ETL_PROCESS_DELETION",
+    "userLogin": "bear@gooddata.com",
+    "userIp": "172.26.60.11",
+    "domainId": "default",
+    "component": "msfrestapi",
+    "occurred": "2017-08-30T11:22:47.328Z",
+    "success": true,
+    "links": {
+      "process": "/gdc/projects/th3h056anbx4bl67n12gm9fmh51zeo1r/dataload/processes/ace513c0-b5ad-4d11-9046-862002efe974",
+      "project": "/gdc/projects/th3h056anbx4bl67n12gm9fmh51zeo1r"
+    },
+    "tag": "cfal.test.mnt.log.cfal.msfrestapi.log",
+    "hostname": "obe-cfal17.int.na.intgdc.com",
+    "cfalvalid": "true",
+    "eventdate": ISODate(
+    "2017-08-30T11:22:47Z"
+    )
+  }
+]
