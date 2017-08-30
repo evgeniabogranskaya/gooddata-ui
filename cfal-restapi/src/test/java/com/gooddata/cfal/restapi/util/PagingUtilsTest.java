@@ -7,7 +7,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import com.gooddata.cfal.restapi.dto.RequestParameters;
+import com.gooddata.auditevent.AuditEventPageRequest;
 import com.gooddata.collections.Paging;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
@@ -21,7 +21,7 @@ public class PagingUtilsTest {
 
     @Test
     public void testCreatePaging() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         Paging paging = PagingUtils.createPaging(BASE_URI, requestParameters, NEXT_OFFSET);
 
         assertThat(paging.getNextUri(), is(BASE_URI + "?offset=" + NEXT_OFFSET + "&limit=" + requestParameters.getSanitizedLimit()));
@@ -29,7 +29,7 @@ public class PagingUtilsTest {
 
     @Test
     public void testCreatePagingWithToParameter() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setTo(TO);
         Paging paging = PagingUtils.createPaging(BASE_URI, requestParameters, NEXT_OFFSET);
 
@@ -39,7 +39,7 @@ public class PagingUtilsTest {
 
     @Test
     public void testCreatePagingWithNullOffset() {
-        Paging paging = PagingUtils.createPaging(BASE_URI, new RequestParameters(), null);
+        Paging paging = PagingUtils.createPaging(BASE_URI, new AuditEventPageRequest(), null);
 
         assertThat(paging.getNextUri(),
                 is(nullValue()));

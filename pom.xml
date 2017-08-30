@@ -21,7 +21,6 @@
     </properties>
 
     <modules>
-        <module>cfal-dto</module>
         <module>cfal-sdk</module>
         <module>cfal-restapi</module>
         <module>cfal-test</module>
@@ -40,7 +39,12 @@
             <dependency>
                 <groupId>com.gooddata</groupId>
                 <artifactId>gooddata-java</artifactId>
-                <version>2.14.0</version>
+                <version>2.15.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gooddata</groupId>
+                <artifactId>gooddata-rest-common</artifactId>
+                <version>1.0.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>

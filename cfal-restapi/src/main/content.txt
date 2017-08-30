@@ -1,6 +1,5 @@
 aopalliance-1.0.jar
 bson-3.3.0.jar
-cfal-dto-*.jar
 classmate-1.3.3.jar
 commons-codec-1.10.jar
 commons-httpclient-3.1.jar
@@ -15,7 +14,8 @@ gdc-spring-boot-actuator-1.4.*.jar
 gdc-spring-boot-starter-1.4.*.jar
 gdc-spring-boot-web-starter-1.4.*.jar
 gooddata-http-client-0.9.*.jar
-gooddata-java-2.14.*.jar
+gooddata-java-2.15.*.jar
+gooddata-rest-common-1.0.*.jar
 hibernate-validator-5.3.*.Final.jar
 httpclient-4.5.2.jar
 httpcore-4.4.6.jar

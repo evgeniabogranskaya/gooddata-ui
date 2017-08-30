@@ -4,10 +4,10 @@
 package com.gooddata.cfal.restapi.service;
 
 import com.codahale.metrics.Timer;
-import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
-import com.gooddata.cfal.restapi.dto.RequestParameters;
+import com.gooddata.auditevent.AuditEvents;
+import com.gooddata.auditevent.AuditEventPageRequest;
 import com.gooddata.cfal.restapi.dto.UserInfo;
-import com.gooddata.cfal.restapi.model.AuditEvent;
+import com.gooddata.cfal.restapi.model.AuditEventEntity;
 import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import com.gooddata.commons.monitoring.metrics.Measure;
 import com.gooddata.commons.monitoring.metrics.Monitored;
@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI_TEMPLATE;
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI_TEMPLATE;
+import static com.gooddata.auditevent.AuditEvent.ADMIN_URI_TEMPLATE;
+import static com.gooddata.auditevent.AuditEvent.USER_URI_TEMPLATE;
 import static com.gooddata.cfal.restapi.util.ConversionUtils.createAuditEventsDTO;
 import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
@@ -49,7 +49,7 @@ public class AuditEventService {
      * @param requestParameters specifies time range to find events for and paging parameters
      * @return paged list
      */
-    public AuditEventsDTO findByDomain(final String domain, final RequestParameters requestParameters) {
+    public AuditEvents findByDomain(final String domain, final AuditEventPageRequest requestParameters) {
         notEmpty(domain, "domain cannot be empty");
         notNull(requestParameters, "requestParameters cannot be null");
 
@@ -60,14 +60,14 @@ public class AuditEventService {
                     domain, requestParameters.getOffset(), requestParameters.getLimit(), requestParameters.getFrom(), requestParameters.getTo());
 
             //Limit is incremented to check if list returned from database is last page or not.
-            final RequestParameters parametersForRepository = requestParameters.withIncrementedLimit();
+            final AuditEventPageRequest parametersForRepository = requestParameters.withIncrementedLimit();
 
             //find up to (requestParameters.getSanitizedLimit + 1) records, which match requestParameters. +1 to check if list is last page.
-            final List<AuditEvent> list = auditLogEventRepository.findByDomain(domain, parametersForRepository);
+            final List<AuditEventEntity> list = auditLogEventRepository.findByDomain(domain, parametersForRepository);
 
             final String baseUri = ADMIN_URI_TEMPLATE.expand(domain).toString();
 
-            final AuditEventsDTO auditEventDTOs = createAuditEventsDTO(baseUri, list, requestParameters);
+            final AuditEvents auditEventDTOs = createAuditEventsDTO(baseUri, list, requestParameters);
 
             logger.info("action=find_by_domain status=finished domain={} offset={} limit={} from={} to={} entries_on_page={}",
                     domain, requestParameters.getOffset(), requestParameters.getLimit(), requestParameters.getFrom(), requestParameters.getTo(), auditEventDTOs.size());
@@ -84,7 +84,7 @@ public class AuditEventService {
      * @param userInfo  to find events for
      *@param requestParameters specifies time range for finding events and paging parameters  @return paged list
      */
-    public AuditEventsDTO findByUser(final UserInfo userInfo, final RequestParameters requestParameters) {
+    public AuditEvents findByUser(final UserInfo userInfo, final AuditEventPageRequest requestParameters) {
         notNull(userInfo, "userInfo cannot be null");
         notNull(requestParameters, "requestParameters cannot be null");
 
@@ -95,14 +95,14 @@ public class AuditEventService {
                     userInfo.getDomainId(), userInfo.getUserId(), userInfo.getUserLogin(), requestParameters.getOffset(), requestParameters.getLimit(), requestParameters.getFrom(), requestParameters.getTo());
 
             //Limit is incremented to check if list returned from database is last page or not.
-            final RequestParameters parametersForRepository = requestParameters.withIncrementedLimit();
+            final AuditEventPageRequest parametersForRepository = requestParameters.withIncrementedLimit();
 
             //find up to (requestParameters.getSanitizedLimit + 1) records, which match requestParameters. +1 to check if list is last page.
-            final List<AuditEvent> list = auditLogEventRepository.findByUser(userInfo, parametersForRepository);
+            final List<AuditEventEntity> list = auditLogEventRepository.findByUser(userInfo, parametersForRepository);
 
             final String baseUri = USER_URI_TEMPLATE.expand(userInfo.getUserId()).toString();
 
-            final AuditEventsDTO auditEventDTOs = createAuditEventsDTO(baseUri, list, requestParameters);
+            final AuditEvents auditEventDTOs = createAuditEventsDTO(baseUri, list, requestParameters);
 
             logger.info("action=find_by_domain_and_user status=finished domain={} user_id={} user_login={} offset={} limit={} from={} to={} entries_on_page={}",
                     userInfo.getDomainId(), userInfo.getUserId(), userInfo.getUserLogin(), requestParameters.getOffset(), requestParameters.getLimit(), requestParameters.getFrom(), requestParameters.getTo(), auditEventDTOs.size());

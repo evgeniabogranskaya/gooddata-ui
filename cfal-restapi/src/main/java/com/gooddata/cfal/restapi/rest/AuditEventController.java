@@ -3,11 +3,11 @@
  */
 package com.gooddata.cfal.restapi.rest;
 
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
-import com.gooddata.cfal.restapi.dto.RequestParameters;
+import com.gooddata.auditevent.AuditEvent;
+import com.gooddata.auditevent.AuditEvents;
+import com.gooddata.auditevent.AuditEventPageRequest;
 import com.gooddata.cfal.restapi.dto.UserInfo;
-import com.gooddata.cfal.restapi.validation.RequestParametersValidator;
+import com.gooddata.cfal.restapi.validation.AuditEventPageRequestValidator;
 import com.gooddata.cfal.restapi.exception.UserNotAuthorizedException;
 import com.gooddata.cfal.restapi.exception.UserNotSpecifiedException;
 import com.gooddata.cfal.restapi.service.AuditEventService;
@@ -45,26 +45,26 @@ public class AuditEventController {
         this.maximumLimit = maximumLimit;
     }
 
-    @RequestMapping(path = AuditEventDTO.ADMIN_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public AuditEventsDTO listAuditEvents(@PathVariable String domainId, @Valid @ModelAttribute RequestParameters requestParameters) {
+    @RequestMapping(path = AuditEvent.ADMIN_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public AuditEvents listAuditEvents(@PathVariable String domainId, @Valid @ModelAttribute AuditEventPageRequest requestParameters) {
 
         final String userId = getUserIdFromContext();
 
         userDomainService.authorizeAdmin(userId, domainId);
 
-        final RequestParameters params = sanitizeParameters(requestParameters);
+        final AuditEventPageRequest params = sanitizeParameters(requestParameters);
 
         return auditEventService.findByDomain(domainId, params);
     }
 
-    @RequestMapping(path = AuditEventDTO.USER_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public AuditEventsDTO listAuditEventsForUser(@PathVariable String userId, @Valid @ModelAttribute RequestParameters requestParameters) {
+    @RequestMapping(path = AuditEvent.USER_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public AuditEvents listAuditEventsForUser(@PathVariable String userId, @Valid @ModelAttribute AuditEventPageRequest requestParameters) {
 
         final String loggedUserId = getUserIdFromContext();
 
         final UserInfo userInfo = userDomainService.getUserInfo(userId);
 
-        final RequestParameters params = sanitizeParameters(requestParameters);
+        final AuditEventPageRequest params = sanitizeParameters(requestParameters);
 
         if (userId.equals(loggedUserId)) {
             return auditEventService.findByUser(userInfo, params);
@@ -84,7 +84,7 @@ public class AuditEventController {
      */
     @InitBinder
     protected void initBinder(WebDataBinder webDataBinder) {
-        webDataBinder.setValidator(new RequestParametersValidator());
+        webDataBinder.setValidator(new AuditEventPageRequestValidator());
     }
 
     private String getUserIdFromContext() {
@@ -97,8 +97,8 @@ public class AuditEventController {
         return userId;
     }
 
-    private RequestParameters sanitizeParameters(final RequestParameters requestParameters) {
-        final RequestParameters params = RequestParameters.copy(requestParameters);
+    private AuditEventPageRequest sanitizeParameters(final AuditEventPageRequest requestParameters) {
+        final AuditEventPageRequest params = AuditEventPageRequest.copy(requestParameters);
         params.setLimit(requestParameters.getSanitizedLimit(maximumLimit));
         return params;
     }

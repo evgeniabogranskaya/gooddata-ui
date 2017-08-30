@@ -10,7 +10,7 @@ import static org.hamcrest.core.IsNot.not;
 
 import com.gooddata.FutureResult;
 import com.gooddata.cfal.AbstractAT;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
+import com.gooddata.auditevent.AuditEvent;
 import com.gooddata.dataload.OutputStage;
 import com.gooddata.dataload.processes.DataloadProcess;
 import com.gooddata.dataload.processes.Schedule;
@@ -133,7 +133,7 @@ public class ManualADDAT extends AbstractAT {
         logger.info("executed schedule_id={} of dataload process={}", createdSchedule.getId(), dataloadProcess.getId());
     }
 
-    private Predicate<AuditEventDTO> eventCheck(final boolean isSuccess) {
+    private Predicate<AuditEvent> eventCheck(final boolean isSuccess) {
         return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE) && e.isSuccess() == isSuccess);
     }
 

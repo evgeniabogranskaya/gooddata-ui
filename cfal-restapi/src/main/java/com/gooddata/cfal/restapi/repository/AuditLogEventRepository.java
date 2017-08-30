@@ -4,9 +4,9 @@
 package com.gooddata.cfal.restapi.repository;
 
 import com.codahale.metrics.Timer;
-import com.gooddata.cfal.restapi.dto.RequestParameters;
+import com.gooddata.auditevent.AuditEventPageRequest;
 import com.gooddata.cfal.restapi.dto.UserInfo;
-import com.gooddata.cfal.restapi.model.AuditEvent;
+import com.gooddata.cfal.restapi.model.AuditEventEntity;
 import com.gooddata.commons.monitoring.metrics.Measure;
 import com.gooddata.commons.monitoring.metrics.Monitored;
 import org.bson.types.ObjectId;
@@ -63,15 +63,15 @@ public class AuditLogEventRepository {
      * @param requestParameters parameters for filtering events
      * @return list starting from <code>offset</code>
      */
-    public List<AuditEvent> findByDomain(final String domain,
-                                         final RequestParameters requestParameters) {
+    public List<AuditEventEntity> findByDomain(final String domain,
+                                               final AuditEventPageRequest requestParameters) {
         notEmpty(domain, "domain cannot be empty");
         notNull(requestParameters, "requestParameters cannot be null");
 
         final Timer.Context time = findByDomainTimer.time();
         try {
             final Query query = createQuery(requestParameters);
-            return mongoTemplate.find(query, AuditEvent.class, getMongoCollectionName(domain));
+            return mongoTemplate.find(query, AuditEventEntity.class, getMongoCollectionName(domain));
         } finally {
             time.stop();
         }
@@ -85,15 +85,15 @@ public class AuditLogEventRepository {
      * @param requestParameters parameters for filtering events
      * @return list starting from <code>offset</code> and limited on given time range
      */
-    public List<AuditEvent> findByUser(final UserInfo userInfo,
-                                       final RequestParameters requestParameters) {
+    public List<AuditEventEntity> findByUser(final UserInfo userInfo,
+                                             final AuditEventPageRequest requestParameters) {
         notNull(userInfo, "userInfo cannot be empty");
         notNull(requestParameters, "requestParameters cannot be null");
 
         final Timer.Context time = findByUserTimer.time();
         try {
             final Query query = createQuery(requestParameters).addCriteria(Criteria.where("userLogin").is(userInfo.getUserLogin()));
-            return mongoTemplate.find(query, AuditEvent.class, getMongoCollectionName(userInfo.getDomainId()));
+            return mongoTemplate.find(query, AuditEventEntity.class, getMongoCollectionName(userInfo.getDomainId()));
         } finally {
             time.stop();
         }
@@ -104,7 +104,7 @@ public class AuditLogEventRepository {
      *
      * @param auditEvent to be persisted
      */
-    public void save(final AuditEvent auditEvent) {
+    public void save(final AuditEventEntity auditEvent) {
         notNull(auditEvent, "auditEvent cannot be null");
 
         mongoTemplate.save(auditEvent, getMongoCollectionName(auditEvent.getDomainId()));
@@ -206,7 +206,7 @@ public class AuditLogEventRepository {
     /**
      * Create query based on <code>requestParameters</code>
      */
-    private Query createQuery(final RequestParameters requestParameters) {
+    private Query createQuery(final AuditEventPageRequest requestParameters) {
 
         final Query query = new Query();
 
@@ -226,12 +226,12 @@ public class AuditLogEventRepository {
         return query;
     }
 
-    private Criteria createCriteriaForId(final RequestParameters requestParameters) {
+    private Criteria createCriteriaForId(final AuditEventPageRequest requestParameters) {
         Criteria idCriteria = null;
 
-        if (requestParameters.getOffsetAsObjectId() != null) {
+        if (getOffsetAsObjectId(requestParameters) != null) {
             idCriteria = nullSafeIdCriteria(idCriteria);
-            idCriteria.gt(requestParameters.getOffsetAsObjectId());
+            idCriteria.gt(getOffsetAsObjectId(requestParameters));
         }
 
         if (requestParameters.getFrom() != null) {
@@ -258,5 +258,9 @@ public class AuditLogEventRepository {
      */
     String getMongoCollectionName(final String domain) {
         return mongoCollectionPrefix + domain;
+    }
+
+    private static ObjectId getOffsetAsObjectId(final AuditEventPageRequest params) {
+        return params == null || params.getOffset() == null ? null : new ObjectId(params.getOffset());
     }
 }

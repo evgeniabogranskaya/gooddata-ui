@@ -5,7 +5,7 @@ package com.gooddata.cfal.restapi.util;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
-import com.gooddata.cfal.restapi.dto.RequestParameters;
+import com.gooddata.auditevent.AuditEventPageRequest;
 import com.gooddata.collections.PageRequest;
 import com.gooddata.collections.Paging;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -20,7 +20,7 @@ public abstract class PagingUtils {
      * @param offsetOfNextPage to be used to build next uri, can be null
      * @return Paging for given parameters
      */
-    public static Paging createPaging(final String baseUri, final RequestParameters requestParameters, final String offsetOfNextPage) {
+    public static Paging createPaging(final String baseUri, final AuditEventPageRequest requestParameters, final String offsetOfNextPage) {
         notNull(baseUri, "baseUri cannot be null");
         notNull(requestParameters, "requestParameters cannot be null");
 
@@ -35,7 +35,7 @@ public abstract class PagingUtils {
         return new Paging(offsetOfNextPage, new PageRequest(offsetOfNextPage, requestParameters.getSanitizedLimit()).getPageUri(uriWithTimeIntervalParams).toString());
     }
 
-    private static UriComponentsBuilder constructUriWithTimeIntervalParam(final String baseUri, final RequestParameters requestParameters) {
+    private static UriComponentsBuilder constructUriWithTimeIntervalParam(final String baseUri, final AuditEventPageRequest requestParameters) {
         final UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(baseUri);
         if (requestParameters.getTo() != null) {
             uriComponentsBuilder.query("to=" + requestParameters.getTo());

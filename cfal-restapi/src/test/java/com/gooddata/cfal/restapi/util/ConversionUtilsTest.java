@@ -10,10 +10,10 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
-import com.gooddata.cfal.restapi.dto.RequestParameters;
-import com.gooddata.cfal.restapi.model.AuditEvent;
+import com.gooddata.auditevent.AuditEvent;
+import com.gooddata.auditevent.AuditEvents;
+import com.gooddata.auditevent.AuditEventPageRequest;
+import com.gooddata.cfal.restapi.model.AuditEventEntity;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -40,7 +40,7 @@ public class ConversionUtilsTest {
 
     @Test
     public void testCreateAuditEventDTO() {
-        AuditEventDTO auditEventDTO = ConversionUtils.createAuditEventDTO(new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS));
+        AuditEvent auditEventDTO = ConversionUtils.createAuditEventDTO(new AuditEventEntity(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS));
 
         assertThat(auditEventDTO.getId(), is(ID.toString()));
         assertThat(auditEventDTO.getUserLogin(), is(USER_LOGIN));
@@ -55,9 +55,9 @@ public class ConversionUtilsTest {
 
     @Test
     public void testCreateAuditEventsDTO() {
-        RequestParameters requestParameters = new RequestParameters();
-        AuditEventsDTO auditEventsDTO = ConversionUtils.createAuditEventsDTO(
-                BASE_URI, Collections.singletonList(new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS)), requestParameters);
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
+        AuditEvents auditEventsDTO = ConversionUtils.createAuditEventsDTO(
+                BASE_URI, Collections.singletonList(new AuditEventEntity(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS)), requestParameters);
 
         assertThat(auditEventsDTO, hasSize(1));
         assertThat(auditEventsDTO.getPaging().getNextUri(), is(nullValue()));
@@ -65,10 +65,10 @@ public class ConversionUtilsTest {
 
     @Test
     public void testCreateAuditEventsDTOWithTimeParameterTo() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setTo(TIME);
-        AuditEventsDTO auditEventsDTO = ConversionUtils.createAuditEventsDTO(
-                BASE_URI, Collections.singletonList(new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS)), requestParameters);
+        AuditEvents auditEventsDTO = ConversionUtils.createAuditEventsDTO(
+                BASE_URI, Collections.singletonList(new AuditEventEntity(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS)), requestParameters);
 
         assertThat(auditEventsDTO, hasSize(1));
         assertThat(auditEventsDTO.getPaging().getNextUri(), is(nullValue()));
@@ -76,12 +76,12 @@ public class ConversionUtilsTest {
 
     @Test(expected = NullPointerException.class)
     public void testCreateAuditEventsDTOnullList() {
-        ConversionUtils.createAuditEventsDTO(BASE_URI, null, new RequestParameters());
+        ConversionUtils.createAuditEventsDTO(BASE_URI, null, new AuditEventPageRequest());
     }
 
     @Test(expected = NullPointerException.class)
     public void testCreateAuditEventsDTOnullUri() {
-        ConversionUtils.createAuditEventsDTO(null, new ArrayList<>(), new RequestParameters());
+        ConversionUtils.createAuditEventsDTO(null, new ArrayList<>(), new AuditEventPageRequest());
     }
 
     @Test(expected = NullPointerException.class)
@@ -91,19 +91,19 @@ public class ConversionUtilsTest {
 
     @Test
     public void testCreateAuditEventsDTOemptyList() {
-        AuditEventsDTO auditEventsDTO = ConversionUtils.createAuditEventsDTO(BASE_URI, Collections.emptyList(), new RequestParameters());
+        AuditEvents auditEventsDTO = ConversionUtils.createAuditEventsDTO(BASE_URI, Collections.emptyList(), new AuditEventPageRequest());
 
         assertThat(auditEventsDTO.getPaging().getNextUri(), is(nullValue()));
     }
 
     @Test
     public void testCreateAuditEventsDTOListHasMoreElementsThanLimit() {
-        AuditEvent event = new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+        AuditEventEntity event = new AuditEventEntity(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
 
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setLimit(3);
 
-        AuditEventsDTO auditEventsDTO = ConversionUtils.createAuditEventsDTO(BASE_URI, asList(event, event, event, event), requestParameters);
+        AuditEvents auditEventsDTO = ConversionUtils.createAuditEventsDTO(BASE_URI, asList(event, event, event, event), requestParameters);
 
         assertThat(auditEventsDTO, hasSize(3));
         assertThat(auditEventsDTO.getPaging().getNextUri(), is(notNullValue()));
@@ -111,12 +111,12 @@ public class ConversionUtilsTest {
 
     @Test
     public void testCreateAuditEventsDTOListHasExactlyElementsOfLimit() {
-        AuditEvent event = new AuditEvent(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+        AuditEventEntity event = new AuditEventEntity(ID, DOMAIN, USER_LOGIN, TIME, IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
 
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setLimit(3);
 
-        AuditEventsDTO auditEventsDTO = ConversionUtils.createAuditEventsDTO(BASE_URI, asList(event, event, event), requestParameters);
+        AuditEvents auditEventsDTO = ConversionUtils.createAuditEventsDTO(BASE_URI, asList(event, event, event), requestParameters);
 
         assertThat(auditEventsDTO, hasSize(3));
         assertThat(auditEventsDTO.getPaging().getNextUri(), is(nullValue()));

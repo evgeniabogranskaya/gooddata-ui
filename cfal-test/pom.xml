@@ -12,17 +12,16 @@
     <dependencies>
         <dependency>
             <groupId>com.gooddata.cfal</groupId>
-            <artifactId>cfal-dto</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.gooddata.cfal</groupId>
             <artifactId>cfal-sdk</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.gooddata</groupId>
             <artifactId>gooddata-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.gooddata</groupId>
+            <artifactId>gooddata-rest-common</artifactId>
         </dependency>
         <dependency>
             <groupId>com.gooddata.commons</groupId>

@@ -8,11 +8,11 @@ import com.gooddata.GoodDataEndpoint;
 import com.gooddata.account.Account;
 import com.gooddata.auditlog.AccountHelper;
 import com.gooddata.auditlog.AdsHelper;
-import com.gooddata.auditlog.AuditLogService;
+import com.gooddata.auditevent.AuditEventService;
 import com.gooddata.auditlog.ProjectHelper;
 import com.gooddata.auditlog.TestEnvironmentProperties;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import com.gooddata.cfal.restapi.dto.RequestParameters;
+import com.gooddata.auditevent.AuditEvent;
+import com.gooddata.auditevent.AuditEventPageRequest;
 import com.gooddata.collections.PageableList;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public abstract class AbstractAT {
     protected final CfalGoodData gd;
     protected final GoodDataEndpoint endpoint;
 
-    protected final AuditLogService service;
+    protected final AuditEventService service;
 
     protected final TestEnvironmentProperties props;
 
@@ -54,7 +54,7 @@ public abstract class AbstractAT {
         endpoint = new GoodDataEndpoint(props.getHost());
 
         gd = new CfalGoodData(endpoint, props.getUser(), props.getPass());
-        service = gd.getAuditLogService();
+        service = gd.getAuditEventService();
 
         startTime = new DateTime();
 
@@ -81,8 +81,8 @@ public abstract class AbstractAT {
      * @param predicate predicate used to checker whether list of audit events contains required message
      * @param type               type of the even you want to check on API
      */
-    public void doTestUserApi(final Predicate<AuditEventDTO> predicate, final String type) {
-        final RequestParameters request = createRequestParameters(type);
+    public void doTestUserApi(final Predicate<AuditEvent> predicate, final String type) {
+        final AuditEventPageRequest request = createRequestParameters(type);
 
         doTest(() -> service.listAuditEvents(getAccount(), request), predicate, type);
     }
@@ -93,14 +93,14 @@ public abstract class AbstractAT {
      * @param predicate predicate used to checker whether list of audit events contains required message
      * @param type               type of the even you want to check on API
      */
-    public void doTestAdminApi(final Predicate<AuditEventDTO> predicate, final String type) {
-        final RequestParameters request = createRequestParameters(type);
+    public void doTestAdminApi(final Predicate<AuditEvent> predicate, final String type) {
+        final AuditEventPageRequest request = createRequestParameters(type);
 
         doTest(() -> service.listAuditEvents(props.getDomain(), request), predicate, type);
     }
 
-    private void doTest(final Supplier<PageableList<AuditEventDTO>> serviceCall,
-                        final Predicate<AuditEventDTO> predicate,
+    private void doTest(final Supplier<PageableList<AuditEvent>> serviceCall,
+                        final Predicate<AuditEvent> predicate,
                         final String type) {
         final String testMethodName = getTestMethodName();
 
@@ -131,13 +131,13 @@ public abstract class AbstractAT {
                     .orElse("unknown");
     }
 
-    private boolean hasMessage(final Supplier<PageableList<AuditEventDTO>> serviceCall, final Predicate<AuditEventDTO> predicate) {
-        final PageableList<AuditEventDTO> events = serviceCall.get();
+    private boolean hasMessage(final Supplier<PageableList<AuditEvent>> serviceCall, final Predicate<AuditEvent> predicate) {
+        final PageableList<AuditEvent> events = serviceCall.get();
         return events.stream().anyMatch(predicate);
     }
 
-    private RequestParameters createRequestParameters(final String type) {
-        final RequestParameters requestParameters = new RequestParameters();
+    private AuditEventPageRequest createRequestParameters(final String type) {
+        final AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setFrom(startTime);
         requestParameters.setType(type);
         return requestParameters;

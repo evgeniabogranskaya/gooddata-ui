@@ -3,8 +3,8 @@
  */
 package com.gooddata.cfal.restapi.service;
 
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI_TEMPLATE;
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI_TEMPLATE;
+import static com.gooddata.auditevent.AuditEvent.ADMIN_URI_TEMPLATE;
+import static com.gooddata.auditevent.AuditEvent.USER_URI_TEMPLATE;
 import static com.gooddata.cfal.restapi.util.DateUtils.convertDateTimeToObjectId;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static com.gooddata.cfal.restapi.util.EntityDTOIdMatcher.hasSameIdAs;
@@ -14,10 +14,10 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-import com.gooddata.cfal.restapi.dto.RequestParameters;
-import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
+import com.gooddata.auditevent.AuditEventPageRequest;
+import com.gooddata.auditevent.AuditEvents;
 import com.gooddata.cfal.restapi.dto.UserInfo;
-import com.gooddata.cfal.restapi.model.AuditEvent;
+import com.gooddata.cfal.restapi.model.AuditEventEntity;
 import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
@@ -64,17 +64,17 @@ public class AuditEventServiceIT {
     @MockBean
     private UserDomainService userDomainService;
 
-    private AuditEvent event1;
-    private AuditEvent event2;
-    private AuditEvent event3;
+    private AuditEventEntity event1;
+    private AuditEventEntity event2;
+    private AuditEventEntity event3;
 
     @Before
     public void setUp() {
         auditLogEventRepository.deleteAllByDomain(DOMAIN);
 
-        event1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN, USER1_LOGIN, date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
-        event2 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN, USER2_LOGIN, date("2001-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
-        event3 = new AuditEvent(convertDateTimeToObjectId(date("2015-03-09")), DOMAIN, USER1_LOGIN, date("2015-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+        event1 = new AuditEventEntity(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN, USER1_LOGIN, date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+        event2 = new AuditEventEntity(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN, USER2_LOGIN, date("2001-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+        event3 = new AuditEventEntity(convertDateTimeToObjectId(date("2015-03-09")), DOMAIN, USER1_LOGIN, date("2015-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
 
         auditLogEventRepository.save(event1);
         auditLogEventRepository.save(event2);
@@ -83,8 +83,8 @@ public class AuditEventServiceIT {
 
     @Test
     public void testFindByDomain() {
-        RequestParameters requestParameters = new RequestParameters();
-        AuditEventsDTO events = auditEventService.findByDomain(DOMAIN, requestParameters);
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
+        AuditEvents events = auditEventService.findByDomain(DOMAIN, requestParameters);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, Matchers.containsInAnyOrder(hasSameIdAs(event1), hasSameIdAs(event2), hasSameIdAs(event3)));
@@ -94,19 +94,19 @@ public class AuditEventServiceIT {
     @Test
     public void testFindByDomainMultiplePages() {
         String uri = ADMIN_URI_TEMPLATE.expand(DOMAIN).toString();
-        RequestParameters firstPageReq = new RequestParameters();
+        AuditEventPageRequest firstPageReq = new AuditEventPageRequest();
         firstPageReq.setLimit(2);
-        AuditEventsDTO firstPage = auditEventService.findByDomain(DOMAIN, firstPageReq);
+        AuditEvents firstPage = auditEventService.findByDomain(DOMAIN, firstPageReq);
 
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage, Matchers.containsInAnyOrder(hasSameIdAs(event1), hasSameIdAs(event2)));
         assertThat(firstPage.getPaging().getNextUri(),
                 is(uri + "?offset=" + event2.getId() + "&limit=" + firstPageReq.getSanitizedLimit()));
 
-        RequestParameters secondPageReq = new RequestParameters();
+        AuditEventPageRequest secondPageReq = new AuditEventPageRequest();
         secondPageReq.setLimit(2);
         secondPageReq.setOffset(event2.getId().toString());
-        AuditEventsDTO secondPage = auditEventService.findByDomain(DOMAIN, secondPageReq);
+        AuditEvents secondPage = auditEventService.findByDomain(DOMAIN, secondPageReq);
 
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage, Matchers.contains(hasSameIdAs(event3)));
@@ -115,8 +115,8 @@ public class AuditEventServiceIT {
 
     @Test
     public void testFindByUser() {
-        RequestParameters pageReq = new RequestParameters();
-        AuditEventsDTO events = auditEventService.findByUser(USER1_INFO, pageReq);
+        AuditEventPageRequest pageReq = new AuditEventPageRequest();
+        AuditEvents events = auditEventService.findByUser(USER1_INFO, pageReq);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, Matchers.containsInAnyOrder(hasSameIdAs(event1), hasSameIdAs(event3)));
@@ -126,19 +126,19 @@ public class AuditEventServiceIT {
     @Test
     public void testFindByUserMultiplePages() {
         String uri = USER_URI_TEMPLATE.expand(USER1_ID).toString();
-        RequestParameters firstPageReq = new RequestParameters();
+        AuditEventPageRequest firstPageReq = new AuditEventPageRequest();
         firstPageReq.setLimit(1);
-        AuditEventsDTO firstPage = auditEventService.findByUser(USER1_INFO, firstPageReq);
+        AuditEvents firstPage = auditEventService.findByUser(USER1_INFO, firstPageReq);
 
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage, Matchers.contains(hasSameIdAs(event1)));
         assertThat(firstPage.getPaging().getNextUri(),
                 is(uri + "?offset=" + event1.getId() + "&limit=" + firstPageReq.getSanitizedLimit()));
 
-        RequestParameters secondPageReq = new RequestParameters();
+        AuditEventPageRequest secondPageReq = new AuditEventPageRequest();
         secondPageReq.setLimit(1);
         secondPageReq.setOffset(event1.getId().toString());
-        AuditEventsDTO secondPage = auditEventService.findByUser(USER1_INFO, secondPageReq);
+        AuditEvents secondPage = auditEventService.findByUser(USER1_INFO, secondPageReq);
 
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage, Matchers.contains(hasSameIdAs(event3)));
@@ -150,11 +150,11 @@ public class AuditEventServiceIT {
         DateTime from = date("1990-01-01");
         DateTime to = date("2005-01-01");
 
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setFrom(from);
         requestParameters.setTo(to);
 
-        AuditEventsDTO events = auditEventService.findByUser(USER1_INFO, requestParameters);
+        AuditEvents events = auditEventService.findByUser(USER1_INFO, requestParameters);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, Matchers.contains(hasSameIdAs(event1)));
@@ -165,10 +165,10 @@ public class AuditEventServiceIT {
     public void testFindByUserWithTimeIntervalFrom() {
         DateTime from = date("1990-01-01");
 
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setFrom(from);
 
-        AuditEventsDTO events = auditEventService.findByUser(USER1_INFO, requestParameters);
+        AuditEvents events = auditEventService.findByUser(USER1_INFO, requestParameters);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, Matchers.contains(hasSameIdAs(event1), hasSameIdAs(event3)));
@@ -179,10 +179,10 @@ public class AuditEventServiceIT {
     public void testFindByUserWithTimeIntervalTo() {
         DateTime to = date("2005-01-01");
 
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setTo(to);
 
-        AuditEventsDTO events = auditEventService.findByUser(USER1_INFO, requestParameters);
+        AuditEvents events = auditEventService.findByUser(USER1_INFO, requestParameters);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, Matchers.contains(hasSameIdAs(event1)));
@@ -191,12 +191,12 @@ public class AuditEventServiceIT {
 
     @Test
     public void testFindByDomainInvalidTimeInterval() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setLimit(10);
         requestParameters.setFrom(date("2005-01-01"));
         requestParameters.setTo(date("2000-01-01"));
 
-        AuditEventsDTO events = auditEventService.findByDomain(DOMAIN, requestParameters);
+        AuditEvents events = auditEventService.findByDomain(DOMAIN, requestParameters);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, hasSize(0));
@@ -204,12 +204,12 @@ public class AuditEventServiceIT {
 
     @Test
     public void testFindByUserInvalidTimeInterval() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setLimit(10);
         requestParameters.setFrom(date("2005-01-01"));
         requestParameters.setTo(date("2000-01-01"));
 
-        AuditEventsDTO events = auditEventService.findByUser(USER1_INFO, requestParameters);
+        AuditEvents events = auditEventService.findByUser(USER1_INFO, requestParameters);
 
         assertThat(events, is(notNullValue()));
         assertThat(events, hasSize(0));

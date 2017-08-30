@@ -16,11 +16,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.gooddata.cfal</groupId>
-            <artifactId>cfal-dto</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <!-- Monitoring dependencies -->
         <dependency>
             <groupId>com.gooddata.commons.monitoring</groupId>
@@ -93,6 +88,10 @@
         <dependency>
             <groupId>com.gooddata</groupId>
             <artifactId>gooddata-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.gooddata</groupId>
+            <artifactId>gooddata-rest-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

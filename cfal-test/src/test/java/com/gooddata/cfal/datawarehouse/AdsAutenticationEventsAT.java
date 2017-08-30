@@ -3,7 +3,7 @@
  */
 package com.gooddata.cfal.datawarehouse;
 
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
+import com.gooddata.auditevent.AuditEvent;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -59,7 +59,7 @@ public class AdsAutenticationEventsAT extends AbstractAdsAT {
         doTestAdminApi(eventCheck(MESSAGE_TYPE_LOGOUT), MESSAGE_TYPE_LOGOUT);
     }
 
-    protected Predicate<AuditEventDTO> eventCheck() {
+    protected Predicate<AuditEvent> eventCheck() {
         return (e ->
                 e.getUserLogin().equals(getAccount().getLogin()) &&
                         e.getType().equals(MESSAGE_TYPE_LOGIN) &&

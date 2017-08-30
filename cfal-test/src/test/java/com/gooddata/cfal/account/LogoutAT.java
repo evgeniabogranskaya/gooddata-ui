@@ -4,7 +4,7 @@
 package com.gooddata.cfal.account;
 
 import com.gooddata.cfal.AbstractAT;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
+import com.gooddata.auditevent.AuditEvent;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -29,7 +29,7 @@ public class LogoutAT extends AbstractAT {
         doTestAdminApi(eventCheck(), MESSAGE_TYPE);
     }
 
-    private Predicate<AuditEventDTO> eventCheck() {
+    private Predicate<AuditEvent> eventCheck() {
         return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE));
     }
 

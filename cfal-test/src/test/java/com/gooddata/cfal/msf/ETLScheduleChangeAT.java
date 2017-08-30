@@ -4,7 +4,7 @@
 package com.gooddata.cfal.msf;
 
 import com.gooddata.cfal.AbstractAT;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
+import com.gooddata.auditevent.AuditEvent;
 import com.gooddata.dataload.processes.DataloadProcess;
 import com.gooddata.dataload.processes.ProcessType;
 import com.gooddata.dataload.processes.Schedule;
@@ -58,7 +58,7 @@ public class ETLScheduleChangeAT extends AbstractAT {
         doTestAdminApi(eventCheck(), MESSAGE_TYPE);
     }
 
-    private Predicate<AuditEventDTO> eventCheck() {
+    private Predicate<AuditEvent> eventCheck() {
         return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE));
     }
 
