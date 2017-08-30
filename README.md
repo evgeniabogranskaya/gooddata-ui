@@ -167,10 +167,9 @@ parameter | value
 `HIERA_OVERRIDES`:
 ```
 cfg_cfal_enabled: true
-cfg_rpm_vertica_version_el7: "%{hiera('vertica72_latest_el7')}"
-cfg_rpm_vertica_odbc_version_el7: "%{hiera('vertica72_latest_el7')}"
-cfg_rpm_gdc_vertica_udx_rfc4180csvparser_version_el7: "%{hiera('vertica72_udx_latest_el7')}"
-cfg_rpm_gdc_vertica_udx_gdccsvparser_version_el7: "%{hiera('vertica72_udx_latest_el7')}"
+cfg_rpm_vertica_version_el7: "%{hiera('vertica8_latest')}"
+cfg_rpm_gdc_vertica_udx_gdccsvparser_version_el7: "%{hiera('vertica8_udx_latest')}"
+cfg_rpm_gdc_vertica_udx_filters_version_el7: "%{hiera('vertica8_udx_latest')}"
 ```
 
 Configuration for pipeline instance in [ci-infra](https://github.com/gooddata/ci-infra/blob/master/jenkins/jobs/ci/cfal-project.yaml).
