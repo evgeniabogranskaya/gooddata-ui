@@ -9,6 +9,7 @@ import com.gooddata.account.Account;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
+import com.gooddata.collections.MultiPageList;
 import com.gooddata.collections.Page;
 import com.gooddata.collections.PageableList;
 import org.springframework.web.client.RestTemplate;
@@ -47,10 +48,8 @@ public class AuditLogService extends AbstractService {
         notEmpty(domainId, "domainId");
         notNull(page, "page");
 
-        final String expandedUri = AuditEventDTO.ADMIN_URI_TEMPLATE.expand(domainId).toString();
-        final String uri = page.updateWithPageParams(UriComponentsBuilder.fromUriString(expandedUri)).build().toUriString();
-
-        return restTemplate.getForObject(uri, AuditEventsDTO.class);
+        final String uri = AuditEventDTO.ADMIN_URI_TEMPLATE.expand(domainId).toString();
+        return new MultiPageList<>(page, (p) -> doListAuditEvents(getAuditEventsUri(p, uri)));
     }
 
     /**
@@ -75,9 +74,16 @@ public class AuditLogService extends AbstractService {
         notEmpty(account.getId(), "account.id");
         notNull(page, "page");
 
-        final String expandedUri = AuditEventDTO.USER_URI_TEMPLATE.expand(account.getId()).toString();
-        final String uri = page.updateWithPageParams(UriComponentsBuilder.fromUriString(expandedUri)).build().toUriString();
+        final String uri = AuditEventDTO.USER_URI_TEMPLATE.expand(account.getId()).toString();
 
+        return new MultiPageList<>(page, (p) -> doListAuditEvents(getAuditEventsUri(p, uri)));
+    }
+
+    private AuditEventsDTO doListAuditEvents(final String uri) {
         return restTemplate.getForObject(uri, AuditEventsDTO.class);
+    }
+
+    private String getAuditEventsUri(final Page page, final String uri) {
+        return page.updateWithPageParams(UriComponentsBuilder.fromUriString(uri)).build().toUriString();
     }
 }

@@ -13,7 +13,6 @@ import com.gooddata.auditlog.ProjectHelper;
 import com.gooddata.auditlog.TestEnvironmentProperties;
 import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.cfal.restapi.dto.RequestParameters;
-import com.gooddata.collections.Page;
 import com.gooddata.collections.PageableList;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -25,7 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static org.testng.Assert.fail;
@@ -85,8 +83,11 @@ public abstract class AbstractAT {
      * @throws InterruptedException
      */
     public void doTestUserApi(Predicate<List<AuditEventDTO>> pageCheckPredicate, String type) throws InterruptedException {
-        doTest((Page page) -> service.listAuditEvents(getAccount(), page), pageCheckPredicate, type);
+        final RequestParameters request = createRequestParameters(type);
 
+        final PageableList<AuditEventDTO> events = service.listAuditEvents(getAccount(), request);
+
+        doTest(events, pageCheckPredicate, type);
     }
 
     /**
@@ -94,13 +95,16 @@ public abstract class AbstractAT {
      *
      * @param pageCheckPredicate predicate used to checker whether list of audit events (page) contains required message
      * @param type               type of the even you want to check on API
-     * @throws InterruptedException
      */
     public void doTestAdminApi(Predicate<List<AuditEventDTO>> pageCheckPredicate, String type) throws InterruptedException {
-        doTest((Page page) -> service.listAuditEvents(props.getDomain(), page), pageCheckPredicate, type);
+        final RequestParameters request = createRequestParameters(type);
+
+        final PageableList<AuditEventDTO> events = service.listAuditEvents(props.getDomain(), request);
+
+        doTest(events, pageCheckPredicate, type);
     }
 
-    private void doTest(final Function<Page, PageableList<AuditEventDTO>> serviceCall,
+    private void doTest(final PageableList<AuditEventDTO> events,
                         final Predicate<List<AuditEventDTO>> pageCheckPredicate,
                         final String type) throws InterruptedException {
         final String testMethodName = getTestMethodName();
@@ -108,7 +112,7 @@ public abstract class AbstractAT {
         //poll until message is found in audit log or poll limit is hit
         int count = 1;
         while (count++ <= POLL_LIMIT) {
-            if (hasMessage(serviceCall, pageCheckPredicate, type)) {
+            if (hasMessage(events, pageCheckPredicate)) {
                 logger.info("{}(): message {} found", testMethodName, type);
                 return;
             }
@@ -127,28 +131,15 @@ public abstract class AbstractAT {
                     .orElse("unknown");
     }
 
-    /**
-     * gets pages from audit log (using serviceCall) and check whether it contains event (using pageCheckPredicate)
-     */
-    private boolean hasMessage(final Function<Page, PageableList<AuditEventDTO>> serviceCall,
-                               final Predicate<List<AuditEventDTO>> pageCheckPredicate,
-                               final String type) {
+    private boolean hasMessage(final PageableList<AuditEventDTO> events, final Predicate<List<AuditEventDTO>> predicate) {
+        return predicate.test(events);
+    }
+
+    private RequestParameters createRequestParameters(final String type) {
         final RequestParameters requestParameters = new RequestParameters();
         requestParameters.setFrom(startTime);
         requestParameters.setType(type);
-
-        PageableList<AuditEventDTO> events = serviceCall.apply(requestParameters);
-        if (pageCheckPredicate.test(events)) {
-            return true;
-        }
-        // check whether there are next pages and check whether they contain event
-        while (events.hasNextPage()) {
-            events = serviceCall.apply(events.getNextPage());
-            if (pageCheckPredicate.test(events)) {
-                return true;
-            }
-        }
-        return false;
+        return requestParameters;
     }
 
     public Account getAccount() {
