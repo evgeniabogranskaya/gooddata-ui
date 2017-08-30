@@ -80,9 +80,8 @@ public abstract class AbstractAT {
      *
      * @param predicate predicate used to checker whether list of audit events contains required message
      * @param type               type of the even you want to check on API
-     * @throws InterruptedException
      */
-    public void doTestUserApi(final Predicate<AuditEventDTO> predicate, final String type) throws InterruptedException {
+    public void doTestUserApi(final Predicate<AuditEventDTO> predicate, final String type) {
         final RequestParameters request = createRequestParameters(type);
 
         final PageableList<AuditEventDTO> events = service.listAuditEvents(getAccount(), request);
@@ -96,7 +95,7 @@ public abstract class AbstractAT {
      * @param predicate predicate used to checker whether list of audit events contains required message
      * @param type               type of the even you want to check on API
      */
-    public void doTestAdminApi(final Predicate<AuditEventDTO> predicate, final String type) throws InterruptedException {
+    public void doTestAdminApi(final Predicate<AuditEventDTO> predicate, final String type) {
         final RequestParameters request = createRequestParameters(type);
 
         final PageableList<AuditEventDTO> events = service.listAuditEvents(props.getDomain(), request);
@@ -106,7 +105,7 @@ public abstract class AbstractAT {
 
     private void doTest(final PageableList<AuditEventDTO> events,
                         final Predicate<AuditEventDTO> predicate,
-                        final String type) throws InterruptedException {
+                        final String type) {
         final String testMethodName = getTestMethodName();
 
         //poll until message is found in audit log or poll limit is hit
@@ -117,7 +116,11 @@ public abstract class AbstractAT {
                 return;
             }
             logger.info("{}(): message {} not found, waiting {} seconds", testMethodName, type, POLL_INTERVAL_SECONDS);
-            TimeUnit.SECONDS.sleep(POLL_INTERVAL_SECONDS);
+            try {
+                TimeUnit.SECONDS.sleep(POLL_INTERVAL_SECONDS);
+            } catch (InterruptedException e) {
+                fail("Interrupted while waiting for message " + type, e);
+            }
         }
 
         fail("message not found");

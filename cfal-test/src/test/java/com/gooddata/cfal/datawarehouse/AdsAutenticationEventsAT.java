@@ -30,22 +30,22 @@ public class AdsAutenticationEventsAT extends AbstractAdsAT {
     }
 
     @Test(groups = MESSAGE_TYPE_LOGIN)
-    public void testUsernamePasswordLoginUserApi() throws InterruptedException {
+    public void testUsernamePasswordLoginUserApi() {
         doTestUserApi(eventCheck(), MESSAGE_TYPE_LOGIN);
     }
 
     @Test(groups = MESSAGE_TYPE_LOGIN)
-    public void testUsernamePasswordLoginAdminApi() throws InterruptedException {
+    public void testUsernamePasswordLoginAdminApi() {
         doTestAdminApi(eventCheck(), MESSAGE_TYPE_LOGIN);
     }
 
     @Test(groups = MESSAGE_TYPE_CONNECTION)
-    public void testADSConnectionUserApi() throws InterruptedException {
+    public void testADSConnectionUserApi() {
         doTestUserApi(eventCheck(MESSAGE_TYPE_CONNECTION), MESSAGE_TYPE_CONNECTION);
     }
 
     @Test(groups = MESSAGE_TYPE_CONNECTION)
-    public void testADSConnectionAdminApi() throws InterruptedException {
+    public void testADSConnectionAdminApi() {
         doTestAdminApi(eventCheck(MESSAGE_TYPE_CONNECTION), MESSAGE_TYPE_CONNECTION);
     }
 

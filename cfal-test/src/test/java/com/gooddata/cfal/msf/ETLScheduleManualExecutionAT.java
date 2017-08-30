@@ -39,7 +39,7 @@ public class ETLScheduleManualExecutionAT extends AbstractAT {
     }
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "createSchedule")
-    public void executeSchedule() throws InterruptedException {
+    public void executeSchedule() {
         gd.getProcessService().executeSchedule(schedule);
     }
 
@@ -52,22 +52,22 @@ public class ETLScheduleManualExecutionAT extends AbstractAT {
     }
 
     @Test(dependsOnMethods = "executeSchedule", groups = MESSAGE_TYPE)
-    public void testScheduleManualExecutionMessageUserApi() throws InterruptedException {
+    public void testScheduleManualExecutionMessageUserApi() {
         doTestUserApi(eventCheck(true), MESSAGE_TYPE);
     }
 
     @Test(dependsOnMethods = "executeSchedule", groups = MESSAGE_TYPE)
-    public void testScheduleManualExecutionMessageAdminApi() throws InterruptedException {
+    public void testScheduleManualExecutionMessageAdminApi() {
         doTestAdminApi(eventCheck(true), MESSAGE_TYPE);
     }
 
     @Test(dependsOnMethods = "badExecuteSchedule", groups = MESSAGE_TYPE)
-    public void testScheduleManualExecutionMessageErrorUserApi() throws InterruptedException {
+    public void testScheduleManualExecutionMessageErrorUserApi() {
         doTestUserApi(eventCheck(false), MESSAGE_TYPE);
     }
 
     @Test(dependsOnMethods = "badExecuteSchedule", groups = MESSAGE_TYPE)
-    public void testScheduleManualExecutionMessageErrorAdminApi() throws InterruptedException {
+    public void testScheduleManualExecutionMessageErrorAdminApi() {
         doTestAdminApi(eventCheck(false), MESSAGE_TYPE);
     }
 

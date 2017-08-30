@@ -40,32 +40,32 @@ public class AccountChangeAT extends AbstractAT {
     }
 
     @Test(groups = USER_PROFILE_CHANGE)
-    public void testUserProfileChangeMessageUserApi() throws InterruptedException {
+    public void testUserProfileChangeMessageUserApi() {
         doTestUserApi(eventCheck(USER_PROFILE_CHANGE), USER_PROFILE_CHANGE);
     }
 
     @Test(groups = USER_PROFILE_CHANGE)
-    public void testUserProfileChangeMessageAdminApi() throws InterruptedException {
+    public void testUserProfileChangeMessageAdminApi() {
         doTestAdminApi(eventCheck(USER_PROFILE_CHANGE), USER_PROFILE_CHANGE);
     }
 
     @Test(groups = USER_PASSWORD_CHANGE)
-    public void testUserPasswordChangeMessageUserApi() throws InterruptedException {
+    public void testUserPasswordChangeMessageUserApi() {
         doTestUserApi(eventCheck(USER_PASSWORD_CHANGE), USER_PASSWORD_CHANGE);
     }
 
     @Test(groups = USER_PASSWORD_CHANGE)
-    public void testUserPasswordChangeMessageAdminApi() throws InterruptedException {
+    public void testUserPasswordChangeMessageAdminApi() {
         doTestAdminApi(eventCheck(USER_PASSWORD_CHANGE), USER_PASSWORD_CHANGE);
     }
 
     @Test(groups = USER_IP_WHITELIST_CHANGE)
-    public void testUserIpWhitelistChangeMessageUserApi() throws InterruptedException {
+    public void testUserIpWhitelistChangeMessageUserApi() {
         doTestUserApi(eventCheck(USER_IP_WHITELIST_CHANGE), USER_IP_WHITELIST_CHANGE);
     }
 
     @Test(groups = USER_IP_WHITELIST_CHANGE)
-    public void testUserIpWhitelistChangeMessageAdminApi() throws InterruptedException {
+    public void testUserIpWhitelistChangeMessageAdminApi() {
         doTestAdminApi(eventCheck(USER_IP_WHITELIST_CHANGE), USER_IP_WHITELIST_CHANGE);
     }
 

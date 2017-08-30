@@ -49,12 +49,12 @@ public class ETLScheduleChangeAT extends AbstractAT {
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void testChangeETLScheduleUserApi() throws InterruptedException {
+    public void testChangeETLScheduleUserApi() {
         doTestUserApi(eventCheck(), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void testChangeETLScheduleAdminApi() throws InterruptedException {
+    public void testChangeETLScheduleAdminApi() {
         doTestAdminApi(eventCheck(), MESSAGE_TYPE);
     }
 

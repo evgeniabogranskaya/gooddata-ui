@@ -20,12 +20,12 @@ public class LogoutAT extends AbstractAT {
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void testLogoutMessageUserApi() throws InterruptedException {
+    public void testLogoutMessageUserApi() {
         doTestUserApi(eventCheck(), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void testLogoutMessageAdminApi() throws InterruptedException {
+    public void testLogoutMessageAdminApi() {
         doTestAdminApi(eventCheck(), MESSAGE_TYPE);
     }
 
