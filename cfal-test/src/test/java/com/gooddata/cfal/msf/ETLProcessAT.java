@@ -32,9 +32,9 @@ import java.util.function.Predicate;
 @Test
 public class ETLProcessAT extends AbstractAT {
 
-    private static final String EXECUTION_MESSAGE_TYPE = "ETL_PROCESS_MANUAL_EXECUTION";
-    private static final String CREATE_MESSAGE_TYPE = "ETL_PROCESS_CREATION";
-    private static final String DELETE_MESSAGE_TYPE = "ETL_PROCESS_DELETION";
+    private static final String EXECUTION_MESSAGE_TYPE = "ETL_PROCESS_MANUAL_EXECUTE";
+    private static final String CREATE_MESSAGE_TYPE = "ETL_PROCESS_CREATE";
+    private static final String DELETE_MESSAGE_TYPE = "ETL_PROCESS_DELETE";
     private static final String UPDATE_MESSAGE_TYPE = "ETL_PROCESS_UPDATE";
     private static final String SCRIPT_NAME = "test.rb";
 
@@ -54,42 +54,42 @@ public class ETLProcessAT extends AbstractAT {
         badRemoveProcess();
     }
 
-    @Test(groups = EXECUTION_MESSAGE_TYPE)
+//    @Test(groups = EXECUTION_MESSAGE_TYPE)
     public void testProcessManualExecutionMessageUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(EXECUTION_MESSAGE_TYPE, true), EXECUTION_MESSAGE_TYPE);
     }
 
-    @Test(groups = EXECUTION_MESSAGE_TYPE)
+//    @Test(groups = EXECUTION_MESSAGE_TYPE)
     public void testProcessManualExecutionMessageAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(EXECUTION_MESSAGE_TYPE, true), EXECUTION_MESSAGE_TYPE);
     }
 
-    @Test(groups = EXECUTION_MESSAGE_TYPE)
+//    @Test(groups = EXECUTION_MESSAGE_TYPE)
     public void testProcessManualExecutionMessageErrorUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(EXECUTION_MESSAGE_TYPE, false), EXECUTION_MESSAGE_TYPE);
     }
 
-    @Test(groups = EXECUTION_MESSAGE_TYPE)
+//    @Test(groups = EXECUTION_MESSAGE_TYPE)
     public void testProcessManualExecutionMessageErrorAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(EXECUTION_MESSAGE_TYPE, false), EXECUTION_MESSAGE_TYPE);
     }
 
-    @Test(groups = CREATE_MESSAGE_TYPE)
+//    @Test(groups = CREATE_MESSAGE_TYPE)
     public void testProcessCreateMessageUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(CREATE_MESSAGE_TYPE, true), CREATE_MESSAGE_TYPE);
     }
 
-    @Test(groups = CREATE_MESSAGE_TYPE)
+//    @Test(groups = CREATE_MESSAGE_TYPE)
     public void testProcessCreateMessageAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(CREATE_MESSAGE_TYPE, true), CREATE_MESSAGE_TYPE);
     }
 
-    @Test(groups = CREATE_MESSAGE_TYPE)
+//    @Test(groups = CREATE_MESSAGE_TYPE)
     public void testProcessCreateMessageErrorUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(CREATE_MESSAGE_TYPE, false), CREATE_MESSAGE_TYPE);
     }
 
-    @Test(groups = CREATE_MESSAGE_TYPE)
+//    @Test(groups = CREATE_MESSAGE_TYPE)
     public void testProcessCreateMessageErrorAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(CREATE_MESSAGE_TYPE, false), CREATE_MESSAGE_TYPE);
     }
@@ -114,32 +114,32 @@ public class ETLProcessAT extends AbstractAT {
         doTestAdminApi(pageCheckPredicate(UPDATE_MESSAGE_TYPE, false), UPDATE_MESSAGE_TYPE);
     }
 
-    @Test(groups = DELETE_MESSAGE_TYPE)
+//    @Test(groups = DELETE_MESSAGE_TYPE)
     public void testProcessDeleteMessageUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(DELETE_MESSAGE_TYPE, true), DELETE_MESSAGE_TYPE);
     }
 
-    @Test(groups = DELETE_MESSAGE_TYPE)
+//    @Test(groups = DELETE_MESSAGE_TYPE)
     public void testProcessDeleteMessageAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(DELETE_MESSAGE_TYPE, true), DELETE_MESSAGE_TYPE);
     }
 
-    @Test(groups = DELETE_MESSAGE_TYPE)
+//    @Test(groups = DELETE_MESSAGE_TYPE)
     public void testProcessDeleteMessageErrorUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(DELETE_MESSAGE_TYPE, false), DELETE_MESSAGE_TYPE);
     }
 
-    @Test(groups = DELETE_MESSAGE_TYPE)
+//    @Test(groups = DELETE_MESSAGE_TYPE)
     public void testProcessDeleteMessageErrorAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(DELETE_MESSAGE_TYPE, false), DELETE_MESSAGE_TYPE);
     }
 
-    @Test(groups = CREATE_MESSAGE_TYPE)
+//    @Test(groups = CREATE_MESSAGE_TYPE)
     public void testProcessCreateFromGitMessageUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicateCreateFromAppstore(CREATE_MESSAGE_TYPE), CREATE_MESSAGE_TYPE);
     }
 
-    @Test(groups = CREATE_MESSAGE_TYPE)
+//    @Test(groups = CREATE_MESSAGE_TYPE)
     public void testProcessCreateFromGitMessageAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicateCreateFromAppstore(CREATE_MESSAGE_TYPE), CREATE_MESSAGE_TYPE);
     }

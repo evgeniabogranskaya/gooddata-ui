@@ -36,7 +36,7 @@ public class ManualADDAT extends AbstractAT {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private static final String MESSAGE_TYPE = "ETL_ADD_MANUAL_EXECUTION";
+    private static final String MESSAGE_TYPE = "ETL_ADD_MANUAL_EXECUTE";
 
     private Warehouse warehouse;
     private JdbcTemplate jdbcTemplate;
@@ -101,12 +101,12 @@ public class ManualADDAT extends AbstractAT {
         createAndExecuteSchedule(dataloadProcess);
     }
 
-    @Test(groups = MESSAGE_TYPE)
+//    @Test(groups = MESSAGE_TYPE)
     public void tesADDManualExecutionMessageUserAPI() throws Exception {
         doTestUserApi(pageCheckPredicate(true), MESSAGE_TYPE);
     }
 
-    @Test(groups = MESSAGE_TYPE)
+//    @Test(groups = MESSAGE_TYPE)
     public void tesADDManualExecutionMessageAdminAPI() throws Exception {
         doTestAdminApi(pageCheckPredicate(true), MESSAGE_TYPE);
     }
