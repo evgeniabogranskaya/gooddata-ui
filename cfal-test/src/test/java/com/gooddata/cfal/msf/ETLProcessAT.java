@@ -29,7 +29,6 @@ import java.util.function.Predicate;
 /**
  * Tests ETL process messages
  */
-@Test
 public class ETLProcessAT extends AbstractAT {
 
     private static final String EXECUTION_MESSAGE_TYPE = "ETL_PROCESS_MANUAL_EXECUTE";
