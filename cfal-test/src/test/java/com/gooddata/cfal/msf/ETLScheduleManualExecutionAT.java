@@ -28,23 +28,23 @@ public class ETLScheduleManualExecutionAT extends AbstractAT {
     private DataloadProcess process;
     private Schedule schedule;
 
-//    @Test(groups = MESSAGE_TYPE)
+    @Test(groups = MESSAGE_TYPE)
     public void createProcess() throws URISyntaxException {
         final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
         process = gd.getProcessService().createProcess(projectHelper.getOrCreateProject(), new DataloadProcess(getClass().getSimpleName(), ProcessType.RUBY), file);
     }
 
-//    @Test(groups = MESSAGE_TYPE, dependsOnMethods = "createProcess")
+    @Test(groups = MESSAGE_TYPE, dependsOnMethods = "createProcess")
     public void createSchedule() throws Exception {
         schedule = gd.getProcessService().createSchedule(projectHelper.getOrCreateProject(), new Schedule(process, SCRIPT_NAME, "0 0 * * *"));
     }
 
-//    @Test(groups = MESSAGE_TYPE, dependsOnMethods = "createSchedule")
+    @Test(groups = MESSAGE_TYPE, dependsOnMethods = "createSchedule")
     public void executeSchedule() throws InterruptedException {
         gd.getProcessService().executeSchedule(schedule);
     }
 
-//    @Test(groups = MESSAGE_TYPE, dependsOnMethods = "executeSchedule", expectedExceptions = ScheduleExecutionException.class)
+    @Test(groups = MESSAGE_TYPE, dependsOnMethods = "executeSchedule", expectedExceptions = ScheduleExecutionException.class)
     public void badExecuteSchedule() {
         final Schedule mock = mock(Schedule.class);
         final String nonExistentScheduleUri = Schedule.TEMPLATE.expand(projectHelper.getOrCreateProject().getId(), "fail").toString();
@@ -52,22 +52,22 @@ public class ETLScheduleManualExecutionAT extends AbstractAT {
         gd.getProcessService().executeSchedule(mock);
     }
 
-//    @Test(dependsOnMethods = "executeSchedule", groups = MESSAGE_TYPE)
+    @Test(dependsOnMethods = "executeSchedule", groups = MESSAGE_TYPE)
     public void testScheduleManualExecutionMessageUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(true), MESSAGE_TYPE);
     }
 
-//    @Test(dependsOnMethods = "executeSchedule", groups = MESSAGE_TYPE)
+    @Test(dependsOnMethods = "executeSchedule", groups = MESSAGE_TYPE)
     public void testScheduleManualExecutionMessageAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(true), MESSAGE_TYPE);
     }
 
-//    @Test(dependsOnMethods = "badExecuteSchedule", groups = MESSAGE_TYPE)
+    @Test(dependsOnMethods = "badExecuteSchedule", groups = MESSAGE_TYPE)
     public void testScheduleManualExecutionMessageErrorUserApi() throws InterruptedException {
         doTestUserApi(pageCheckPredicate(false), MESSAGE_TYPE);
     }
 
-//    @Test(dependsOnMethods = "badExecuteSchedule", groups = MESSAGE_TYPE)
+    @Test(dependsOnMethods = "badExecuteSchedule", groups = MESSAGE_TYPE)
     public void testScheduleManualExecutionMessageErrorAdminApi() throws InterruptedException {
         doTestAdminApi(pageCheckPredicate(false), MESSAGE_TYPE);
     }
