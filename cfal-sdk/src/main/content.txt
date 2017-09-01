@@ -9,7 +9,7 @@ gdc-commons-http-client-2.1.*.jar
 gdc-commons-json-1.1.*.jar
 gdc-lang-4.1.*.jar
 gdc-selftest-1.6.*.jar
-gooddata-java-2.12.*.jar
+gooddata-java-2.14.*.jar
 jackson-annotations-2.8.0.jar
 jackson-core-2.8.*.jar
 jackson-core-asl-1.9.12.jar

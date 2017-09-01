@@ -15,7 +15,7 @@ gdc-spring-boot-actuator-1.4.*.jar
 gdc-spring-boot-starter-1.4.*.jar
 gdc-spring-boot-web-starter-1.4.*.jar
 gooddata-http-client-0.9.*.jar
-gooddata-java-2.12.*.jar
+gooddata-java-2.14.*.jar
 hibernate-validator-5.3.*.Final.jar
 httpclient-4.5.2.jar
 httpcore-4.4.6.jar
