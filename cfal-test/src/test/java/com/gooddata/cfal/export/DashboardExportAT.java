@@ -29,7 +29,7 @@ public class DashboardExportAT extends AbstractAT {
         this.project = projectHelper.getOrCreateProject();
         this.dashboard = gd.getMetadataService().createObj(project, dashboard);
 
-        gd.getExportService().exportPdf(dashboard, dashboard.getTabs().iterator().next(), new NullOutputStream()).get();
+        gd.getExportService().exportPdf(this.dashboard, this.dashboard.getTabs().iterator().next(), new NullOutputStream()).get();
     }
 
     @Test(groups = MESSAGE_TYPE)
