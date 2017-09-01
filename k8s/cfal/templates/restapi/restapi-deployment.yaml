@@ -1,0 +1,51 @@
+kind: Deployment
+apiVersion: apps/v1beta1
+metadata:
+  name: {{ template "fullname" . }}-restapi
+  labels:
+    app: cfal
+    component: restapi
+    team: smurfs
+    chart: "{{ .Chart.Name }}"
+spec:
+  replicas: {{ .Values.cfal.restapi.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: cfal
+        component: restapi
+        team: smurfs
+    spec:
+      containers:
+      - name: restapi-springboot
+        {{- with .Values.cfal.restapi.image }}
+        image: "{{ .repository }}/{{ .userspace }}/cfal-restapi:{{ .tag }}"
+        {{- end }}
+        imagePullPolicy: {{ .Values.global.pullPolicy }}
+        livenessProbe:
+          httpGet:
+            path: /info
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 10
+          failureThreshold: 5
+        ports:
+        - name: http
+          containerPort: 50300
+        env:
+        - name: SPRING_APPLICATION_JSON
+          value: '{
+"gdc.c4.hostname":"{{ .Values.c4.c4_proxy.service.host }}",
+"gdc.c4.pass": "{{ .Values.c4.c4_proxy.service.password }}",
+"monitoring.graphite.reporting-enabled": {{ .Values.cfal.restapi.service.reporting.enabled }},
+"spring.data.mongodb.uri": "mongodb://{{ .Values.cfal.mongo.username }}:{{ .Values.cfal.mongo.password }}@{{ .Values.cfal.mongo.nodes }}"
+          }'
