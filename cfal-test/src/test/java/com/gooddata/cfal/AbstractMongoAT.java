@@ -24,6 +24,8 @@ public abstract class AbstractMongoAT extends AbstractAT {
 
     private MongoTemplate mongo;
 
+    private MongoClient mongoClient;
+
     protected SshClient ssh;
 
     @BeforeClass
@@ -36,7 +38,8 @@ public abstract class AbstractMongoAT extends AbstractAT {
         final String uri = new UriTemplate("mongodb://gdc_root:{pass}@localhost:{port}")
                 .expand(mongoPass, mongoPort)
                 .toString();
-        mongo = new MongoTemplate(new MongoClient(new MongoClientURI(uri)), "cfal");
+        this.mongoClient = new MongoClient(new MongoClientURI(uri));
+        this.mongo = new MongoTemplate(mongoClient, "cfal");
     }
 
     private String obtainMongoPass(final SshClient ssh) {
@@ -49,6 +52,9 @@ public abstract class AbstractMongoAT extends AbstractAT {
 
     @AfterClass
     public void tearDownSsh() throws Exception {
+        if (mongoClient != null) {
+            mongoClient.close();
+        }
         if (ssh != null) {
             ssh.close();
         }
