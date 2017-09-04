@@ -25,7 +25,7 @@ public class AdsAutenticationEventsAT extends AbstractAdsAT {
     private static final String MESSAGE_TYPE_CONNECTION = "CONNECTION";
     private static final String MESSAGE_TYPE_LOGOUT = "DATAWAREHOUSE_LOGOUT";
 
-    @BeforeClass(groups = {MESSAGE_TYPE_LOGIN, MESSAGE_TYPE_LOGOUT})
+    @BeforeClass(groups = {MESSAGE_TYPE_LOGIN, MESSAGE_TYPE_LOGOUT, MESSAGE_TYPE_CONNECTION})
     public void setUp() {
         getJdbcTemplate().execute(TEST_QUERY);
     }
