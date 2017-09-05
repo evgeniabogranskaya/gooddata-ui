@@ -110,7 +110,7 @@ parameter               | default                 | example
 `pass`                  | `jindrisska`            | `-Dpass=jindrisska`
 `projectId`             | `FoodMartDemo`          | `-DprojectId=FoodMartDemo`
 `projectToken`          | _none_                  | `-DprojectToken=pgroup2`
-`keepProject`           | `true` for FoodMartDemo | `-DprojectToken=pgroup2`
+`keepProject`           | `true` for FoodMartDemo | `-DkeepProject=true`
 `datawarehouseToken`    | `vertica`               | `-DdatawarehouseToken=vertica`
 `pollTimeoutMinutes`    | `5`                     | `-DpollTimeoutMinutes=5`
 `sshKey`                | `~/.ssh/id_rsa`         | `-DsshKey=/path/to/key`
