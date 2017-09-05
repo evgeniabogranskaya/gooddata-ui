@@ -21,10 +21,10 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static org.testng.Assert.fail;
 
@@ -84,9 +84,7 @@ public abstract class AbstractAT {
     public void doTestUserApi(final Predicate<AuditEventDTO> predicate, final String type) {
         final RequestParameters request = createRequestParameters(type);
 
-        final PageableList<AuditEventDTO> events = service.listAuditEvents(getAccount(), request);
-
-        doTest(events, predicate, type);
+        doTest(() -> service.listAuditEvents(getAccount(), request), predicate, type);
     }
 
     /**
@@ -98,12 +96,10 @@ public abstract class AbstractAT {
     public void doTestAdminApi(final Predicate<AuditEventDTO> predicate, final String type) {
         final RequestParameters request = createRequestParameters(type);
 
-        final PageableList<AuditEventDTO> events = service.listAuditEvents(props.getDomain(), request);
-
-        doTest(events, predicate, type);
+        doTest(() -> service.listAuditEvents(props.getDomain(), request), predicate, type);
     }
 
-    private void doTest(final PageableList<AuditEventDTO> events,
+    private void doTest(final Supplier<PageableList<AuditEventDTO>> serviceCall,
                         final Predicate<AuditEventDTO> predicate,
                         final String type) {
         final String testMethodName = getTestMethodName();
@@ -111,7 +107,7 @@ public abstract class AbstractAT {
         //poll until message is found in audit log or poll limit is hit
         int count = 1;
         while (count++ <= POLL_LIMIT) {
-            if (hasMessage(events, predicate)) {
+            if (hasMessage(serviceCall, predicate)) {
                 logger.info("{}(): message {} found", testMethodName, type);
                 return;
             }
@@ -135,7 +131,8 @@ public abstract class AbstractAT {
                     .orElse("unknown");
     }
 
-    private boolean hasMessage(final PageableList<AuditEventDTO> events, final Predicate<AuditEventDTO> predicate) {
+    private boolean hasMessage(final Supplier<PageableList<AuditEventDTO>> serviceCall, final Predicate<AuditEventDTO> predicate) {
+        final PageableList<AuditEventDTO> events = serviceCall.get();
         return events.stream().anyMatch(predicate);
     }
 
