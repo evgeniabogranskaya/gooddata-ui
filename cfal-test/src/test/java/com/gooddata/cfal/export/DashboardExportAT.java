@@ -12,7 +12,6 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 public class DashboardExportAT extends AbstractAT {
@@ -34,16 +33,16 @@ public class DashboardExportAT extends AbstractAT {
 
     @Test(groups = MESSAGE_TYPE)
     public void testLoginMessageUserApi() throws Exception {
-        doTestUserApi(pageCheckPredicate(), MESSAGE_TYPE);
+        doTestUserApi(eventCheck(), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void testLoginMessageAdminApi() throws Exception {
-        doTestAdminApi(pageCheckPredicate(), MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(), MESSAGE_TYPE);
     }
 
-    private Predicate<List<AuditEventDTO>> pageCheckPredicate() {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e ->
+    private Predicate<AuditEventDTO> eventCheck() {
+        return (e ->
                 e.getUserLogin().equals(getAccount().getLogin()) &&
                         e.getType().equals(MESSAGE_TYPE) &&
                         e.isSuccess() &&

@@ -11,7 +11,6 @@ import com.gooddata.project.User;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 public class ProjectUserProvisioningAT extends AbstractAT {
@@ -34,27 +33,26 @@ public class ProjectUserProvisioningAT extends AbstractAT {
 
     @Test(groups = USER_ADD_MESSAGE_TYPE)
     public void testAddUserToProjectMessageUserApi() throws Exception {
-        doTestUserApi(pageCheckPredicate(USER_ADD_MESSAGE_TYPE), USER_ADD_MESSAGE_TYPE);
+        doTestUserApi(eventCheck(USER_ADD_MESSAGE_TYPE), USER_ADD_MESSAGE_TYPE);
     }
 
     @Test(groups = USER_ADD_MESSAGE_TYPE)
     public void testAddUserToProjectMessageAdminApi() throws Exception {
-        doTestAdminApi(pageCheckPredicate(USER_ADD_MESSAGE_TYPE), USER_ADD_MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(USER_ADD_MESSAGE_TYPE), USER_ADD_MESSAGE_TYPE);
     }
 
     @Test(groups = STATUS_CHANGE_MESSAGE_TYPE)
     public void testProjectUserStatusChangeMessageUserApi() throws Exception {
-        doTestUserApi(pageCheckPredicate(STATUS_CHANGE_MESSAGE_TYPE), STATUS_CHANGE_MESSAGE_TYPE);
+        doTestUserApi(eventCheck(STATUS_CHANGE_MESSAGE_TYPE), STATUS_CHANGE_MESSAGE_TYPE);
     }
 
     @Test(groups = STATUS_CHANGE_MESSAGE_TYPE)
     public void testProjectUserStatusChangeMessageAdminApi() throws Exception {
-        doTestAdminApi(pageCheckPredicate(STATUS_CHANGE_MESSAGE_TYPE), STATUS_CHANGE_MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(STATUS_CHANGE_MESSAGE_TYPE), STATUS_CHANGE_MESSAGE_TYPE);
     }
 
-    private Predicate<List<AuditEventDTO>> pageCheckPredicate(final String messageType) {
-        return (auditEvents) -> auditEvents.stream()
-                .anyMatch(e ->
+    private Predicate<AuditEventDTO> eventCheck(final String messageType) {
+        return (e ->
                         getAccount().getLogin().equals(e.getUserLogin()) &&
                                 messageType.equals(e.getType()) &&
                                 addedUser.getUri().equals(e.getLinks().get("profile"))

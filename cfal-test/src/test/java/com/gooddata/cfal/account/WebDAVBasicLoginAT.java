@@ -75,21 +75,21 @@ public class WebDAVBasicLoginAT extends AbstractLoginAT {
 
     @Test(groups = MESSAGE_TYPE)
     public void testWebDAVMessageUserApi() throws Exception {
-        doTestUserApi(pageCheckPredicate(true, WEBDAV, BASIC), MESSAGE_TYPE);
+        doTestUserApi(eventCheck(true, WEBDAV, BASIC), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void testWebDAVMessageAdminApi() throws Exception {
-        doTestAdminApi(pageCheckPredicate(true, WEBDAV, BASIC), MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(true, WEBDAV, BASIC), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void testWebDAVMessageUserApiFail() throws Exception {
-        doTestUserApi(pageCheckPredicate(false, WEBDAV, BASIC), MESSAGE_TYPE);
+        doTestUserApi(eventCheck(false, WEBDAV, BASIC), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void testWebDAVMessageAdminApiFail() throws Exception {
-        doTestAdminApi(pageCheckPredicate(false, WEBDAV, BASIC), MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(false, WEBDAV, BASIC), MESSAGE_TYPE);
     }
 }

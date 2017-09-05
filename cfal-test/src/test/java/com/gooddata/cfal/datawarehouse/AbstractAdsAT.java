@@ -19,8 +19,8 @@ abstract class AbstractAdsAT extends AbstractAT {
 
     private static JdbcTemplate jdbcTemplate;
 
-    protected Predicate<List<AuditEventDTO>> pageCheckPredicate(final String eventType) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> matchEvent(eventType, e));
+    protected Predicate<AuditEventDTO> eventCheck(final String eventType) {
+        return (e -> matchEvent(eventType, e));
     }
 
     private boolean matchEvent(String eventType, AuditEventDTO e) {

@@ -8,7 +8,6 @@ import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 public class LogoutAT extends AbstractAT {
@@ -21,17 +20,17 @@ public class LogoutAT extends AbstractAT {
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void testLogoutMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(), MESSAGE_TYPE);
+    public void testLogoutMessageUserApi() {
+        doTestUserApi(eventCheck(), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void testLogoutMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(), MESSAGE_TYPE);
+    public void testLogoutMessageAdminApi() {
+        doTestAdminApi(eventCheck(), MESSAGE_TYPE);
     }
 
-    private Predicate<List<AuditEventDTO>> pageCheckPredicate() {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE));
+    private Predicate<AuditEventDTO> eventCheck() {
+        return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE));
     }
 
 }

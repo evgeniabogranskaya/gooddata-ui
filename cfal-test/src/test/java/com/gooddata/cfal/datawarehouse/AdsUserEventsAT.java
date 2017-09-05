@@ -28,22 +28,22 @@ public class AdsUserEventsAT extends AbstractAdsAT {
     }
 
     @Test(groups = MESSAGE_TYPE_ADD)
-    public void testAddUserEventUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_ADD), MESSAGE_TYPE_ADD);
+    public void testAddUserEventUserApi() {
+        doTestUserApi(eventCheck(MESSAGE_TYPE_ADD), MESSAGE_TYPE_ADD);
     }
 
     @Test(groups = MESSAGE_TYPE_ADD)
-    public void testAddUserEventAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_ADD), MESSAGE_TYPE_ADD);
+    public void testAddUserEventAdminApi() {
+        doTestAdminApi(eventCheck(MESSAGE_TYPE_ADD), MESSAGE_TYPE_ADD);
     }
 
     @Test(groups = MESSAGE_TYPE_REMOVE)
-    public void testRemoveUserEventUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_REMOVE), MESSAGE_TYPE_REMOVE);
+    public void testRemoveUserEventUserApi() {
+        doTestUserApi(eventCheck(MESSAGE_TYPE_REMOVE), MESSAGE_TYPE_REMOVE);
     }
 
     @Test(groups = MESSAGE_TYPE_REMOVE)
-    public void testRemoveUserEventAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_REMOVE), MESSAGE_TYPE_REMOVE);
+    public void testRemoveUserEventAdminApi() {
+        doTestAdminApi(eventCheck(MESSAGE_TYPE_REMOVE), MESSAGE_TYPE_REMOVE);
     }
 }

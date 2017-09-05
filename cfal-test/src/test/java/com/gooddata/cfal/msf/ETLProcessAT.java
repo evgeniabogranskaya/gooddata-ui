@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -54,101 +53,101 @@ public class ETLProcessAT extends AbstractAT {
     }
 
     @Test(groups = EXECUTION_MESSAGE_TYPE)
-    public void testProcessManualExecutionMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(EXECUTION_MESSAGE_TYPE, true), EXECUTION_MESSAGE_TYPE);
+    public void testProcessManualExecutionMessageUserApi() {
+        doTestUserApi(eventCheck(EXECUTION_MESSAGE_TYPE, true), EXECUTION_MESSAGE_TYPE);
     }
 
     @Test(groups = EXECUTION_MESSAGE_TYPE)
-    public void testProcessManualExecutionMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(EXECUTION_MESSAGE_TYPE, true), EXECUTION_MESSAGE_TYPE);
+    public void testProcessManualExecutionMessageAdminApi() {
+        doTestAdminApi(eventCheck(EXECUTION_MESSAGE_TYPE, true), EXECUTION_MESSAGE_TYPE);
     }
 
     @Test(groups = EXECUTION_MESSAGE_TYPE)
-    public void testProcessManualExecutionMessageErrorUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(EXECUTION_MESSAGE_TYPE, false), EXECUTION_MESSAGE_TYPE);
+    public void testProcessManualExecutionMessageErrorUserApi() {
+        doTestUserApi(eventCheck(EXECUTION_MESSAGE_TYPE, false), EXECUTION_MESSAGE_TYPE);
     }
 
     @Test(groups = EXECUTION_MESSAGE_TYPE)
-    public void testProcessManualExecutionMessageErrorAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(EXECUTION_MESSAGE_TYPE, false), EXECUTION_MESSAGE_TYPE);
+    public void testProcessManualExecutionMessageErrorAdminApi() {
+        doTestAdminApi(eventCheck(EXECUTION_MESSAGE_TYPE, false), EXECUTION_MESSAGE_TYPE);
     }
 
     @Test(groups = CREATE_MESSAGE_TYPE)
-    public void testProcessCreateMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(CREATE_MESSAGE_TYPE, true), CREATE_MESSAGE_TYPE);
+    public void testProcessCreateMessageUserApi() {
+        doTestUserApi(eventCheck(CREATE_MESSAGE_TYPE, true), CREATE_MESSAGE_TYPE);
     }
 
     @Test(groups = CREATE_MESSAGE_TYPE)
-    public void testProcessCreateMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(CREATE_MESSAGE_TYPE, true), CREATE_MESSAGE_TYPE);
+    public void testProcessCreateMessageAdminApi() {
+        doTestAdminApi(eventCheck(CREATE_MESSAGE_TYPE, true), CREATE_MESSAGE_TYPE);
     }
 
     @Test(groups = CREATE_MESSAGE_TYPE)
-    public void testProcessCreateMessageErrorUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(CREATE_MESSAGE_TYPE, false), CREATE_MESSAGE_TYPE);
+    public void testProcessCreateMessageErrorUserApi() {
+        doTestUserApi(eventCheck(CREATE_MESSAGE_TYPE, false), CREATE_MESSAGE_TYPE);
     }
 
     @Test(groups = CREATE_MESSAGE_TYPE)
-    public void testProcessCreateMessageErrorAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(CREATE_MESSAGE_TYPE, false), CREATE_MESSAGE_TYPE);
+    public void testProcessCreateMessageErrorAdminApi() {
+        doTestAdminApi(eventCheck(CREATE_MESSAGE_TYPE, false), CREATE_MESSAGE_TYPE);
     }
 
     @Test(groups = UPDATE_MESSAGE_TYPE)
-    public void testProcessUpdateMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(UPDATE_MESSAGE_TYPE, true), UPDATE_MESSAGE_TYPE);
+    public void testProcessUpdateMessageUserApi() {
+        doTestUserApi(eventCheck(UPDATE_MESSAGE_TYPE, true), UPDATE_MESSAGE_TYPE);
     }
 
     @Test(groups = UPDATE_MESSAGE_TYPE)
-    public void testProcessUpdateMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(UPDATE_MESSAGE_TYPE, true), UPDATE_MESSAGE_TYPE);
+    public void testProcessUpdateMessageAdminApi() {
+        doTestAdminApi(eventCheck(UPDATE_MESSAGE_TYPE, true), UPDATE_MESSAGE_TYPE);
     }
 
     @Test(groups = UPDATE_MESSAGE_TYPE)
-    public void testProcessUpdateErrorMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(UPDATE_MESSAGE_TYPE, false), UPDATE_MESSAGE_TYPE);
+    public void testProcessUpdateErrorMessageUserApi() {
+        doTestUserApi(eventCheck(UPDATE_MESSAGE_TYPE, false), UPDATE_MESSAGE_TYPE);
     }
 
     @Test(groups = UPDATE_MESSAGE_TYPE)
-    public void testProcessUpdateErrorMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(UPDATE_MESSAGE_TYPE, false), UPDATE_MESSAGE_TYPE);
+    public void testProcessUpdateErrorMessageAdminApi() {
+        doTestAdminApi(eventCheck(UPDATE_MESSAGE_TYPE, false), UPDATE_MESSAGE_TYPE);
     }
 
     @Test(groups = DELETE_MESSAGE_TYPE)
-    public void testProcessDeleteMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(DELETE_MESSAGE_TYPE, true), DELETE_MESSAGE_TYPE);
+    public void testProcessDeleteMessageUserApi() {
+        doTestUserApi(eventCheck(DELETE_MESSAGE_TYPE, true), DELETE_MESSAGE_TYPE);
     }
 
     @Test(groups = DELETE_MESSAGE_TYPE)
-    public void testProcessDeleteMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(DELETE_MESSAGE_TYPE, true), DELETE_MESSAGE_TYPE);
+    public void testProcessDeleteMessageAdminApi() {
+        doTestAdminApi(eventCheck(DELETE_MESSAGE_TYPE, true), DELETE_MESSAGE_TYPE);
     }
 
     @Test(groups = DELETE_MESSAGE_TYPE)
-    public void testProcessDeleteMessageErrorUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(DELETE_MESSAGE_TYPE, false), DELETE_MESSAGE_TYPE);
+    public void testProcessDeleteMessageErrorUserApi() {
+        doTestUserApi(eventCheck(DELETE_MESSAGE_TYPE, false), DELETE_MESSAGE_TYPE);
     }
 
     @Test(groups = DELETE_MESSAGE_TYPE)
-    public void testProcessDeleteMessageErrorAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(DELETE_MESSAGE_TYPE, false), DELETE_MESSAGE_TYPE);
+    public void testProcessDeleteMessageErrorAdminApi() {
+        doTestAdminApi(eventCheck(DELETE_MESSAGE_TYPE, false), DELETE_MESSAGE_TYPE);
     }
 
     @Test(groups = CREATE_MESSAGE_TYPE)
-    public void testProcessCreateFromGitMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicateCreateFromAppstore(CREATE_MESSAGE_TYPE), CREATE_MESSAGE_TYPE);
+    public void testProcessCreateFromGitMessageUserApi() {
+        doTestUserApi(eventCheckCreateFromAppstore(CREATE_MESSAGE_TYPE), CREATE_MESSAGE_TYPE);
     }
 
     @Test(groups = CREATE_MESSAGE_TYPE)
-    public void testProcessCreateFromGitMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicateCreateFromAppstore(CREATE_MESSAGE_TYPE), CREATE_MESSAGE_TYPE);
+    public void testProcessCreateFromGitMessageAdminApi() {
+        doTestAdminApi(eventCheckCreateFromAppstore(CREATE_MESSAGE_TYPE), CREATE_MESSAGE_TYPE);
     }
 
-    private Predicate<List<AuditEventDTO>> pageCheckPredicate(final String messageType, final boolean isSuccess) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(messageType) && e.isSuccess() == isSuccess);
+    private Predicate<AuditEventDTO> eventCheck(final String messageType, final boolean isSuccess) {
+        return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(messageType) && e.isSuccess() == isSuccess);
     }
 
-    private Predicate<List<AuditEventDTO>> pageCheckPredicateCreateFromAppstore(final String messageType) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(messageType) &&
+    private Predicate<AuditEventDTO> eventCheckCreateFromAppstore(final String messageType) {
+        return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(messageType) &&
                 e.isSuccess() == true && processAppstore.getUri().equals(e.getLinks().get("process")));
     }
 

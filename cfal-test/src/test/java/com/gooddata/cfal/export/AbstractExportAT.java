@@ -27,8 +27,8 @@ abstract class AbstractExportAT extends AbstractAT {
         metadata = MetadataHelper.getInstance(gd, project);
     }
 
-    protected Predicate<List<AuditEventDTO>> pageCheckPredicate(final String format) {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e ->
+    protected Predicate<AuditEventDTO> eventCheck(final String format) {
+        return (e ->
                 e.getUserLogin().equals(getAccount().getLogin()) &&
                         e.getType().equals(MESSAGE_TYPE) &&
                         e.isSuccess() &&

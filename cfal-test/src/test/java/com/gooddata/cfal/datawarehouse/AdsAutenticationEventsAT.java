@@ -7,7 +7,6 @@ import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -31,37 +30,37 @@ public class AdsAutenticationEventsAT extends AbstractAdsAT {
     }
 
     @Test(groups = MESSAGE_TYPE_LOGIN)
-    public void testUsernamePasswordLoginUserApi() throws InterruptedException {
-        doTestUserApi(loginPageCheckPredicate(), MESSAGE_TYPE_LOGIN);
+    public void testUsernamePasswordLoginUserApi() {
+        doTestUserApi(eventCheck(), MESSAGE_TYPE_LOGIN);
     }
 
     @Test(groups = MESSAGE_TYPE_LOGIN)
-    public void testUsernamePasswordLoginAdminApi() throws InterruptedException {
-        doTestAdminApi(loginPageCheckPredicate(), MESSAGE_TYPE_LOGIN);
+    public void testUsernamePasswordLoginAdminApi() {
+        doTestAdminApi(eventCheck(), MESSAGE_TYPE_LOGIN);
     }
 
     @Test(groups = MESSAGE_TYPE_CONNECTION)
-    public void testADSConnectionUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_CONNECTION), MESSAGE_TYPE_CONNECTION);
+    public void testADSConnectionUserApi() {
+        doTestUserApi(eventCheck(MESSAGE_TYPE_CONNECTION), MESSAGE_TYPE_CONNECTION);
     }
 
     @Test(groups = MESSAGE_TYPE_CONNECTION)
-    public void testADSConnectionAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_CONNECTION), MESSAGE_TYPE_CONNECTION);
+    public void testADSConnectionAdminApi() {
+        doTestAdminApi(eventCheck(MESSAGE_TYPE_CONNECTION), MESSAGE_TYPE_CONNECTION);
     }
 
     @Test(groups = MESSAGE_TYPE_LOGOUT)
     public void testDatawarehouseLogoutUserApi() throws Exception {
-        doTestUserApi(pageCheckPredicate(MESSAGE_TYPE_LOGOUT), MESSAGE_TYPE_LOGOUT);
+        doTestUserApi(eventCheck(MESSAGE_TYPE_LOGOUT), MESSAGE_TYPE_LOGOUT);
     }
 
     @Test(groups = MESSAGE_TYPE_LOGOUT)
     public void testDatawarehouseLogoutAdminApi() throws Exception {
-        doTestAdminApi(pageCheckPredicate(MESSAGE_TYPE_LOGOUT), MESSAGE_TYPE_LOGOUT);
+        doTestAdminApi(eventCheck(MESSAGE_TYPE_LOGOUT), MESSAGE_TYPE_LOGOUT);
     }
 
-    protected Predicate<List<AuditEventDTO>> loginPageCheckPredicate() {
-        return (auditEvents) -> auditEvents.stream().anyMatch(e ->
+    protected Predicate<AuditEventDTO> eventCheck() {
+        return (e ->
                 e.getUserLogin().equals(getAccount().getLogin()) &&
                         e.getType().equals(MESSAGE_TYPE_LOGIN) &&
                         USER_NAME_PASSWORD.equals(e.getParams().get(LOGIN_TYPE)) &&

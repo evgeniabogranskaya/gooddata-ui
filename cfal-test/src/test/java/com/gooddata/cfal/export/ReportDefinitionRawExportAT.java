@@ -25,12 +25,12 @@ public class ReportDefinitionRawExportAT extends AbstractExportAT {
 
     @Test(groups = MESSAGE_TYPE)
     public void testDefinitionMessageUserApi() throws Exception {
-        doTestUserApi(pageCheckPredicate(CSV_CONTENT_TYPE), MESSAGE_TYPE);
+        doTestUserApi(eventCheck(CSV_CONTENT_TYPE), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void testDefinitionMessageAdminApi() throws Exception {
-        doTestAdminApi(pageCheckPredicate(CSV_CONTENT_TYPE), MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(CSV_CONTENT_TYPE), MESSAGE_TYPE);
     }
 
 }

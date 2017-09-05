@@ -18,12 +18,12 @@ public class LoginAT extends AbstractLoginAT {
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void testLoginMessageUserApi() throws InterruptedException {
-        doTestUserApi(pageCheckPredicate(true, WEBAPP, USERNAME_PASSWORD), MESSAGE_TYPE);
+    public void testLoginMessageUserApi() {
+        doTestUserApi(eventCheck(true, WEBAPP, USERNAME_PASSWORD), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void testLoginMessageAdminApi() throws InterruptedException {
-        doTestAdminApi(pageCheckPredicate(true, WEBAPP, USERNAME_PASSWORD), MESSAGE_TYPE);
+    public void testLoginMessageAdminApi() {
+        doTestAdminApi(eventCheck(true, WEBAPP, USERNAME_PASSWORD), MESSAGE_TYPE);
     }
 }
