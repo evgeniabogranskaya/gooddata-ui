@@ -4,6 +4,7 @@
 package com.gooddata.auditlog;
 
 import com.gooddata.GoodData;
+import com.gooddata.dataset.DatasetService;
 import com.gooddata.md.AbstractObj;
 import com.gooddata.md.Attribute;
 import com.gooddata.md.Dataset;
@@ -38,11 +39,15 @@ public class MetadataHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(MetadataHelper.class);
 
+    private static final String DATASET_NAME = "dataset.star";
+
     private static MetadataHelper instance;
 
     private final MetadataService md;
 
     private final ModelService model;
+
+    private final DatasetService datasetService;
 
     private final Project project;
 
@@ -56,6 +61,7 @@ public class MetadataHelper {
         notNull(gd, "gd");
         this.md = gd.getMetadataService();
         this.model = gd.getModelService();
+        this.datasetService = gd.getDatasetService();
         this.project = notNull(project, "project");
     }
 
@@ -81,41 +87,41 @@ public class MetadataHelper {
     }
 
     private void createMetadata() {
-        final Dataset dataset = getObjOrRunMAQL(Dataset.class, "dataset.person",
-                "CREATE DATASET {dataset.person} VISUAL(TITLE \"Person\", DESCRIPTION \"Dataset with Person-related data\")"
+        final Dataset dataset = getObjOrRunMAQL(Dataset.class, DATASET_NAME,
+                "CREATE DATASET {dataset.star} VISUAL(TITLE \"Stars\", DESCRIPTION \"Movie Stars\")"
         );
 
-        final Attribute attr = getObjOrRunMAQL(Attribute.class, "attr.person.department",
-                "CREATE ATTRIBUTE {attr.person.department} VISUAL(TITLE \"Department\") AS {f_person.id} FULLSET;",
-                "ALTER DATASET {dataset.person} ADD {attr.person.department};",
-                "ALTER ATTRIBUTE {attr.person.department} ADD LABELS {label.person.department} VISUAL(TITLE \"Department\") AS {d_person_department.nm_department};"
+        final Attribute attr = getObjOrRunMAQL(Attribute.class, "attr.star.name",
+                "CREATE ATTRIBUTE {attr.star.name} VISUAL(TITLE \"Department\") AS {f_star.id} FULLSET;",
+                "ALTER DATASET {dataset.star} ADD {attr.star.name};",
+                "ALTER ATTRIBUTE {attr.star.name} ADD LABELS {label.star.name} VISUAL(TITLE \"Name\") AS {f_star.nm_name};"
         );
 
-        final Fact fact = getObjOrRunMAQL(Fact.class, "fact.person.shoesize",
-                "CREATE FACT {fact.person.shoesize} VISUAL(TITLE \"Person Shoe Size\") AS {f_person.f_shoesize};",
-                "ALTER DATASET {dataset.person} ADD {fact.person.shoesize};");
+        final Fact fact = getObjOrRunMAQL(Fact.class, "fact.star.size",
+                "CREATE FACT {fact.star.size} VISUAL(TITLE \"Star Boobs Size\") AS {f_star.f_size};",
+                "ALTER DATASET {dataset.star} ADD {fact.star.size};");
 
-        final Metric metric = getObjOrCreateUsingAPI(Metric.class, "metric.avgshoesize",
-                () -> new Metric("Avg shoe size", "SELECT AVG([" + fact.getUri() + "])", "#,##0")
+        final Metric metric = getObjOrCreateUsingAPI(Metric.class, "metric.avgsize",
+                () -> new Metric("Avg size", "SELECT AVG([" + fact.getUri() + "])", "#,##0")
         );
 
-        this.reportDefinition = getObjOrCreateUsingAPI(ReportDefinition.class, "reportdefinition.avgshoesize",
+        this.reportDefinition = getObjOrCreateUsingAPI(ReportDefinition.class, "reportdefinition.avgsize",
                 () -> GridReportDefinitionContent.create(
-                        "Department avg shoe size",
+                        "Star avg size",
                         singletonList(METRIC_GROUP),
                         singletonList(new AttributeInGrid(attr.getDefaultDisplayForm())),
-                        singletonList(new MetricElement(metric, "Avg shoe size")),
+                        singletonList(new MetricElement(metric, "Avg size")),
                         singletonList(new Filter("(SELECT [" + metric.getUri() + "]) >= 0"))
                 )
         );
 
-        this.report = getObjOrCreateUsingAPI(Report.class, "report.avgshoesize",
+        this.report = getObjOrCreateUsingAPI(Report.class, "report.avgsize",
                 () -> new Report(reportDefinition.getTitle(), reportDefinition)
         );
 
         if (needSynchronize) {
-            logger.info("synchronizing dataset=dataset.person");
-            model.updateProjectModel(project, "SYNCHRONIZE {dataset.person};").get();
+            logger.info("synchronizing dataset={}", DATASET_NAME);
+            model.updateProjectModel(project, "SYNCHRONIZE {dataset.star};").get();
         }
     }
 
@@ -163,5 +169,11 @@ public class MetadataHelper {
         } else {
             return creator.get();
         }
+    }
+
+    public void loadData() {
+        logger.info("Loading dataset={}", DATASET_NAME);
+        datasetService.loadDataset(project, DATASET_NAME, getClass().getResourceAsStream("/stars.csv")).get();
+        logger.info("Loaded dataset={}", DATASET_NAME);
     }
 }
