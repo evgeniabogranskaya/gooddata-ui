@@ -169,7 +169,7 @@
                         </goals>
                         <configuration>
                             <failOnMissing>true</failOnMissing>
-                            <directory>${project.build.directory}/dependencies</directory>
+                            <sourceFile>${project.build.directory}/dependencies</sourceFile>
                             <checkFilesPattern>**/*.jar</checkFilesPattern>
                             <ignoreVendorArchives>false</ignoreVendorArchives>
                             <skipPOMPackaging>true</skipPOMPackaging>
