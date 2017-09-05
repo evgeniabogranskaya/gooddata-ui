@@ -123,7 +123,8 @@ public abstract class AbstractAT {
             }
         }
 
-        fail("message not found");
+        logger.error("{}(): message {} not found", testMethodName, type);
+        fail("message " + type + " not found");
     }
 
     protected String getTestMethodName() {
