@@ -76,7 +76,7 @@ public class ProjectHelper {
         return result.get(props.getPollTimeoutMinutes(), props.getPollTimeoutUnit());
     }
 
-    public void destroy() throws Exception {
+    public void destroy() {
         if (project != null) {
             if (keepProject) {
                 logger.debug("Keeping project_id={}", project.getId());

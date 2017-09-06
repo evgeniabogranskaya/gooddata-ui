@@ -49,7 +49,7 @@ public class AuditLogService extends AbstractService {
         notNull(page, "page");
 
         final String uri = AuditEventDTO.ADMIN_URI_TEMPLATE.expand(domainId).toString();
-        return new MultiPageList<>(page, (p) -> doListAuditEvents(getAuditEventsUri(p, uri)));
+        return new MultiPageList<>(page, p -> doListAuditEvents(getAuditEventsUri(p, uri)));
     }
 
     /**
@@ -76,7 +76,7 @@ public class AuditLogService extends AbstractService {
 
         final String uri = AuditEventDTO.USER_URI_TEMPLATE.expand(account.getId()).toString();
 
-        return new MultiPageList<>(page, (p) -> doListAuditEvents(getAuditEventsUri(p, uri)));
+        return new MultiPageList<>(page, p -> doListAuditEvents(getAuditEventsUri(p, uri)));
     }
 
     private AuditEventsDTO doListAuditEvents(final String uri) {

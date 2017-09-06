@@ -19,6 +19,7 @@ import javax.management.BadBinaryOpValueExpException;
 import javax.management.BadStringOperationException;
 import javax.management.InvalidApplicationException;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.QueryExp;
@@ -44,7 +45,7 @@ public class MonitoringConfig {
     }
 
     @Bean
-    public MetricRegistrator mongoConnectionRegistrator(final MetricRegistry metricRegistry) throws Exception {
+    public MetricRegistrator mongoConnectionRegistrator(final MetricRegistry metricRegistry) throws MalformedObjectNameException {
         final Set<ObjectInstance> objectInstances = ManagementFactory.getPlatformMBeanServer().queryMBeans(null, new QueryExp() {
             @Override
             public boolean apply(final ObjectName name) throws BadStringOperationException, BadBinaryOpValueExpException, BadAttributeValueExpException, InvalidApplicationException {

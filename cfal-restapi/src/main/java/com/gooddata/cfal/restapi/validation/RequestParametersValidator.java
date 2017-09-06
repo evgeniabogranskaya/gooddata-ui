@@ -51,20 +51,17 @@ public class RequestParametersValidator implements Validator {
     @Override
     public void validate(final Object o, final Errors errors) {
         final RequestParameters requestParameters = (RequestParameters) o;
-        if (requestParameters.getOffset() != null) {
-            if (!ObjectId.isValid(requestParameters.getOffset())) {
-                errors.rejectValue(OFFSET_FIELD, ERROR_CODE_INVALID_OFFSET, INVALID_OFFSET_MSG);
-            }
+        if (requestParameters.getOffset() != null && !ObjectId.isValid(requestParameters.getOffset())) {
+            errors.rejectValue(OFFSET_FIELD, ERROR_CODE_INVALID_OFFSET, INVALID_OFFSET_MSG);
         }
 
         if (requestParameters.getOffset() != null && requestParameters.getFrom() != null) {
             errors.rejectValue(OFFSET_FIELD, ERROR_CODE_OFFSET_FROM_SPECIFIED, OFFSET_AND_FROM_SPECIFIED_MSG);
         }
 
-        if (requestParameters.getFrom() != null && requestParameters.getTo() != null) {
-            if (!requestParameters.getFrom().isBefore(requestParameters.getTo())) {
-                errors.rejectValue(FROM_FIELD, ERROR_CODE_INVALID_TIME_INTERVAL, INVALID_TIME_INTERVAL_MSG);
-            }
+        if (requestParameters.getFrom() != null && requestParameters.getTo() != null &&
+                !requestParameters.getFrom().isBefore(requestParameters.getTo())) {
+            errors.rejectValue(FROM_FIELD, ERROR_CODE_INVALID_TIME_INTERVAL, INVALID_TIME_INTERVAL_MSG);
         }
 
         if (requestParameters.getType() != null && !requestParameters.getType().matches(TYPE_REGEXP)) {
