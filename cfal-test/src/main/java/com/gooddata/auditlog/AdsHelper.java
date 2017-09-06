@@ -35,10 +35,10 @@ public class AdsHelper {
     private final TestEnvironmentProperties props;
 
     public static AdsHelper getInstance(final GoodData gd, final TestEnvironmentProperties props) {
-        if (instance != null) {
-            return instance;
+        if (instance == null) {
+            instance = new AdsHelper(gd, props);
         }
-        return instance = new AdsHelper(gd, props);
+        return instance;
     }
 
     private AdsHelper(final GoodData gd, final TestEnvironmentProperties props) {

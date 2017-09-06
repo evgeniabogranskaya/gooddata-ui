@@ -66,10 +66,10 @@ public class MetadataHelper {
     }
 
     public static MetadataHelper getInstance(final GoodData gd, final Project project) {
-        if (instance != null) {
-            return instance;
+        if (instance == null) {
+            instance = new MetadataHelper(gd, project);
         }
-        return instance = new MetadataHelper(gd, project);
+        return instance;
     }
 
     public Report getOrCreateReport() {

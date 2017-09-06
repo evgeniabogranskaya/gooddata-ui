@@ -31,10 +31,10 @@ public class AccountHelper {
     private final TestEnvironmentProperties props;
 
     public static AccountHelper getInstance(final GoodData gd, final TestEnvironmentProperties props) {
-        if (instance != null) {
-            return instance;
+        if (instance == null) {
+            instance = new AccountHelper(gd, props);
         }
-        return instance = new AccountHelper(gd, props);
+        return instance;
     }
 
     private AccountHelper(final GoodData gd, final TestEnvironmentProperties props) {
