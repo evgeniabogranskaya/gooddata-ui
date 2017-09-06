@@ -30,10 +30,10 @@ public class ProjectHelper {
     private Project project;
 
     public static ProjectHelper getInstance(final GoodData gd, final TestEnvironmentProperties props) {
-        if (instance != null) {
-            return instance;
+        if (instance == null) {
+            instance = new ProjectHelper(gd, props);
         }
-        return instance = new ProjectHelper(gd, props);
+        return instance;
     }
 
     public ProjectHelper(final GoodData gd, final TestEnvironmentProperties props) {
