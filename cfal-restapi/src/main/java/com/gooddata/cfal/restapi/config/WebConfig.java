@@ -17,17 +17,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.validation.BindException;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.GDC_URI;
+import java.util.List;
+import java.util.Map;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import static com.gooddata.cfal.restapi.dto.AuditEventDTO.GDC_URI;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonMap;
 
 @Configuration
 //NO @EnableWebMvc, because this is only additional MVC config to spring boot autoconfiguration
@@ -100,10 +102,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public HttpExceptionTranslator httpExceptionTranslator() {
         final HttpExceptionTranslator httpExceptionTranslator = new HttpExceptionTranslator();
         httpExceptionTranslator.setComponent(COMPONENT_NAME);
-        httpExceptionTranslator.setExceptionsToHTTPstatusMapping(new HashMap<Integer, java.util.List<Class<? extends Exception>>>() {{
+        final Map<Integer, List<Class<? extends Exception>>> mapping = singletonMap(
             //map BindException and MethodArgumentTypeMismatchException (these exceptions are thrown due to type conversion error) to bad request status, because by default it is 5xx
-            put(HttpStatus.SC_BAD_REQUEST, Arrays.asList(BindException.class, MethodArgumentTypeMismatchException.class));
-        }});
+            HttpStatus.SC_BAD_REQUEST, asList(BindException.class, MethodArgumentTypeMismatchException.class)
+        );
+        httpExceptionTranslator.setExceptionsToHTTPstatusMapping(mapping);
         return httpExceptionTranslator;
     }
 
