@@ -87,7 +87,7 @@ public class MetadataHelper {
     }
 
     private void createMetadata() {
-        final Dataset dataset = getObjOrRunMAQL(Dataset.class, DATASET_NAME,
+        getObjOrRunMAQL(Dataset.class, DATASET_NAME,
                 "CREATE DATASET {dataset.star} VISUAL(TITLE \"Stars\", DESCRIPTION \"Movie Stars\")"
         );
 

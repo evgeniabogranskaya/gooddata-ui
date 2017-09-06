@@ -110,6 +110,7 @@ public class ConcurrentAuditLogService extends SimpleAuditLogService {
     }
 
     @PreDestroy
+    @Override
     public void destroy() throws Exception {
         try {
             // signal consumer it should stop processing tasks
