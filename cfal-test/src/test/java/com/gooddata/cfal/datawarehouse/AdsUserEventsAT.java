@@ -17,7 +17,7 @@ public class AdsUserEventsAT extends AbstractAdsAT {
     private static final String MESSAGE_TYPE_ADD = "DATAWAREHOUSE_ADD_USER";
     private static final String MESSAGE_TYPE_REMOVE = "DATAWAREHOUSE_REMOVE_USER";
 
-    @BeforeClass(groups = {MESSAGE_TYPE_ADD, MESSAGE_TYPE_REMOVE})
+    @BeforeClass(groups = {MESSAGE_TYPE_ADD, MESSAGE_TYPE_REMOVE}, enabled = false)
     public void addUserToAds() throws Exception {
         final Account anotherAccount = accountHelper.getOrCreateUser();
 
@@ -27,22 +27,22 @@ public class AdsUserEventsAT extends AbstractAdsAT {
         gd.getWarehouseService().removeUserFromWarehouse(warehouseUser).get();
     }
 
-    @Test(groups = MESSAGE_TYPE_ADD)
+    @Test(groups = MESSAGE_TYPE_ADD, enabled = false)
     public void testAddUserEventUserApi() {
         doTestUserApi(eventCheck(MESSAGE_TYPE_ADD), MESSAGE_TYPE_ADD);
     }
 
-    @Test(groups = MESSAGE_TYPE_ADD)
+    @Test(groups = MESSAGE_TYPE_ADD, enabled = false)
     public void testAddUserEventAdminApi() {
         doTestAdminApi(eventCheck(MESSAGE_TYPE_ADD), MESSAGE_TYPE_ADD);
     }
 
-    @Test(groups = MESSAGE_TYPE_REMOVE)
+    @Test(groups = MESSAGE_TYPE_REMOVE, enabled = false)
     public void testRemoveUserEventUserApi() {
         doTestUserApi(eventCheck(MESSAGE_TYPE_REMOVE), MESSAGE_TYPE_REMOVE);
     }
 
-    @Test(groups = MESSAGE_TYPE_REMOVE)
+    @Test(groups = MESSAGE_TYPE_REMOVE, enabled = false)
     public void testRemoveUserEventAdminApi() {
         doTestAdminApi(eventCheck(MESSAGE_TYPE_REMOVE), MESSAGE_TYPE_REMOVE);
     }
