@@ -8,7 +8,6 @@ import com.gooddata.cfal.AbstractAT;
 import com.gooddata.warehouse.Warehouse;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 
@@ -20,14 +19,10 @@ abstract class AbstractAdsAT extends AbstractAT {
     private static JdbcTemplate jdbcTemplate;
 
     protected Predicate<AuditEventDTO> eventCheck(final String eventType) {
-        return (e -> matchEvent(eventType, e));
-    }
-
-    private boolean matchEvent(String eventType, AuditEventDTO e) {
-        return e.getUserLogin().equals(getAccount().getLogin()) &&
-                e.getType().equals(eventType) &&
-                e.getLinks() != null &&
-                getWarehouse().getUri().equals(e.getLinks().get("datawarehouse"));
+        return (e -> e.getUserLogin().equals(getAccount().getLogin()) &&
+                        e.getType().equals(eventType) &&
+                        e.getLinks() != null &&
+                        getWarehouse().getUri().equals(e.getLinks().get("datawarehouse")));
     }
 
     protected JdbcTemplate getJdbcTemplate() {
