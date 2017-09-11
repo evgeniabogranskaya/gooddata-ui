@@ -39,11 +39,13 @@ import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI_TEMPLATE;
 import static com.gooddata.cfal.restapi.util.DateUtils.convertDateTimeToObjectId;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static com.gooddata.cfal.restapi.util.EntityDTOIdMatcher.hasSameIdAs;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -302,6 +304,29 @@ public class AuditEventControllerIT {
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
         assertThat(result.getBody(), contains(hasSameIdAs(event6)));
+    }
+
+    @Test
+    public void testListAuditEventsWithTypeMultiplePages() {
+        final RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setType(TYPE);
+        requestParameters.setLimit(4);
+
+        final String uri = createUriWithParams(requestParameters, adminUri());
+
+        final ResponseEntity<AuditEventsDTO> firstPage = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+
+        assertThat(firstPage, is(notNullValue()));
+        assertThat(firstPage.getBody(), contains(hasSameIdAs(event1), hasSameIdAs(event2), hasSameIdAs(event3), hasSameIdAs(event4)));
+
+        final String secondPageUri = firstPage.getBody().getPaging().getNextUri();
+
+        assertThat(secondPageUri, containsString("type=" + TYPE));
+
+        final ResponseEntity<AuditEventsDTO> secondPage = testRestTemplate.exchange(secondPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+
+        assertThat(secondPage, is(notNullValue()));
+        assertThat(secondPage.getBody(), contains(hasSameIdAs(event5)));
     }
 
     @Test

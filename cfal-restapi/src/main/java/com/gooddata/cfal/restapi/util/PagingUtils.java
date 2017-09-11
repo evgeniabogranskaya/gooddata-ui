@@ -29,6 +29,9 @@ public abstract class PagingUtils {
         }
 
         final UriComponentsBuilder uriWithTimeIntervalParams = constructUriWithTimeIntervalParam(baseUri, requestParameters);
+        if (requestParameters.getType() != null) {
+            uriWithTimeIntervalParams.query("type=" + requestParameters.getType());
+        }
         return new Paging(offsetOfNextPage, new PageRequest(offsetOfNextPage, requestParameters.getSanitizedLimit()).getPageUri(uriWithTimeIntervalParams).toString());
     }
 
