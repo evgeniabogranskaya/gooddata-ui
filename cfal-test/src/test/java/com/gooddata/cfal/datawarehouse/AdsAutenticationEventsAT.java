@@ -49,12 +49,12 @@ public class AdsAutenticationEventsAT extends AbstractAdsAT {
         doTestAdminApi(eventCheck(MESSAGE_TYPE_CONNECTION), MESSAGE_TYPE_CONNECTION);
     }
 
-    @Test(groups = MESSAGE_TYPE_LOGOUT, enabled = false)
+    @Test(groups = MESSAGE_TYPE_LOGOUT)
     public void testDatawarehouseLogoutUserApi() throws Exception {
         doTestUserApi(eventCheck(MESSAGE_TYPE_LOGOUT), MESSAGE_TYPE_LOGOUT);
     }
 
-    @Test(groups = MESSAGE_TYPE_LOGOUT, enabled = false)
+    @Test(groups = MESSAGE_TYPE_LOGOUT)
     public void testDatawarehouseLogoutAdminApi() throws Exception {
         doTestAdminApi(eventCheck(MESSAGE_TYPE_LOGOUT), MESSAGE_TYPE_LOGOUT);
     }
