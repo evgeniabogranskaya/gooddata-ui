@@ -38,9 +38,8 @@ public class WebDAVBasicLoginAT extends AbstractLoginAT {
     }
 
     @BeforeSuite(groups = GROUP)
-    @Override
-    public void logConnectionInfo() throws Exception {
-        logger.info("host={} user={} domain={} path={}", host, props.getUser(), props.getDomain(), path);
+    public void logWebDAVConnectionInfo() throws Exception {
+        logger.info("host={} user={} path={}", host, props.getUser(), path);
     }
 
     private UriPrefixer createUriPrefixer() {
