@@ -1,0 +1,10 @@
+{
+  "type": "$REPLACE_TYPE",
+  "userLogin": "bear@gooddata.com",
+  "userIp": "172.26.60.11",
+  "domainId": "default",
+  "component": "msfrestapi",
+  "occurred": "2017-09-12T11:17:26.742Z",
+  "success": true,
+  "links": "big bad"
+}

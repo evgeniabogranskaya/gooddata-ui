@@ -7,11 +7,13 @@ import com.gooddata.cfal.AbstractMongoAT;
 import com.gooddata.cfal.AuditLogEvent;
 import com.gooddata.cfal.ExtensibleAuditLogEvent;
 import com.gooddata.cfal.RemoteAuditLogFile;
+import org.apache.commons.io.FileUtils;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.File;
 import java.util.UUID;
 
 public class InvalidRecordsAT extends AbstractMongoAT {
@@ -75,6 +77,58 @@ public class InvalidRecordsAT extends AbstractMongoAT {
         query.addCriteria(Criteria.where("__dollar__fo__dot__o").is("bar"));
 
         assertQuery(query, "cfal_test");
+    }
+
+    @Test(groups = {"ssh", "invalid"})
+    public void shouldAddBadOccurredDateToInvalidCollection() throws Exception {
+        final String event = readEventFromResource("auditEventWithBadOccurred.json");
+
+        auditLog.appendString(event);
+
+        assertQuery(query, INVALID_COLLECTION);
+    }
+
+    @Test(groups = {"ssh", "invalid"})
+    public void shouldAddBadSuccessToInvalidCollection() throws Exception {
+        final String event = readEventFromResource("auditEventWithBadSuccess.json");
+
+        auditLog.appendString(event);
+
+        assertQuery(query, INVALID_COLLECTION);
+    }
+
+    @Test(groups = {"ssh", "invalid"})
+    public void shouldAddBadParamsToInvalidCollection() throws Exception {
+        final String event = readEventFromResource("auditEventWithBadParams.json");
+
+        auditLog.appendString(event);
+
+        assertQuery(query, INVALID_COLLECTION);
+    }
+
+    @Test(groups = {"ssh", "invalid"})
+    public void shouldAddBadLinksToInvalidCollection() throws Exception {
+        final String event = readEventFromResource("auditEventWithBadLinks.json");
+
+        auditLog.appendString(event);
+
+        assertQuery(query, INVALID_COLLECTION);
+    }
+
+    /**
+     * read audit event from resource file and removes new lines and replaces $REPLACE_TYPE with <code>uniqueType</code>
+     * @param resourceName to read audit event from
+     * @return
+     * @throws Exception
+     */
+    private String readEventFromResource(final String resourceName) throws Exception {
+        final File file = new File(getClass().getClassLoader().getResource(resourceName).toURI());
+
+        final String auditEventString = FileUtils.readFileToString(file);
+
+        final String auditEventWithReplacedType = auditEventString.replace("$REPLACE_TYPE", uniqueType);
+        final String auditEventWithReplacedNewLines = auditEventWithReplacedType.replaceAll("\n","");
+        return auditEventWithReplacedNewLines + "\n";
     }
 
 }
