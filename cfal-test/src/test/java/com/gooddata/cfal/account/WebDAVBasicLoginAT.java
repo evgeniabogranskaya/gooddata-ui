@@ -16,6 +16,8 @@ import org.testng.annotations.Test;
 import java.net.URI;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.appendIfMissing;
+import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -34,7 +36,8 @@ public class WebDAVBasicLoginAT extends AbstractLoginAT {
         final UriPrefixer prefixer = createUriPrefixer();
         final URI uri = prefixer.getUriPrefix();
         this.host = uri.getHost();
-        this.path = uri.toString();
+        final String path = uri.toString();
+        this.path = appendIfMissing(path, "/");
     }
 
     @BeforeSuite(groups = GROUP)
