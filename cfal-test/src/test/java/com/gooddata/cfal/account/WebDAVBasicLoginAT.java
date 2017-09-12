@@ -23,8 +23,9 @@ import static org.testng.Assert.fail;
 
 public class WebDAVBasicLoginAT extends AbstractLoginAT {
 
-    private static final String BASIC = "BASIC";
-    private static final String WEBDAV = "WEBDAV";
+    private static final String GROUP = "WEBDAV";
+    private static final String LOGIN_TYPE = "BASIC";
+    private static final String COMPONENT = "WEBDAV";
 
     private final String path;
     private final String host;
@@ -36,7 +37,7 @@ public class WebDAVBasicLoginAT extends AbstractLoginAT {
         this.path = uri.toString();
     }
 
-    @BeforeSuite(groups = MESSAGE_TYPE)
+    @BeforeSuite(groups = GROUP)
     @Override
     public void logConnectionInfo() throws Exception {
         logger.info("host={} user={} domain={} path={}", host, props.getUser(), props.getDomain(), path);
@@ -55,14 +56,14 @@ public class WebDAVBasicLoginAT extends AbstractLoginAT {
         return sardine;
     }
 
-    @BeforeClass(groups = MESSAGE_TYPE)
+    @BeforeClass(groups = GROUP)
     public void shouldLoginUsingWebDAV() throws Exception {
         final Sardine sardine = createSardine(props.getPass());
         final List<DavResource> list = sardine.list(path);
         assertThat(list, is(notNullValue()));
     }
 
-    @BeforeClass(groups = MESSAGE_TYPE)
+    @BeforeClass(groups = GROUP)
     public void shouldFailLoginUsingWebDAV() throws Exception {
         final Sardine sardine = createSardine("certainly invalid password");
         try {
@@ -73,23 +74,23 @@ public class WebDAVBasicLoginAT extends AbstractLoginAT {
         }
     }
 
-    @Test(groups = MESSAGE_TYPE)
+    @Test(groups = GROUP)
     public void testWebDAVMessageUserApi() throws Exception {
-        doTestUserApi(eventCheck(true, WEBDAV, BASIC), MESSAGE_TYPE);
+        doTestUserApi(eventCheck(true, COMPONENT, LOGIN_TYPE), MESSAGE_TYPE);
     }
 
-    @Test(groups = MESSAGE_TYPE)
+    @Test(groups = GROUP)
     public void testWebDAVMessageAdminApi() throws Exception {
-        doTestAdminApi(eventCheck(true, WEBDAV, BASIC), MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(true, COMPONENT, LOGIN_TYPE), MESSAGE_TYPE);
     }
 
-    @Test(groups = MESSAGE_TYPE)
+    @Test(groups = GROUP)
     public void testWebDAVMessageUserApiFail() throws Exception {
-        doTestUserApi(eventCheck(false, WEBDAV, BASIC), MESSAGE_TYPE);
+        doTestUserApi(eventCheck(false, COMPONENT, LOGIN_TYPE), MESSAGE_TYPE);
     }
 
-    @Test(groups = MESSAGE_TYPE)
+    @Test(groups = GROUP)
     public void testWebDAVMessageAdminApiFail() throws Exception {
-        doTestAdminApi(eventCheck(false, WEBDAV, BASIC), MESSAGE_TYPE);
+        doTestAdminApi(eventCheck(false, COMPONENT, LOGIN_TYPE), MESSAGE_TYPE);
     }
 }
