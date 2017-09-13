@@ -1,0 +1,13 @@
+{
+  "type": "$REPLACE_TYPE",
+  "userLogin": "bear@gooddata.com",
+  "userIp": "172.26.60.11",
+  "domainId": "default",
+  "component": "webapp",
+  "occurred": "big bad",
+  "success": true,
+  "params": {
+    "component": "WEBAPP",
+    "loginType": "USERNAME_PASSWORD"
+  }
+}

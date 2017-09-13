@@ -23,8 +23,16 @@ public class RemoteAuditLogFile {
         this.ssh = notNull(ssh, "ssh");
     }
 
+    public CommandResult appendString(final String string) {
+        return doAppend(string);
+    }
+
     public CommandResult appendEvent(final AuditLogEvent event) {
         final String string = asString(event);
+        return doAppend(string);
+    }
+
+    private CommandResult doAppend(final String string) {
         // have to use tee here because sudo is not able to append to file directly
         // eg simple "sudo echo aaa >> /foo" doesn't work
         final CommandResult result = ssh.execCmd(
