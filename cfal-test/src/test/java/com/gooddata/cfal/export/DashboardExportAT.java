@@ -3,8 +3,8 @@
  */
 package com.gooddata.cfal.export;
 
+import com.gooddata.auditevent.AuditEvent;
 import com.gooddata.cfal.AbstractAT;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.md.ProjectDashboard;
 import com.gooddata.md.ProjectDashboard.Tab;
 import com.gooddata.project.Project;
@@ -41,7 +41,7 @@ public class DashboardExportAT extends AbstractAT {
         doTestAdminApi(eventCheck(), MESSAGE_TYPE);
     }
 
-    private Predicate<AuditEventDTO> eventCheck() {
+    private Predicate<AuditEvent> eventCheck() {
         return (e ->
                 e.getUserLogin().equals(getAccount().getLogin()) &&
                         e.getType().equals(MESSAGE_TYPE) &&

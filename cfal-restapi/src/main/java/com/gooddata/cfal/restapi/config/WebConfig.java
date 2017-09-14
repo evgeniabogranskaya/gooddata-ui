@@ -27,7 +27,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import java.util.List;
 import java.util.Map;
 
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.GDC_URI;
+import static com.gooddata.auditevent.AuditEvent.GDC_URI;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 

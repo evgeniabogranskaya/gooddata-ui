@@ -5,7 +5,7 @@ package com.gooddata.cfal;
 
 import com.gooddata.GoodDataRestException;
 import com.gooddata.account.Account;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
+import com.gooddata.auditevent.AuditEvent;
 import com.gooddata.collections.PageableList;
 import org.apache.http.HttpStatus;
 import org.testng.annotations.Test;
@@ -18,7 +18,7 @@ public class SimpleAT extends AbstractAT {
 
     @Test
     public void shouldReachDomainResource() throws Exception {
-        final PageableList<AuditEventDTO> events = service.listAuditEvents(props.getDomain());
+        final PageableList<AuditEvent> events = service.listAuditEvents(props.getDomain());
         assertThat(events, is(notNullValue()));
     }
 
@@ -36,7 +36,7 @@ public class SimpleAT extends AbstractAT {
     public void shouldReachUserResource() throws Exception {
         final Account account = gd.getAccountService().getCurrent();
 
-        final PageableList<AuditEventDTO> events = service.listAuditEvents(account);
+        final PageableList<AuditEvent> events = service.listAuditEvents(account);
         assertThat(events, is(notNullValue()));
     }
 }

@@ -3,9 +3,9 @@
  */
 package com.gooddata.cfal.export;
 
+import com.gooddata.auditevent.AuditEvent;
 import com.gooddata.auditlog.MetadataHelper;
 import com.gooddata.cfal.AbstractAT;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
 import com.gooddata.export.ExportFormat;
 import com.gooddata.export.NoDataExportException;
 import com.gooddata.md.report.Report;
@@ -83,7 +83,7 @@ public class ExportAT extends AbstractAT {
         doTestAdminApi(eventCheck(RAW_CSV_FORMAT, true), MESSAGE_TYPE);
     }
 
-    protected Predicate<AuditEventDTO> eventCheck(final String format, final boolean success) {
+    protected Predicate<AuditEvent> eventCheck(final String format, final boolean success) {
         return (e ->
                 e.getUserLogin().equals(getAccount().getLogin()) &&
                         e.getType().equals(MESSAGE_TYPE) &&

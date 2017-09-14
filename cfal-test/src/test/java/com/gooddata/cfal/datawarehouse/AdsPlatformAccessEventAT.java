@@ -3,7 +3,7 @@
  */
 package com.gooddata.cfal.datawarehouse;
 
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
+import com.gooddata.auditevent.AuditEvent;
 import org.testng.annotations.Test;
 
 import java.util.function.Predicate;
@@ -29,7 +29,7 @@ public class AdsPlatformAccessEventAT extends AbstractAdsAT {
     }
 
     @Override
-    protected Predicate<AuditEventDTO> eventCheck(final String eventType) {
+    protected Predicate<AuditEvent> eventCheck(final String eventType) {
         return (e -> e.getUserLogin().equals(getAccount().getLogin()) &&
                 e.getType().equals(eventType) &&
                 e.getParams() != null &&

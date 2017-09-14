@@ -9,7 +9,7 @@ gdc-commons-http-client-2.1.*.jar
 gdc-commons-json-1.1.*.jar
 gdc-lang-4.1.*.jar
 gdc-selftest-1.6.*.jar
-gooddata-java-2.14.*.jar
+gooddata-rest-common-1.0.*.jar
 jackson-annotations-2.8.0.jar
 jackson-core-2.8.*.jar
 jackson-core-asl-1.9.12.jar
@@ -20,7 +20,6 @@ metrics-core-3.1.4.jar
 metrics-graphite-3.1.4.jar
 monitoring-metrics-3.3.*.jar
 slf4j-api-1.7.*.jar
-spring-aop-4.3.*.RELEASE.jar
 spring-beans-4.3.*.RELEASE.jar
 spring-boot-1.5.4.RELEASE.jar
 spring-boot-autoconfigure-1.5.4.RELEASE.jar

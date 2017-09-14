@@ -4,7 +4,7 @@
 package com.gooddata.cfal.project;
 
 import com.gooddata.cfal.AbstractAT;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
+import com.gooddata.auditevent.AuditEvent;
 import com.gooddata.project.Invitation;
 import com.gooddata.project.Project;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -35,7 +35,7 @@ public class ProjectAT extends AbstractAT {
         doTestAdminApi(eventCheck(MESSAGE_TYPE), MESSAGE_TYPE);
     }
 
-    private Predicate<AuditEventDTO> eventCheck(final String messageType) {
+    private Predicate<AuditEvent> eventCheck(final String messageType) {
         final Project project = projectHelper.getOrCreateProject();
         return (e ->
                         getAccount().getLogin().equals(e.getUserLogin()) &&

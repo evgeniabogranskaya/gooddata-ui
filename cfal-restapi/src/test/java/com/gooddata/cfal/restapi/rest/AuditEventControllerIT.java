@@ -8,9 +8,9 @@ import com.gooddata.c4.domain.DomainService;
 import com.gooddata.c4.setting.C4SettingEntry;
 import com.gooddata.c4.user.C4User;
 import com.gooddata.c4.user.UserService;
-import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
-import com.gooddata.cfal.restapi.dto.RequestParameters;
-import com.gooddata.cfal.restapi.model.AuditEvent;
+import com.gooddata.auditevent.AuditEvents;
+import com.gooddata.auditevent.AuditEventPageRequest;
+import com.gooddata.cfal.restapi.model.AuditEventEntity;
 import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import com.gooddata.exception.servlet.ErrorStructure;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -34,8 +34,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI_TEMPLATE;
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI_TEMPLATE;
+import static com.gooddata.auditevent.AuditEvent.ADMIN_URI_TEMPLATE;
+import static com.gooddata.auditevent.AuditEvent.USER_URI_TEMPLATE;
 import static com.gooddata.cfal.restapi.util.DateUtils.convertDateTimeToObjectId;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static com.gooddata.cfal.restapi.util.EntityDTOIdMatcher.hasSameIdAs;
@@ -98,12 +98,12 @@ public class AuditEventControllerIT {
     @Autowired
     private AuditLogEventRepository auditLogEventRepository;
 
-    private AuditEvent event1 = new AuditEvent(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN, USER1_LOGIN, date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
-    private AuditEvent event2 = new AuditEvent(convertDateTimeToObjectId(date("1995-03-09")), DOMAIN, USER2_LOGIN, date("1995-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
-    private AuditEvent event3 = new AuditEvent(convertDateTimeToObjectId(date("1996-03-09")), DOMAIN, USER1_LOGIN, date("1996-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
-    private AuditEvent event4 = new AuditEvent(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN, USER1_LOGIN, date("2001-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
-    private AuditEvent event5 = new AuditEvent(convertDateTimeToObjectId(date("2016-03-09")), DOMAIN, USER2_LOGIN, date("2016-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
-    private AuditEvent event6 = new AuditEvent(convertDateTimeToObjectId(date("2016-03-09")), DOMAIN, USER2_LOGIN, date("2016-03-09"), IP, SUCCESS, TYPE2, EMPTY_PARAMS, EMPTY_LINKS);
+    private AuditEventEntity event1 = new AuditEventEntity(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN, USER1_LOGIN, date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+    private AuditEventEntity event2 = new AuditEventEntity(convertDateTimeToObjectId(date("1995-03-09")), DOMAIN, USER2_LOGIN, date("1995-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+    private AuditEventEntity event3 = new AuditEventEntity(convertDateTimeToObjectId(date("1996-03-09")), DOMAIN, USER1_LOGIN, date("1996-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+    private AuditEventEntity event4 = new AuditEventEntity(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN, USER1_LOGIN, date("2001-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+    private AuditEventEntity event5 = new AuditEventEntity(convertDateTimeToObjectId(date("2016-03-09")), DOMAIN, USER2_LOGIN, date("2016-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+    private AuditEventEntity event6 = new AuditEventEntity(convertDateTimeToObjectId(date("2016-03-09")), DOMAIN, USER2_LOGIN, date("2016-03-09"), IP, SUCCESS, TYPE2, EMPTY_PARAMS, EMPTY_LINKS);
 
     private C4User c4User1;
     private C4User c4User2;
@@ -145,7 +145,7 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEvents() {
-        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(adminUri(), HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> result = testRestTemplate.exchange(adminUri(), HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
@@ -155,12 +155,12 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsMultiplePages() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setLimit(2);
 
         String firstPageUri = createUriWithParams(requestParameters, adminUri());
 
-        ResponseEntity<AuditEventsDTO> firstPage = testRestTemplate.exchange(firstPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> firstPage = testRestTemplate.exchange(firstPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage.getStatusCode(), is(HttpStatus.OK));
@@ -168,7 +168,7 @@ public class AuditEventControllerIT {
         String secondPageUri = firstPage.getBody().getPaging().getNextUri();
         assertThat(secondPageUri, notNullValue());
 
-        ResponseEntity<AuditEventsDTO> secondPage = testRestTemplate.exchange(secondPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> secondPage = testRestTemplate.exchange(secondPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage.getStatusCode(), is(HttpStatus.OK));
@@ -177,7 +177,7 @@ public class AuditEventControllerIT {
         String thirdPageUri = secondPage.getBody().getPaging().getNextUri();
         assertThat(thirdPageUri, notNullValue());
 
-        ResponseEntity<AuditEventsDTO> thirdPage = testRestTemplate.exchange(thirdPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> thirdPage = testRestTemplate.exchange(thirdPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(thirdPage, is(notNullValue()));
         assertThat(thirdPage.getStatusCode(), is(HttpStatus.OK));
@@ -200,7 +200,7 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsInvalidOffset() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setLimit(2);
         requestParameters.setOffset("incorrect offset");
 
@@ -213,7 +213,7 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsInvalidType() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setType("_x");
 
         String uri = createUriWithParams(requestParameters, adminUri());
@@ -225,7 +225,7 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsForUserInvalidType() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setType("_x");
 
         String uri = createUriWithParams(requestParameters, userUri(USER1_ID));
@@ -237,7 +237,7 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsForUser() {
-        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(userUri(USER1_ID), HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> result = testRestTemplate.exchange(userUri(USER1_ID), HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
@@ -246,12 +246,12 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsForUserMultiplePages() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setLimit(1);
 
         String firstPageUri = createUriWithParams(requestParameters, userUri(USER1_ID));
 
-        ResponseEntity<AuditEventsDTO> firstPage = testRestTemplate.exchange(firstPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> firstPage = testRestTemplate.exchange(firstPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage.getStatusCode(), is(HttpStatus.OK));
@@ -259,7 +259,7 @@ public class AuditEventControllerIT {
         String secondPageUri = firstPage.getBody().getPaging().getNextUri();
         assertThat(secondPageUri, notNullValue());
 
-        ResponseEntity<AuditEventsDTO> secondPage = testRestTemplate.exchange(secondPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> secondPage = testRestTemplate.exchange(secondPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage.getStatusCode(), is(HttpStatus.OK));
@@ -268,7 +268,7 @@ public class AuditEventControllerIT {
         String thirdPageUri = secondPage.getBody().getPaging().getNextUri();
         assertThat(thirdPageUri, notNullValue());
 
-        ResponseEntity<AuditEventsDTO> thirdPage = testRestTemplate.exchange(thirdPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> thirdPage = testRestTemplate.exchange(thirdPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(thirdPage, is(notNullValue()));
         assertThat(thirdPage.getStatusCode(), is(HttpStatus.OK));
@@ -280,12 +280,12 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsWithType() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setType(TYPE2);
 
         String uri = createUriWithParams(requestParameters, adminUri());
 
-        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
@@ -294,12 +294,12 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsForUserWithType() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setType(TYPE2);
 
         String uri = createUriWithParams(requestParameters, userUri(USER2_ID));
 
-        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER2_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER2_ID), AuditEvents.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
@@ -308,13 +308,13 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsWithTypeMultiplePages() {
-        final RequestParameters requestParameters = new RequestParameters();
+        final AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setType(TYPE);
         requestParameters.setLimit(4);
 
         final String uri = createUriWithParams(requestParameters, adminUri());
 
-        final ResponseEntity<AuditEventsDTO> firstPage = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        final ResponseEntity<AuditEvents> firstPage = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage.getBody(), contains(hasSameIdAs(event1), hasSameIdAs(event2), hasSameIdAs(event3), hasSameIdAs(event4)));
@@ -323,7 +323,7 @@ public class AuditEventControllerIT {
 
         assertThat(secondPageUri, containsString("type=" + TYPE));
 
-        final ResponseEntity<AuditEventsDTO> secondPage = testRestTemplate.exchange(secondPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        final ResponseEntity<AuditEvents> secondPage = testRestTemplate.exchange(secondPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage.getBody(), contains(hasSameIdAs(event5)));
@@ -331,12 +331,12 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsWithTimeIntervalFrom() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setFrom(TIME_2000);
 
         String uri = createUriWithParams(requestParameters, adminUri());
 
-        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
@@ -345,12 +345,12 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsWithTimeIntervalTo() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setTo(TIME_2000);
 
         String uri = createUriWithParams(requestParameters, adminUri());
 
-        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
@@ -359,13 +359,13 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsWithTimeIntervalFromAndTo() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setFrom(TIME_1995);
         requestParameters.setTo(TIME_2000);
 
         String uri = createUriWithParams(requestParameters, adminUri());
 
-        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
@@ -374,12 +374,12 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsForUserWithTimeIntervalFrom() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setFrom(TIME_1995);
 
         String uri = createUriWithParams(requestParameters, userUri(USER1_ID));
 
-        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
@@ -388,12 +388,12 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsForUserWithTimeIntervalTo() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setTo(TIME_1995);
 
         String uri = createUriWithParams(requestParameters, userUri(USER1_ID));
 
-        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
@@ -402,13 +402,13 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsForUserWithTimeIntervalFromAndTo() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setFrom(TIME_1990);
         requestParameters.setTo(TIME_2000);
 
         String uri = createUriWithParams(requestParameters, userUri(USER1_ID));
 
-        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> result = testRestTemplate.exchange(uri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
@@ -417,14 +417,14 @@ public class AuditEventControllerIT {
 
     @Test
     public void testListAuditEventsMultiplePagesWithTimeIntervalFromAndTo() {
-        RequestParameters requestParameters = new RequestParameters();
+        AuditEventPageRequest requestParameters = new AuditEventPageRequest();
         requestParameters.setFrom(TIME_1990);
         requestParameters.setTo(TIME_2000);
         requestParameters.setLimit(2);
 
         String firstPageUri = createUriWithParams(requestParameters, adminUri());
 
-        ResponseEntity<AuditEventsDTO> firstPage = testRestTemplate.exchange(firstPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> firstPage = testRestTemplate.exchange(firstPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage.getStatusCode(), is(HttpStatus.OK));
@@ -433,7 +433,7 @@ public class AuditEventControllerIT {
         String secondPageUri = firstPage.getBody().getPaging().getNextUri();
         assertThat(secondPageUri, is(notNullValue()));
 
-        ResponseEntity<AuditEventsDTO> secondPage = testRestTemplate.exchange(secondPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> secondPage = testRestTemplate.exchange(secondPageUri, HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage.getStatusCode(), is(HttpStatus.OK));
@@ -450,7 +450,7 @@ public class AuditEventControllerIT {
 
     @Test
     public void testAdminAccessingUserAPIforDifferentUser() {
-        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(userUri(USER2_ID), HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> result = testRestTemplate.exchange(userUri(USER2_ID), HttpMethod.GET, requestWithGdcHeader(USER1_ID), AuditEvents.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
@@ -459,7 +459,7 @@ public class AuditEventControllerIT {
 
     @Test
     public void testUserAccessingUserAPI() {
-        ResponseEntity<AuditEventsDTO> result = testRestTemplate.exchange(userUri(USER2_ID), HttpMethod.GET, requestWithGdcHeader(USER2_ID), AuditEventsDTO.class);
+        ResponseEntity<AuditEvents> result = testRestTemplate.exchange(userUri(USER2_ID), HttpMethod.GET, requestWithGdcHeader(USER2_ID), AuditEvents.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
@@ -498,7 +498,7 @@ public class AuditEventControllerIT {
         assertThat(result.getStatusCode(), is(not(HttpStatus.UNAUTHORIZED)));
     }
 
-    private HttpEntity<AuditEventsDTO> requestWithGdcHeader(final String userId) {
+    private HttpEntity<AuditEvents> requestWithGdcHeader(final String userId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-GDC-PUBLIC-USER-ID", userId);
         return new HttpEntity<>(headers);
@@ -518,7 +518,7 @@ public class AuditEventControllerIT {
         return USER_URI_TEMPLATE.expand(userId).toString();
     }
 
-    private String createUriWithParams(final RequestParameters requestParameters, final String uri) {
+    private String createUriWithParams(final AuditEventPageRequest requestParameters, final String uri) {
         return requestParameters.updateWithPageParams(UriComponentsBuilder.fromUriString(uri)).build().toUriString();
     }
 }

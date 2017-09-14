@@ -4,7 +4,7 @@
 package com.gooddata.cfal.account;
 
 import com.gooddata.account.Account;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
+import com.gooddata.auditevent.AuditEvent;
 import com.gooddata.cfal.AbstractAT;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -69,7 +69,7 @@ public class AccountChangeAT extends AbstractAT {
         doTestAdminApi(eventCheck(USER_IP_WHITELIST_CHANGE), USER_IP_WHITELIST_CHANGE);
     }
 
-    private Predicate<AuditEventDTO> eventCheck(final String messageType) {
+    private Predicate<AuditEvent> eventCheck(final String messageType) {
         return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(messageType));
     }
 }

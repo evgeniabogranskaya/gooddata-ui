@@ -5,9 +5,9 @@ package com.gooddata.cfal.restapi.rest;
 
 import com.gooddata.cfal.restapi.config.MonitoringTestConfig;
 import com.gooddata.cfal.restapi.config.WebConfig;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
-import com.gooddata.cfal.restapi.dto.RequestParameters;
+import com.gooddata.auditevent.AuditEvent;
+import com.gooddata.auditevent.AuditEvents;
+import com.gooddata.auditevent.AuditEventPageRequest;
 import com.gooddata.cfal.restapi.dto.UserInfo;
 import com.gooddata.cfal.restapi.exception.AuditLogNotEnabledException;
 import com.gooddata.cfal.restapi.exception.DomainNotFoundException;
@@ -38,12 +38,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.gooddata.cfal.restapi.config.WebConfig.COMPONENT_NAME;
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.ADMIN_URI_TEMPLATE;
-import static com.gooddata.cfal.restapi.dto.AuditEventDTO.USER_URI_TEMPLATE;
-import static com.gooddata.cfal.restapi.validation.RequestParametersValidator.INVALID_OFFSET_MSG;
-import static com.gooddata.cfal.restapi.validation.RequestParametersValidator.INVALID_TIME_INTERVAL_MSG;
-import static com.gooddata.cfal.restapi.validation.RequestParametersValidator.NOT_POSITIVE_LIMIT_MSG;
-import static com.gooddata.cfal.restapi.validation.RequestParametersValidator.OFFSET_AND_FROM_SPECIFIED_MSG;
+import static com.gooddata.auditevent.AuditEvent.ADMIN_URI_TEMPLATE;
+import static com.gooddata.auditevent.AuditEvent.USER_URI_TEMPLATE;
+import static com.gooddata.cfal.restapi.validation.AuditEventPageRequestValidator.INVALID_OFFSET_MSG;
+import static com.gooddata.cfal.restapi.validation.AuditEventPageRequestValidator.INVALID_TIME_INTERVAL_MSG;
+import static com.gooddata.cfal.restapi.validation.AuditEventPageRequestValidator.NOT_POSITIVE_LIMIT_MSG;
+import static com.gooddata.cfal.restapi.validation.AuditEventPageRequestValidator.OFFSET_AND_FROM_SPECIFIED_MSG;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -111,33 +111,33 @@ public class AuditEventControllerTest {
     private static final DateTime LOWER_BOUND = date("1990-01-01");
     private static final DateTime UPPER_BOUND = date("2005-01-01");
 
-    private final AuditEventsDTO domainEvents = new AuditEventsDTO(
-            Arrays.asList(new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS),
-                    new AuditEventDTO("456", USER2_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS)),
-            new Paging(adminUri() + "?offset=456&limit=" + RequestParameters.DEFAULT_LIMIT),
+    private final AuditEvents domainEvents = new AuditEvents(
+            Arrays.asList(new AuditEvent("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS),
+                    new AuditEvent("456", USER2_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS)),
+            new Paging(adminUri() + "?offset=456&limit=" + AuditEventPageRequest.DEFAULT_LIMIT),
             new HashMap<String, String>() {{
                 put("self", adminUri());
             }});
 
-    private final AuditEventsDTO eventsForAdminUser = new AuditEventsDTO(
-            Arrays.asList(new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS),
-                    new AuditEventDTO("456", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS)),
-            new Paging(userUri(ADMIN_USER_ID) + "?offset=456&limit=" + RequestParameters.DEFAULT_LIMIT),
+    private final AuditEvents eventsForAdminUser = new AuditEvents(
+            Arrays.asList(new AuditEvent("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS),
+                    new AuditEvent("456", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS)),
+            new Paging(userUri(ADMIN_USER_ID) + "?offset=456&limit=" + AuditEventPageRequest.DEFAULT_LIMIT),
             new HashMap<String, String>() {{
                 put("self", userUri(ADMIN_USER_ID));
             }});
 
-    private final AuditEventsDTO eventsForUser = new AuditEventsDTO(
-            Arrays.asList(new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS),
-                    new AuditEventDTO("456", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS)),
-            new Paging(userUri(NOT_ADMIN_USER_ID) + "?offset=456&limit=" + RequestParameters.DEFAULT_LIMIT),
+    private final AuditEvents eventsForUser = new AuditEvents(
+            Arrays.asList(new AuditEvent("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS),
+                    new AuditEvent("456", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS)),
+            new Paging(userUri(NOT_ADMIN_USER_ID) + "?offset=456&limit=" + AuditEventPageRequest.DEFAULT_LIMIT),
             new HashMap<String, String>() {{
                 put("self", userUri(NOT_ADMIN_USER_ID));
             }});
 
-    private final AuditEventsDTO domainEventsWithTimeInterval = new AuditEventsDTO(
-            Arrays.asList(new AuditEventDTO("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS),
-                    new AuditEventDTO("456", USER2_LOGIN, date("1995-03-09"), date("1995-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS)),
+    private final AuditEvents domainEventsWithTimeInterval = new AuditEvents(
+            Arrays.asList(new AuditEvent("123", USER1_LOGIN, date("1993-03-09"), date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS),
+                    new AuditEvent("456", USER2_LOGIN, date("1995-03-09"), date("1995-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS)),
             new Paging(adminUri() + "?to=" + UPPER_BOUND + "&offset=456&limit=100"),
             new HashMap<String, String>() {{
                 put("self", adminUri());
@@ -160,25 +160,25 @@ public class AuditEventControllerTest {
 
         doThrow(new AuditLogNotEnabledException("")).when(userDomainService).ensureFeatureEnabled(FF_NOT_ENABLED_USER_ID);
 
-        RequestParameters pageRequestWithBadOffset = new RequestParameters();
+        AuditEventPageRequest pageRequestWithBadOffset = new AuditEventPageRequest();
         pageRequestWithBadOffset.setOffset(BAD_OFFSET);
 
-        RequestParameters pageRequestDefault = new RequestParameters();
+        AuditEventPageRequest pageRequestDefault = new AuditEventPageRequest();
 
         when(auditEventService.findByDomain(eq(DOMAIN), eq(pageRequestDefault))).thenReturn(domainEvents);
 
         when(auditEventService.findByUser(eq(adminUserInfo), eq(pageRequestDefault))).thenReturn(eventsForAdminUser);
         when(auditEventService.findByUser(eq(notAdminUserInfo), eq(pageRequestDefault))).thenReturn(eventsForUser);
 
-        RequestParameters boundedRequestParameters = new RequestParameters();
+        AuditEventPageRequest boundedRequestParameters = new AuditEventPageRequest();
         boundedRequestParameters.setFrom(LOWER_BOUND);
         boundedRequestParameters.setTo(UPPER_BOUND);
         when(auditEventService.findByDomain(eq(DOMAIN), eq(boundedRequestParameters))).thenReturn(domainEventsWithTimeInterval);
 
-        RequestParameters lowerBoundRequestParameters = new RequestParameters();
+        AuditEventPageRequest lowerBoundRequestParameters = new AuditEventPageRequest();
         lowerBoundRequestParameters.setFrom(LOWER_BOUND);
 
-        RequestParameters pageRequestWithOffset = new RequestParameters();
+        AuditEventPageRequest pageRequestWithOffset = new AuditEventPageRequest();
         pageRequestWithOffset.setOffset(OFFSET.toString());
         pageRequestWithOffset.setFrom(LOWER_BOUND);
     }
@@ -304,9 +304,9 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, ADMIN_USER_ID))
                 .andExpect(status().isOk())
         ;
-        final ArgumentCaptor<RequestParameters> captor = ArgumentCaptor.forClass(RequestParameters.class);
+        final ArgumentCaptor<AuditEventPageRequest> captor = ArgumentCaptor.forClass(AuditEventPageRequest.class);
         verify(auditEventService).findByDomain(eq("default"), captor.capture());
-        final RequestParameters params = captor.getValue();
+        final AuditEventPageRequest params = captor.getValue();
         assertThat(params.getLimit(), is(10000));
     }
 
@@ -376,9 +376,9 @@ public class AuditEventControllerTest {
                 .header(X_PUBLIC_USER_ID, ADMIN_USER_ID))
                 .andExpect(status().isOk())
         ;
-        final ArgumentCaptor<RequestParameters> captor = ArgumentCaptor.forClass(RequestParameters.class);
+        final ArgumentCaptor<AuditEventPageRequest> captor = ArgumentCaptor.forClass(AuditEventPageRequest.class);
         verify(auditEventService).findByUser(any(), captor.capture());
-        final RequestParameters params = captor.getValue();
+        final AuditEventPageRequest params = captor.getValue();
         assertThat(params.getLimit(), is(10000));
     }
 

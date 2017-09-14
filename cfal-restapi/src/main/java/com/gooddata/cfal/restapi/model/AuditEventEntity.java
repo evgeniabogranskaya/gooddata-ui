@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Audit event entity
  */
-public class AuditEvent {
+public class AuditEventEntity {
 
     @Id
     private ObjectId id;
@@ -33,29 +33,29 @@ public class AuditEvent {
 
     private Map<String, String> links;
 
-    public AuditEvent(final String domainId,
-                      final String userLogin,
-                      final DateTime occurred,
-                      final String userIp,
-                      final boolean success,
-                      final String type,
-                      final Map<String, String> params,
-                      final Map<String, String> links) {
+    public AuditEventEntity(final String domainId,
+                            final String userLogin,
+                            final DateTime occurred,
+                            final String userIp,
+                            final boolean success,
+                            final String type,
+                            final Map<String, String> params,
+                            final Map<String, String> links) {
         this(null, domainId, userLogin, occurred, userIp, success, type, params, links);
     }
 
     /**
      * Constructor for testing purposes
      */
-    public AuditEvent(final ObjectId id,
-                      final String domainId,
-                      final String userLogin,
-                      final DateTime occurred,
-                      final String userIp,
-                      final boolean success,
-                      final String type,
-                      final Map<String, String> params,
-                      final Map<String, String> links) {
+    public AuditEventEntity(final ObjectId id,
+                            final String domainId,
+                            final String userLogin,
+                            final DateTime occurred,
+                            final String userIp,
+                            final boolean success,
+                            final String type,
+                            final Map<String, String> params,
+                            final Map<String, String> links) {
         this.id = id;
         this.domainId = domainId;
         this.userLogin = userLogin;
@@ -67,7 +67,7 @@ public class AuditEvent {
         this.links = links;
     }
 
-    AuditEvent() {
+    AuditEventEntity() {
     }
 
     public ObjectId getId() {

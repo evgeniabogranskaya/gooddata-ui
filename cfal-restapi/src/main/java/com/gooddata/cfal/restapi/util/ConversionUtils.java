@@ -8,10 +8,10 @@ import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.Validate.notNull;
 
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
-import com.gooddata.cfal.restapi.dto.AuditEventsDTO;
-import com.gooddata.cfal.restapi.dto.RequestParameters;
-import com.gooddata.cfal.restapi.model.AuditEvent;
+import com.gooddata.auditevent.AuditEvent;
+import com.gooddata.auditevent.AuditEvents;
+import com.gooddata.auditevent.AuditEventPageRequest;
+import com.gooddata.cfal.restapi.model.AuditEventEntity;
 import com.gooddata.collections.Paging;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -30,7 +30,7 @@ public abstract class ConversionUtils {
      * @param requestParameters for next link construction
      * @return AuditEventsDTO
      */
-    public static AuditEventsDTO createAuditEventsDTO(final String baseUri, final List<AuditEvent> list, final RequestParameters requestParameters) {
+    public static AuditEvents createAuditEventsDTO(final String baseUri, final List<AuditEventEntity> list, final AuditEventPageRequest requestParameters) {
         notNull(list, "list cannot be null");
         notNull(baseUri, "baseUri cannot be null");
         notNull(requestParameters, "requestParameters cannot be null");
@@ -38,27 +38,27 @@ public abstract class ConversionUtils {
         //indicator whether there is next page, if false next uri is not generated in Paging
         boolean hasNextPage = list.size() > requestParameters.getSanitizedLimit();
 
-        final List<AuditEvent> auditEventsOnPage = list.size() <= requestParameters.getSanitizedLimit()? list : list.subList(0, requestParameters.getSanitizedLimit());
+        final List<AuditEventEntity> auditEventsOnPage = list.size() <= requestParameters.getSanitizedLimit()? list : list.subList(0, requestParameters.getSanitizedLimit());
 
         final String offset = getOffset(auditEventsOnPage, hasNextPage);
 
         Paging paging = createPaging(baseUri, requestParameters, offset);
 
-        final List<AuditEventDTO> listDTOs = auditEventsOnPage
+        final List<AuditEvent> listDTOs = auditEventsOnPage
                 .stream()
                 .map(ConversionUtils::createAuditEventDTO)
                 .collect(toList());
 
-        return new AuditEventsDTO(listDTOs, paging, singletonMap("self", baseUri));
+        return new AuditEvents(listDTOs, paging, singletonMap("self", baseUri));
     }
 
     /**
      * Create <i>AuditEventDTO</i> instance from <i>AuditEvent</i> instance
      */
-    public static AuditEventDTO createAuditEventDTO(final AuditEvent auditEvent) {
+    public static AuditEvent createAuditEventDTO(final AuditEventEntity auditEvent) {
         notNull(auditEvent, "auditEvent cannot be null");
 
-        return new AuditEventDTO(auditEvent.getId().toString(),
+        return new AuditEvent(auditEvent.getId().toString(),
                 auditEvent.getUserLogin(),
                 auditEvent.getOccurred(),
                 new DateTime(auditEvent.getId().getDate(), DateTimeZone.UTC),
@@ -73,7 +73,7 @@ public abstract class ConversionUtils {
      * Get new offset based on list or if list is empty return null.
      * If <code>hasNextPage</code> is false, then return null.
      */
-    private static String getOffset(final List<AuditEvent> list, boolean hasNextPage) {
+    private static String getOffset(final List<AuditEventEntity> list, boolean hasNextPage) {
         if(!hasNextPage){
             return null;
         }

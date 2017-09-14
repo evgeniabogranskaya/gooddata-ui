@@ -10,7 +10,7 @@ import static org.testng.Assert.fail;
 import com.gooddata.FutureResult;
 import com.gooddata.GoodDataException;
 import com.gooddata.cfal.AbstractAT;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
+import com.gooddata.auditevent.AuditEvent;
 import com.gooddata.dataload.processes.DataloadProcess;
 import com.gooddata.dataload.processes.ProcessExecution;
 import com.gooddata.dataload.processes.ProcessExecutionDetail;
@@ -142,11 +142,11 @@ public class ETLProcessAT extends AbstractAT {
         doTestAdminApi(eventCheckCreateFromAppstore(CREATE_MESSAGE_TYPE), CREATE_MESSAGE_TYPE);
     }
 
-    private Predicate<AuditEventDTO> eventCheck(final String messageType, final boolean isSuccess) {
+    private Predicate<AuditEvent> eventCheck(final String messageType, final boolean isSuccess) {
         return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(messageType) && e.isSuccess() == isSuccess);
     }
 
-    private Predicate<AuditEventDTO> eventCheckCreateFromAppstore(final String messageType) {
+    private Predicate<AuditEvent> eventCheckCreateFromAppstore(final String messageType) {
         return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(messageType) &&
                 e.isSuccess() == true && processAppstore.getUri().equals(e.getLinks().get("process")));
     }

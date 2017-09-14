@@ -4,7 +4,7 @@
 package com.gooddata.cfal.account;
 
 import com.gooddata.cfal.AbstractAT;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
+import com.gooddata.auditevent.AuditEvent;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -18,7 +18,7 @@ public class AbstractLoginAT extends AbstractAT {
     private static final String LOGIN_TYPE = "loginType";
     private static final String COMPONENT = "component";
 
-    protected Predicate<AuditEventDTO> eventCheck(final boolean success,
+    protected Predicate<AuditEvent> eventCheck(final boolean success,
                                                   final String component,
                                                   final String loginType) {
         return (e ->

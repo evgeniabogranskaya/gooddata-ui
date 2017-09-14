@@ -3,15 +3,15 @@
  */
 package com.gooddata.cfal.restapi.validation;
 
-import com.gooddata.cfal.restapi.dto.RequestParameters;
+import com.gooddata.auditevent.AuditEventPageRequest;
 import org.bson.types.ObjectId;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 /**
- * Validator for {@link RequestParameters}
+ * Validator for {@link AuditEventPageRequest}
  */
-public class RequestParametersValidator implements Validator {
+public class AuditEventPageRequestValidator implements Validator {
 
     public static final String OFFSET_FIELD = "offset";
 
@@ -45,12 +45,12 @@ public class RequestParametersValidator implements Validator {
 
     @Override
     public boolean supports(final Class<?> aClass) {
-        return aClass.isAssignableFrom(RequestParameters.class);
+        return aClass.isAssignableFrom(AuditEventPageRequest.class);
     }
 
     @Override
     public void validate(final Object o, final Errors errors) {
-        final RequestParameters requestParameters = (RequestParameters) o;
+        final AuditEventPageRequest requestParameters = (AuditEventPageRequest) o;
         if (requestParameters.getOffset() != null && !ObjectId.isValid(requestParameters.getOffset())) {
             errors.rejectValue(OFFSET_FIELD, ERROR_CODE_INVALID_OFFSET, INVALID_OFFSET_MSG);
         }

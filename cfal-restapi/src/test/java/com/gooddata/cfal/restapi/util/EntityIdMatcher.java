@@ -5,18 +5,18 @@ package com.gooddata.cfal.restapi.util;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
-import com.gooddata.cfal.restapi.model.AuditEvent;
+import com.gooddata.cfal.restapi.model.AuditEventEntity;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
 /**
  * Matcher between AuditEvent entities based on ID
  */
-public class EntityIdMatcher extends TypeSafeMatcher<AuditEvent> {
+public class EntityIdMatcher extends TypeSafeMatcher<AuditEventEntity> {
 
-    private final AuditEvent auditEvent;
+    private final AuditEventEntity auditEvent;
 
-    public EntityIdMatcher(final AuditEvent auditEvent) {
+    public EntityIdMatcher(final AuditEventEntity auditEvent) {
         this.auditEvent = notNull(auditEvent);
     }
 
@@ -25,12 +25,12 @@ public class EntityIdMatcher extends TypeSafeMatcher<AuditEvent> {
         description.appendText("Audit event id " + auditEvent.getId());
     }
 
-    public static EntityIdMatcher hasSameIdAs(final AuditEvent auditEvent) {
+    public static EntityIdMatcher hasSameIdAs(final AuditEventEntity auditEvent) {
         return new EntityIdMatcher(auditEvent);
     }
 
     @Override
-    protected boolean matchesSafely(AuditEvent item) {
+    protected boolean matchesSafely(AuditEventEntity item) {
         return auditEvent.getId().equals(item.getId());
     }
 }

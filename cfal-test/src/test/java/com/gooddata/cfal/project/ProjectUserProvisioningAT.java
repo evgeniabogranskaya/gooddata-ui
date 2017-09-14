@@ -5,7 +5,7 @@ package com.gooddata.cfal.project;
 
 import com.gooddata.account.Account;
 import com.gooddata.cfal.AbstractAT;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
+import com.gooddata.auditevent.AuditEvent;
 import com.gooddata.project.Project;
 import com.gooddata.project.User;
 import org.testng.annotations.BeforeClass;
@@ -51,7 +51,7 @@ public class ProjectUserProvisioningAT extends AbstractAT {
         doTestAdminApi(eventCheck(STATUS_CHANGE_MESSAGE_TYPE), STATUS_CHANGE_MESSAGE_TYPE);
     }
 
-    private Predicate<AuditEventDTO> eventCheck(final String messageType) {
+    private Predicate<AuditEvent> eventCheck(final String messageType) {
         return (e ->
                         getAccount().getLogin().equals(e.getUserLogin()) &&
                                 messageType.equals(e.getType()) &&

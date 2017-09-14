@@ -7,7 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.gooddata.cfal.AbstractAT;
-import com.gooddata.cfal.restapi.dto.AuditEventDTO;
+import com.gooddata.auditevent.AuditEvent;
 import com.gooddata.dataload.processes.DataloadProcess;
 import com.gooddata.dataload.processes.ProcessType;
 import com.gooddata.dataload.processes.Schedule;
@@ -81,7 +81,7 @@ public class ETLScheduleManualExecutionAT extends AbstractAT {
         }
     }
 
-    private Predicate<AuditEventDTO> eventCheck(final boolean isSuccess) {
+    private Predicate<AuditEvent> eventCheck(final boolean isSuccess) {
         return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE) && e.isSuccess() == isSuccess);
     }
 }
