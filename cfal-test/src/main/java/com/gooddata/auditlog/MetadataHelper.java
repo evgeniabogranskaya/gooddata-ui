@@ -57,6 +57,8 @@ public class MetadataHelper {
 
     private boolean needSynchronize;
 
+    private boolean isDataLoaded;
+
     private MetadataHelper(final GoodData gd, final Project project) {
         notNull(gd, "gd");
         this.md = gd.getMetadataService();
@@ -171,9 +173,12 @@ public class MetadataHelper {
         }
     }
 
-    public void loadData() {
-        logger.info("Loading dataset={}", DATASET_NAME);
-        datasetService.loadDataset(project, DATASET_NAME, getClass().getResourceAsStream("/stars.csv")).get();
-        logger.info("Loaded dataset={}", DATASET_NAME);
+    public void ensureDataLoaded() {
+        if (!isDataLoaded) {
+            logger.info("Loading dataset={}", DATASET_NAME);
+            datasetService.loadDataset(project, DATASET_NAME, getClass().getResourceAsStream("/stars.csv")).get();
+            isDataLoaded = true;
+            logger.info("Loaded dataset={}", DATASET_NAME);
+        }
     }
 }

@@ -70,7 +70,7 @@ public class ExportAT extends AbstractAT {
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "emptyExport")
     public void dataExport() throws Exception {
-        metadata.loadData();
+        metadata.ensureDataLoaded();
         export();
         rawExport();
 

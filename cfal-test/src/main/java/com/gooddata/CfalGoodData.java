@@ -12,11 +12,19 @@ import org.springframework.web.client.RestTemplate;
  */
 public class CfalGoodData extends GoodData {
 
+    private final ReportExecuteService reportExecuteService;
+
     public CfalGoodData(final GoodDataEndpoint endpoint, final String login, final String password) {
         super(endpoint, new LoginPasswordAuthentication(login, password));
+
+        reportExecuteService = new ReportExecuteService(getRestTemplate(), endpoint);
     }
 
     public static RestTemplate createRestTemplate(final GoodDataEndpoint endpoint, final HttpClient httpClient) {
         return GoodData.createRestTemplate(endpoint, httpClient);
+    }
+
+    public ReportExecuteService getReportExecuteService() {
+        return reportExecuteService;
     }
 }
