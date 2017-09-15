@@ -3,16 +3,16 @@
  */
 package com.gooddata.cfal;
 
-import com.gooddata.GoodDataRestException;
 import com.gooddata.account.Account;
 import com.gooddata.auditevent.AuditEvent;
+import com.gooddata.auditevent.AuditEventsForbiddenException;
 import com.gooddata.collections.PageableList;
-import org.apache.http.HttpStatus;
 import org.testng.annotations.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.testng.Assert.fail;
 
 public class SimpleAT extends AbstractAT {
 
@@ -26,9 +26,8 @@ public class SimpleAT extends AbstractAT {
     public void shouldReturnErrorOnInvalidDomain() throws Exception {
         try {
             service.listAuditEvents("this_domain_should_never_exists");
-        } catch (GoodDataRestException e) {
-            assertThat(e.getStatusCode(), is(HttpStatus.SC_UNAUTHORIZED));
-            assertThat(e.getErrorCode(), is("gdc.auditlog.user.not_authorized"));
+            fail("Expected AuditEventsForbiddenException");
+        } catch (AuditEventsForbiddenException ignored) {
         }
     }
 
