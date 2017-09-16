@@ -3,11 +3,14 @@
  */
 package com.gooddata.cfal.access;
 
+import static com.gooddata.md.Restriction.identifier;
+
 import com.gooddata.ReportExecuteService;
 import com.gooddata.auditevent.AuditEvent;
 import com.gooddata.cfal.AbstractAT;
 import com.gooddata.export.ExecuteReport;
 import com.gooddata.export.ExecuteReportDefinition;
+import com.gooddata.md.Attribute;
 import com.gooddata.md.report.Report;
 import com.gooddata.md.report.ReportDefinition;
 import com.gooddata.project.Project;
@@ -20,6 +23,8 @@ public class DataAccessAT extends AbstractAT {
 
     private static final String MESSAGE_TYPE = "DATA_ACCESS";
     private static final String DATA_RESULT = "dataResult";
+    private static final String VALID_ELEMENTS = "validElements";
+    private static final String ELEMENTS = "elements";
 
     private Project project;
 
@@ -45,6 +50,12 @@ public class DataAccessAT extends AbstractAT {
 
         reportExecuteService.executeUsingXtabExecutorResource(project, reportRequest);
         reportExecuteService.executeUsingXtabExecutorResource(project, reportDefinitionRequest);
+
+        final Attribute attr = gd.getMetadataService().getObj(project, Attribute.class, identifier("attr.star.name"));
+
+        gd.getMetadataService().getAttributeValidElements(attr);
+
+        gd.getMetadataService().getAttributeElements(attr);
     }
 
     @Test(groups = MESSAGE_TYPE)
@@ -57,11 +68,47 @@ public class DataAccessAT extends AbstractAT {
         doTestAdminApi(eventCheck(), MESSAGE_TYPE, reportExecuteService.getTimesExecuted());
     }
 
+    @Test(groups = MESSAGE_TYPE)
+    public void testValidElementsAccessMessageUserApi() throws Exception {
+        doTestUserApi(validElementsEventCheck(), MESSAGE_TYPE);
+    }
+
+    @Test(groups = MESSAGE_TYPE)
+    public void testValidElementsAccessMessageAdminApi() throws Exception {
+        doTestAdminApi(validElementsEventCheck(), MESSAGE_TYPE);
+    }
+
+    @Test(groups = MESSAGE_TYPE)
+    public void testElementsAccessMessageUserApi() throws Exception {
+        doTestUserApi(elementsEventCheck(), MESSAGE_TYPE);
+    }
+
+    @Test(groups = MESSAGE_TYPE)
+    public void testElementsAccessMessageAdminApi() throws Exception {
+        doTestAdminApi(elementsEventCheck(), MESSAGE_TYPE);
+    }
+
     private Predicate<AuditEvent> eventCheck() {
         return e -> e.getUserLogin().equals(getAccount().getLogin())
                 && e.getType().equals(MESSAGE_TYPE)
                 && e.isSuccess()
                 && DATA_RESULT.equals(e.getParams().get("type"))
+                && project.getUri().equals(e.getLinks().get("project"));
+    }
+
+    private Predicate<AuditEvent> validElementsEventCheck() {
+        return e -> e.getUserLogin().equals(getAccount().getLogin())
+                && e.getType().equals(MESSAGE_TYPE)
+                && e.isSuccess()
+                && VALID_ELEMENTS.equals(e.getParams().get("type"))
+                && project.getUri().equals(e.getLinks().get("project"));
+    }
+
+    private Predicate<AuditEvent> elementsEventCheck() {
+        return e -> e.getUserLogin().equals(getAccount().getLogin())
+                && e.getType().equals(MESSAGE_TYPE)
+                && e.isSuccess()
+                && ELEMENTS.equals(e.getParams().get("type"))
                 && project.getUri().equals(e.getLinks().get("project"));
     }
 }
