@@ -138,13 +138,15 @@ These tests measure coverage by slightly changing existing source code and watch
 
 More information about whole theory behind it: http://pitest.org/
 
-These tests are being executed in `verify` phase automatically. Expected number of killed mutants is 70% (it's set in the `pom.xml`).
-You can check reports in `target/pit-reports/{date_time_of_execution}` directory.
+These tests are being executed in `verify` phase automatically only on Jenkins.
 
-However if you want to skip these tests, you can do it by simply using `-P !mutation-tests`, so for example:
+However if you want manualy these tests, you can do it by simply using `-P mutation-tests`, so for example:
 ```
-mvn clean verify -P '!mutation-tests'
+mvn clean verify -P mutation-tests
 ```
+
+Expected number of killed mutants is 70% (it's set in the `pom.xml`).
+You can check reports in `target/pit-reports/{date_time_of_execution}` directory.
 
 ## REST API Security
 
