@@ -35,6 +35,8 @@ public abstract class AbstractAT {
     protected static final int POLL_LIMIT = 10;
     protected static final int POLL_INTERVAL_SECONDS = 30;
 
+    private static final int DEFAULT_TIMES = 1;
+
     protected final CfalGoodData gd;
     protected final GoodDataEndpoint endpoint;
 
@@ -78,36 +80,60 @@ public abstract class AbstractAT {
     /**
      * Tests whether message is contained in audit log via user API
      *
-     * @param predicate predicate used to checker whether list of audit events contains required message
-     * @param type               type of the even you want to check on API
+     * @param predicate predicate used to check whether list of audit events contains required message
+     * @param type      type of the event you want to check on API
      */
     public void doTestUserApi(final Predicate<AuditEvent> predicate, final String type) {
-        final AuditEventPageRequest request = createRequestParameters(type);
-
-        doTest(() -> service.listAuditEvents(getAccount(), request), predicate, type);
+        doTestUserApi(predicate, type, DEFAULT_TIMES);
     }
 
     /**
      * Tests whether message is contained in audit log via admin API
      *
-     * @param predicate predicate used to checker whether list of audit events contains required message
-     * @param type               type of the even you want to check on API
+     * @param predicate predicate used to check whether list of audit events contains required message
+     * @param type      type of the event you want to check on API
      */
     public void doTestAdminApi(final Predicate<AuditEvent> predicate, final String type) {
+        doTestAdminApi(predicate, type, DEFAULT_TIMES);
+    }
+
+
+    /**
+     * Tests whether certain message is contained multiple times in audit log via user API
+     *
+     * @param predicate predicate used to check whether list of audit events contains required message
+     * @param type      type of the event you want to check on API
+     * @param times     how many events should at least match predicate
+     */
+    public void doTestUserApi(final Predicate<AuditEvent> predicate, final String type, final int times) {
         final AuditEventPageRequest request = createRequestParameters(type);
 
-        doTest(() -> service.listAuditEvents(props.getDomain(), request), predicate, type);
+        doTest(() -> service.listAuditEvents(getAccount(), request), predicate, type, times);
+    }
+
+    /**
+     * Tests whether certain message is contained multiple times in audit log via admin API
+     *
+     * @param predicate predicate used to check whether list of audit events contains required message
+     * @param type      type of the event you want to check on API
+     * @param times     how many events should at least match predicate
+     */
+    public void doTestAdminApi(final Predicate<AuditEvent> predicate, final String type, final int times) {
+        final AuditEventPageRequest request = createRequestParameters(type);
+
+        doTest(() -> service.listAuditEvents(props.getDomain(), request), predicate, type, times);
     }
 
     private void doTest(final Supplier<PageableList<AuditEvent>> serviceCall,
                         final Predicate<AuditEvent> predicate,
-                        final String type) {
+                        final String type,
+                        final int times) {
         final String testMethodName = getTestMethodName();
 
         //poll until message is found in audit log or poll limit is hit
         int count = 1;
         while (count++ <= POLL_LIMIT) {
-            if (hasMessage(serviceCall, predicate)) {
+            if (hasMessage(serviceCall, predicate, times)) {
                 logger.info("{}(): message {} found", testMethodName, type);
                 return;
             }
@@ -131,9 +157,9 @@ public abstract class AbstractAT {
                     .orElse("unknown");
     }
 
-    private boolean hasMessage(final Supplier<PageableList<AuditEvent>> serviceCall, final Predicate<AuditEvent> predicate) {
+    private boolean hasMessage(final Supplier<PageableList<AuditEvent>> serviceCall, final Predicate<AuditEvent> predicate, final int times) {
         final PageableList<AuditEvent> events = serviceCall.get();
-        return events.stream().anyMatch(predicate);
+        return events.stream().filter(predicate).count() >= times;
     }
 
     private AuditEventPageRequest createRequestParameters(final String type) {
