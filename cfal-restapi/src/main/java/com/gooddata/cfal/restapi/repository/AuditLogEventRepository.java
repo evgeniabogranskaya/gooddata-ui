@@ -21,6 +21,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static org.apache.commons.lang3.Validate.isTrue;
@@ -211,11 +212,8 @@ public class AuditLogEventRepository {
 
         final Query query = new Query();
 
-        final Criteria idCriteria = createCriteriaForId(requestParameters);
-
-        if (idCriteria != null) {
-            query.addCriteria(idCriteria);
-        }
+        final Optional<Criteria> idCriteria = createCriteriaForId(requestParameters);
+        idCriteria.map(query::addCriteria);
 
         if (requestParameters.getType() != null) {
             query.addCriteria(Criteria.where("type").is(requestParameters.getType()));
@@ -227,32 +225,31 @@ public class AuditLogEventRepository {
         return query;
     }
 
-    private Criteria createCriteriaForId(final AuditEventPageRequest requestParameters) {
+    private Optional<Criteria> createCriteriaForId(final AuditEventPageRequest requestParameters) {
         notNull(requestParameters, "request");
-        Criteria idCriteria = null;
+        final Criteria idCriteria = createIdCriteria();
 
-        if (getOffsetAsObjectId(requestParameters) != null) {
-            idCriteria = nullSafeIdCriteria(idCriteria);
-            idCriteria.gt(getOffsetAsObjectId(requestParameters));
+        if (requestParameters.getOffset() != null) {
+            final ObjectId objectId = new ObjectId(requestParameters.getOffset());
+            idCriteria.gt(objectId);
         }
 
         if (requestParameters.getFrom() != null) {
-            idCriteria = nullSafeIdCriteria(idCriteria);
             //use constructor ObjectId(Date, int, short, int, int) in order to get ObjectID with value xxxxxxxx0000000000000000
             idCriteria.gte(new ObjectId(requestParameters.getFrom().toDate(), 0, (short) 0, 0));
         }
 
         if (requestParameters.getTo() != null) {
-            idCriteria = nullSafeIdCriteria(idCriteria);
             //use constructor ObjectId(Date, int, short, int, int) in order to get ObjectID with value xxxxxxxx0000000000000000
             idCriteria.lte(new ObjectId(requestParameters.getTo().toDate(), 0, (short) 0, 0));
         }
 
-        return idCriteria;
+        return idCriteria.equals(createIdCriteria()) // check whether idCriteria is empty
+                ? Optional.empty() : Optional.of(idCriteria);
     }
 
-    private Criteria nullSafeIdCriteria(final Criteria idCriteria) {
-        return (idCriteria == null) ? Criteria.where("id") : idCriteria;
+    private Criteria createIdCriteria() {
+        return Criteria.where("id");
     }
 
     /**
@@ -262,7 +259,4 @@ public class AuditLogEventRepository {
         return mongoCollectionPrefix + domain;
     }
 
-    private static ObjectId getOffsetAsObjectId(final AuditEventPageRequest params) {
-        return params == null || params.getOffset() == null ? null : new ObjectId(params.getOffset());
-    }
 }
