@@ -63,7 +63,7 @@ public class ReportExecuteService extends ExportService {
         return timesExecuted;
     }
 
-    private String doExecute(final Project project, final ReportRequest reportRequest, final String uri) throws Exception {
+    private String doExecute(final Project project, final ReportRequest reportRequest, final String uri) {
         final UriTemplate template = new UriTemplate(uri);
         final String result = execute(template.expand(project.getId()).toString(), reportRequest)
                 .get();
@@ -81,7 +81,7 @@ public class ReportExecuteService extends ExportService {
      * @return
      * @throws Exception
      */
-    private FutureResult<String> execute(final String executeUri, final ReportRequest request) throws Exception {
+    private FutureResult<String> execute(final String executeUri, final ReportRequest request) {
         final JsonNode jsonNode = executeReport(executeUri, request);
 
         final String dataResultUri = jsonNode.path("execResult").path("dataResult").asText();
