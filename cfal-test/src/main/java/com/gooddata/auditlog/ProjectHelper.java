@@ -14,6 +14,9 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.Validate.notNull;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Common parent for all tests using a project. Uses an existing one or creates a new and optionally removes is.
  */
@@ -28,6 +31,7 @@ public class ProjectHelper {
     private final GoodData gd;
     private final TestEnvironmentProperties props;
     private Project project;
+    private final List<Project> projects = new LinkedList<>();
 
     public static ProjectHelper getInstance(final GoodData gd, final TestEnvironmentProperties props) {
         if (instance == null) {
@@ -68,6 +72,12 @@ public class ProjectHelper {
         return project;
     }
 
+    public Project createProject() {
+        final Project project = createProject(props.getProjectToken());
+        projects.add(project);
+        return project;
+    }
+
     private Project createProject(final String projectToken) {
         final Project project = new Project("CFAL Test", projectToken);
         project.setEnvironment(ProjectEnvironment.TESTING);
@@ -85,5 +95,14 @@ public class ProjectHelper {
                 gd.getProjectService().removeProject(project);
             }
         }
+
+        projects.forEach(e -> {
+            try {
+                gd.getProjectService().removeProject(e);
+                logger.info("removed project_id={}", e.getId());
+            } catch (Exception ex) {
+                logger.warn("could not remove project_id={}", e.getId());
+            }
+        });
     }
 }

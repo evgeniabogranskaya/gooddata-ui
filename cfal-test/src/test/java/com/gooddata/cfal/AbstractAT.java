@@ -9,6 +9,7 @@ import com.gooddata.account.Account;
 import com.gooddata.auditlog.AccountHelper;
 import com.gooddata.auditlog.AdsHelper;
 import com.gooddata.auditevent.AuditEventService;
+import com.gooddata.auditlog.MetadataHelper;
 import com.gooddata.auditlog.ProjectHelper;
 import com.gooddata.auditlog.TestEnvironmentProperties;
 import com.gooddata.auditevent.AuditEvent;
@@ -49,6 +50,7 @@ public abstract class AbstractAT {
     protected final AdsHelper adsHelper;
     protected final AccountHelper accountHelper;
     protected final ProjectHelper projectHelper;
+    protected final MetadataHelper metadataHelper;
 
     public AbstractAT() {
         props = new TestEnvironmentProperties();
@@ -63,6 +65,7 @@ public abstract class AbstractAT {
         this.adsHelper = AdsHelper.getInstance(gd, props);
         this.accountHelper = AccountHelper.getInstance(gd, props);
         this.projectHelper = ProjectHelper.getInstance(gd, props);
+        this.metadataHelper = MetadataHelper.getInstance(gd);
     }
 
     @BeforeSuite(alwaysRun = true)
