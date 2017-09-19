@@ -3,9 +3,6 @@
  */
 package com.gooddata.cfal;
 
-import static org.apache.commons.lang3.Validate.noNullElements;
-import static org.apache.commons.lang3.Validate.notNull;
-
 import com.codahale.metrics.Gauge;
 import com.gooddata.commons.monitoring.metrics.Measure;
 import com.gooddata.commons.monitoring.metrics.Monitored;
@@ -14,10 +11,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Arrays;
+
+import static java.nio.file.Files.newOutputStream;
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static org.apache.commons.lang3.Validate.noNullElements;
+import static org.apache.commons.lang3.Validate.notNull;
 
 /**
  * Formats Audit Events as one-line JSON and writes them into the given file/writer.
@@ -147,7 +150,7 @@ public class AuditLogEventFileWriter implements AuditLogEventWriter {
     private static AuditLogEventWriterBase createWriter(final File logFile) throws IOException {
         notNull(logFile, "logFile");
         try {
-            final Writer result = new FileWriter(logFile, true);
+            final Writer result = new OutputStreamWriter(newOutputStream(logFile.toPath(), CREATE, APPEND));
             return new AuditLogEventWriterBase(result);
         } catch (IOException e) {
             throw new IOException("Unable to write file: " + logFile.getAbsolutePath(), e);
