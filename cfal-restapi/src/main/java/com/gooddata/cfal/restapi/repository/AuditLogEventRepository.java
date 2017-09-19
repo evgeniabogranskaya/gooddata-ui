@@ -207,6 +207,7 @@ public class AuditLogEventRepository {
      * Create query based on <code>requestParameters</code>
      */
     private Query createQuery(final AuditEventPageRequest requestParameters) {
+        notNull(requestParameters, "request");
 
         final Query query = new Query();
 
@@ -227,6 +228,7 @@ public class AuditLogEventRepository {
     }
 
     private Criteria createCriteriaForId(final AuditEventPageRequest requestParameters) {
+        notNull(requestParameters, "request");
         Criteria idCriteria = null;
 
         if (getOffsetAsObjectId(requestParameters) != null) {
