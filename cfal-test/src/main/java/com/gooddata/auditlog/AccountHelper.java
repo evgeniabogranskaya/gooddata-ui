@@ -19,16 +19,17 @@ import static org.apache.commons.lang3.Validate.notNull;
  */
 public class AccountHelper {
 
-    private static AccountHelper instance;
+    private static final Logger logger = LoggerFactory.getLogger(AccountHelper.class);
 
-    private Account currentAccount;
+    private static AccountHelper instance;
 
     private final List<Account> accounts = new ArrayList<>();
 
-    private static final Logger logger = LoggerFactory.getLogger(AccountHelper.class);
-
     private final GoodData gd;
+
     private final TestEnvironmentProperties props;
+
+    private Account currentAccount;
 
     public static AccountHelper getInstance(final GoodData gd, final TestEnvironmentProperties props) {
         if (instance == null) {
@@ -47,7 +48,10 @@ public class AccountHelper {
      * @return current account
      */
     public Account getCurrentAccount() {
-        return currentAccount != null ? currentAccount : (currentAccount = gd.getAccountService().getCurrent());
+        if (currentAccount == null) {
+            currentAccount = gd.getAccountService().getCurrent();
+        }
+        return currentAccount;
     }
 
     /**
@@ -67,16 +71,12 @@ public class AccountHelper {
      * @return created user
      */
     public Account createUser() {
-        final String email = UUID.randomUUID() + "@mail.com";
-        final String password = "passpasspass";
-        final String firstName = "hugo";
-        final String lastName = "boss";
-        final Account account = gd.getAccountService().createAccount(new Account(email, password, firstName, lastName), props.getDomain());
+        final Account create = new Account(UUID.randomUUID() + "@mail.com", "passpasspass", "hugo", "boss");
 
+        final Account account = gd.getAccountService().createAccount(create, props.getDomain());
         logger.info("created user_id={}", account.getId());
 
         accounts.add(account);
-
         return account;
     }
 
@@ -84,7 +84,7 @@ public class AccountHelper {
      * remove all created users
      */
     public void destroy() {
-        accounts.stream().forEach(e -> {
+        accounts.forEach(e -> {
             try {
                 gd.getAccountService().removeAccount(e);
                 logger.info("removed account_id={}", e.getId());

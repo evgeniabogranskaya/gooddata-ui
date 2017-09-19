@@ -88,7 +88,7 @@ public class AdsHelper {
      * Removes all created warehouses
      */
     public void destroy() {
-        warehouses.stream().forEach(e -> {
+        warehouses.forEach(e -> {
             try {
                 gd.getWarehouseService().removeWarehouse(e);
                 logger.info("removed warehouse_id={}", e.getId());
