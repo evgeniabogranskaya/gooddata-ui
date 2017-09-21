@@ -5,7 +5,6 @@ package com.gooddata.cfal.access;
 
 import com.gooddata.ReportExecuteService;
 import com.gooddata.auditevent.AuditEvent;
-import com.gooddata.auditlog.MetadataHelper;
 import com.gooddata.cfal.AbstractAT;
 import com.gooddata.export.ExecuteReport;
 import com.gooddata.export.ExecuteReportDefinition;
@@ -30,12 +29,10 @@ public class DataAccessAT extends AbstractAT {
     public void setUp() throws Exception {
         project = projectHelper.getOrCreateProject();
 
-        final MetadataHelper metadataHelper = MetadataHelper.getInstance(gd, project);
+        final Report report = metadataHelper.getOrCreateReport(project);
+        final ReportDefinition reportDefinition = metadataHelper.getOrCreateReportDefinition(project);
 
-        final Report report = metadataHelper.getOrCreateReport();
-        final ReportDefinition reportDefinition = metadataHelper.getOrCreateReportDefinition();
-
-        metadataHelper.ensureDataLoaded();
+        metadataHelper.ensureDataLoaded(project);
 
         final ExecuteReport reportRequest = new ExecuteReport(report);
         final ExecuteReportDefinition reportDefinitionRequest = new ExecuteReportDefinition(reportDefinition);

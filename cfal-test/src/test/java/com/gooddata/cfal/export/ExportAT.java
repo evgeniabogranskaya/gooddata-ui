@@ -4,7 +4,6 @@
 package com.gooddata.cfal.export;
 
 import com.gooddata.auditevent.AuditEvent;
-import com.gooddata.auditlog.MetadataHelper;
 import com.gooddata.cfal.AbstractAT;
 import com.gooddata.export.ExportFormat;
 import com.gooddata.export.NoDataExportException;
@@ -25,19 +24,15 @@ public class ExportAT extends AbstractAT {
     private static final String XLS_FORMAT = "application/vnd.ms-excel";
     private static final String XLSX_FORMAT = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-    private MetadataHelper metadata;
-
     private Project project;
     private Report report;
     private ReportDefinition definition;
 
     @BeforeClass
     public void createMetadata() throws Exception {
-        project = projectHelper.getOrCreateProject();
-
-        metadata = MetadataHelper.getInstance(gd, project);
-        report = metadata.getOrCreateReport();
-        definition = metadata.getOrCreateReportDefinition();
+        project = projectHelper.createProject();
+        report = metadataHelper.getOrCreateReport(project);
+        definition = metadataHelper.getOrCreateReportDefinition(project);
         export();
     }
 
@@ -70,7 +65,7 @@ public class ExportAT extends AbstractAT {
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "emptyExport")
     public void dataExport() throws Exception {
-        metadata.ensureDataLoaded();
+        metadataHelper.ensureDataLoaded(project);
         export();
         rawExport();
 
