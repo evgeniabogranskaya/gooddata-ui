@@ -150,7 +150,7 @@ public class AuditLogEventFileWriter implements AuditLogEventWriter {
     private static AuditLogEventWriterBase createWriter(final File logFile) throws IOException {
         notNull(logFile, "logFile");
         try {
-            final Writer result = new OutputStreamWriter(newOutputStream(logFile.toPath(), CREATE, APPEND));
+            final Writer result = new OutputStreamWriter(newOutputStream(logFile.toPath(), CREATE, APPEND)); // NOSONAR - closed in rotate()
             return new AuditLogEventWriterBase(result);
         } catch (IOException e) {
             throw new IOException("Unable to write file: " + logFile.getAbsolutePath(), e);
