@@ -68,12 +68,12 @@ public class DataAccessAT extends AbstractAT {
         doTestAdminApi(eventCheck(), MESSAGE_TYPE, reportExecuteService.getTimesExecuted());
     }
 
-    @Test(groups = MESSAGE_TYPE, enabled = false) //disable until bear RT passes
+    @Test(groups = MESSAGE_TYPE)
     public void testValidElementsAccessMessageUserApi() throws Exception {
         doTestUserApi(validElementsEventCheck(), MESSAGE_TYPE);
     }
 
-    @Test(groups = MESSAGE_TYPE, enabled = false) //disable until bear RT passes
+    @Test(groups = MESSAGE_TYPE)
     public void testValidElementsAccessMessageAdminApi() throws Exception {
         doTestAdminApi(validElementsEventCheck(), MESSAGE_TYPE);
     }
