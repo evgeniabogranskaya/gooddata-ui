@@ -102,19 +102,20 @@ mvn verify
 mvn -am -pl cfal-test -P at verify
 ```
 
-parameter               | default                 | example
-------------------------|-------------------------|--------
-`host`                  | `localhost`             | `-Dhost=mcl-cfal.na.intgdc.com`
-`user`                  | `bear@gooddata.com`     | `-Duser=bear@gooddata.com`
-`pass`                  | `jindrisska`            | `-Dpass=jindrisska`
-`projectId`             | `FoodMartDemo`          | `-DprojectId=FoodMartDemo`
-`projectToken`          | _none_                  | `-DprojectToken=pgroup2`
-`keepProject`           | `true` for FoodMartDemo | `-DkeepProject=true`
-`datawarehouseToken`    | `vertica`               | `-DdatawarehouseToken=vertica`
-`pollTimeoutMinutes`    | `5`                     | `-DpollTimeoutMinutes=5`
-`sshKey`                | `~/.ssh/id_rsa`         | `-DsshKey=/path/to/key`
-`sshKeyPass`            | _none_                  | `-DsshKeyPass=mykeypass`
-`sshUser`               | OS user                 | `-DsshUser=martin.caslavsky`
+parameter                | default                 | example
+-------------------------|-------------------------|--------
+`host`                   | `localhost`             | `-Dhost=mcl-cfal.na.intgdc.com`
+`user`                   | `bear@gooddata.com`     | `-Duser=bear@gooddata.com`
+`pass`                   | `jindrisska`            | `-Dpass=jindrisska`
+`projectId`              | `FoodMartDemo`          | `-DprojectId=FoodMartDemo`
+`projectToken`           | _none_                  | `-DprojectToken=pgroup2`
+`keepProject`            | `true` for FoodMartDemo | `-DkeepProject=true`
+`datawarehouseToken`     | `vertica`               | `-DdatawarehouseToken=vertica`
+`pollTimeoutMinutes`     | `5`                     | `-DpollTimeoutMinutes=5`
+`sshKey`                 | `~/.ssh/id_rsa`         | `-DsshKey=/path/to/key`
+`sshKeyPass`             | _none_                  | `-DsshKeyPass=mykeypass`
+`sshUser`                | OS user                 | `-DsshUser=martin.caslavsky`
+`notificationWaitSeconds`| 30                      | `-DnotificationWaitSeconds=10`
 
 #### Test using SSH
 

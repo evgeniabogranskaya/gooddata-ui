@@ -29,6 +29,7 @@ public class TestEnvironmentProperties {
     private final Boolean keepProject;
     private final Integer pollTimeoutMinutes;
     private final Authentication sshAuth;
+    private final int notificationWaitSeconds;
 
     public TestEnvironmentProperties() {
         host = getProperty("host", "localhost");
@@ -40,6 +41,7 @@ public class TestEnvironmentProperties {
         datawarehouseToken = getProperty("datawarehouseToken", "vertica");
         keepProject = Boolean.getBoolean("keepProject");
         pollTimeoutMinutes = Integer.getInteger("pollTimeoutMinutes", 5);
+        notificationWaitSeconds = Integer.getInteger("notificationWaitSeconds", 30);
 
         final String sshKey = getProperty("sshKey", null);
         final File sshKeyFile = isEmpty(sshKey) ? new File(getProperty("user.home"), ".ssh/id_rsa") : new File(sshKey);
@@ -90,5 +92,9 @@ public class TestEnvironmentProperties {
 
     public Authentication getSshAuth() {
         return sshAuth;
+    }
+
+    public int getNotificationWaitSeconds() {
+        return notificationWaitSeconds;
     }
 }
