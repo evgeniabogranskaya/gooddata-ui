@@ -67,12 +67,12 @@ public class ScheduleMailAT extends AbstractAT {
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void testDataAccessMessageUserApi() throws Exception {
+    public void testScheduledMailSendMessageUserApi() throws Exception {
         doTestUserApi(eventCheck(), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void testDataAccessMessageAdminApi() throws Exception {
+    public void testScheduledMailSendMessageAdminApi() throws Exception {
         doTestAdminApi(eventCheck(), MESSAGE_TYPE);
     }
 

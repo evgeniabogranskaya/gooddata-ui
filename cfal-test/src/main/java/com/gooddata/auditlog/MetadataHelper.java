@@ -119,7 +119,7 @@ public class MetadataHelper {
         ));
 
         if (projectMetadataState.isNeedSynchronize()) {
-            logger.info("synchronizing dataset={}", DATASET_NAME);
+            logger.info("synchronizing dataset={} in project={}", DATASET_NAME, project.getId());
             modelService.updateProjectModel(project, "SYNCHRONIZE {dataset.star};").get();
         }
     }
@@ -129,7 +129,7 @@ public class MetadataHelper {
                                                                   final String identifier,
                                                                   final String... maql) {
         return getObjOrCreate(project, cls, identifier, () -> {
-                    logger.info("Running MAQL to create type={} identifier={}", cls.getSimpleName(), identifier);
+                    logger.info("Running MAQL to create type={} identifier={} for project={}", cls.getSimpleName(), identifier, project.getId());
                     modelService.updateProjectModel(project, maql).get();
                     getOrCreateProjectMetadataState(project).setNeedSynchronize(true);
                     return getObjOrCreate(project, cls, identifier,
@@ -186,10 +186,10 @@ public class MetadataHelper {
     public void ensureDataLoaded(final Project project) {
         final ProjectMetadataState projectMetadataState = getOrCreateProjectMetadataState(project);
         if (!projectMetadataState.isDataLoaded()) {
-            logger.info("Loading dataset={}", DATASET_NAME);
+            logger.info("Loading dataset={} for project={}", DATASET_NAME, project.getId());
             datasetService.loadDataset(project, DATASET_NAME, getClass().getResourceAsStream("/stars.csv")).get();
             projectMetadataState.setDataLoaded(true);
-            logger.info("Loaded dataset={}", DATASET_NAME);
+            logger.info("Loaded dataset={} for project={}", DATASET_NAME, project.getId());
         }
     }
 }
