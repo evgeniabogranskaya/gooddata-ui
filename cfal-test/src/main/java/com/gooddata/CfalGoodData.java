@@ -14,12 +14,14 @@ public class CfalGoodData extends GoodData {
 
     private final ReportExecuteService reportExecuteService;
     private final ExtendedMetadataService extendedMetadataService;
+    private final ScheduledMailsAccelerateService scheduledMailsAccelerateService;
 
     public CfalGoodData(final GoodDataEndpoint endpoint, final String login, final String password) {
         super(endpoint, new LoginPasswordAuthentication(login, password));
 
         reportExecuteService = new ReportExecuteService(getRestTemplate(), endpoint);
         extendedMetadataService = new ExtendedMetadataService(getRestTemplate());
+        scheduledMailsAccelerateService = new ScheduledMailsAccelerateService(getRestTemplate());
     }
 
     public static RestTemplate createRestTemplate(final GoodDataEndpoint endpoint, final HttpClient httpClient) {
@@ -33,5 +35,9 @@ public class CfalGoodData extends GoodData {
     @Override
     public ExtendedMetadataService getMetadataService() {
         return extendedMetadataService;
+    }
+
+    public ScheduledMailsAccelerateService getScheduledMailsAccelerateService() {
+        return scheduledMailsAccelerateService;
     }
 }

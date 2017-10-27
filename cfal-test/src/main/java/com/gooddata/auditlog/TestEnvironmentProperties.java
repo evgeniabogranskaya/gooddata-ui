@@ -30,6 +30,7 @@ public class TestEnvironmentProperties {
     private final Integer pollTimeoutMinutes;
     private final Authentication sshAuth;
     private final int notificationWaitSeconds;
+    private final int scheduledMailWaitSeconds;
 
     public TestEnvironmentProperties() {
         host = getProperty("host", "localhost");
@@ -42,6 +43,7 @@ public class TestEnvironmentProperties {
         keepProject = Boolean.getBoolean("keepProject");
         pollTimeoutMinutes = Integer.getInteger("pollTimeoutMinutes", 5);
         notificationWaitSeconds = Integer.getInteger("notificationWaitSeconds", 30);
+        scheduledMailWaitSeconds = Integer.getInteger("scheduledMailWaitSeconds",60);
 
         final String sshKey = getProperty("sshKey", null);
         final File sshKeyFile = isEmpty(sshKey) ? new File(getProperty("user.home"), ".ssh/id_rsa") : new File(sshKey);
@@ -96,5 +98,9 @@ public class TestEnvironmentProperties {
 
     public int getNotificationWaitSeconds() {
         return notificationWaitSeconds;
+    }
+
+    public int getScheduledMailWaitSeconds() {
+        return scheduledMailWaitSeconds;
     }
 }
