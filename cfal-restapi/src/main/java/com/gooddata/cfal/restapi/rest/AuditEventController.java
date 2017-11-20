@@ -7,6 +7,7 @@ import com.gooddata.auditevent.AuditEvent;
 import com.gooddata.auditevent.AuditEvents;
 import com.gooddata.auditevent.AuditEventPageRequest;
 import com.gooddata.cfal.restapi.dto.UserInfo;
+import com.gooddata.cfal.restapi.service.IpMaskingService;
 import com.gooddata.cfal.restapi.validation.AuditEventPageRequestValidator;
 import com.gooddata.cfal.restapi.exception.UserNotAuthorizedException;
 import com.gooddata.cfal.restapi.exception.UserNotSpecifiedException;
@@ -35,13 +36,16 @@ public class AuditEventController {
 
     private final AuditEventService auditEventService;
     private final UserDomainService userDomainService;
+    private final IpMaskingService ipMaskingService;
     private final int maximumLimit;
 
     public AuditEventController(final AuditEventService auditEventService,
                                 final UserDomainService userDomainService,
+                                final IpMaskingService ipMaskingService,
                                 @Value("${gdc.cfal.mongo.limit}") final int maximumLimit) {
         this.auditEventService = notNull(auditEventService, "auditEventService cannot be null");
         this.userDomainService = notNull(userDomainService, "userDomainService cannot be null");
+        this.ipMaskingService = notNull(ipMaskingService, "ipMaskingService cannot be null");
         this.maximumLimit = maximumLimit;
     }
 
@@ -54,7 +58,7 @@ public class AuditEventController {
 
         final AuditEventPageRequest params = sanitizeParameters(requestParameters);
 
-        return auditEventService.findByDomain(domainId, params);
+        return ipMaskingService.maskIps(auditEventService.findByDomain(domainId, params));
     }
 
     @RequestMapping(path = AuditEvent.USER_URI, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -76,7 +80,7 @@ public class AuditEventController {
             throw new UserNotAuthorizedException("user with ID" + loggedUserId + " is not authorized to access this resource");
         }
 
-        return auditEventService.findByUser(userInfo, params);
+        return ipMaskingService.maskIps(auditEventService.findByUser(userInfo, params));
     }
 
     /**

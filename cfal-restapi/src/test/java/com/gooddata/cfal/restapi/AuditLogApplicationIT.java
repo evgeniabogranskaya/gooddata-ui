@@ -12,6 +12,7 @@ import com.codahale.metrics.JmxAttributeGauge;
 import com.codahale.metrics.MetricRegistry;
 import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import com.gooddata.cfal.restapi.service.AuditEventService;
+import com.gooddata.cfal.restapi.service.IpMaskingService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class AuditLogApplicationIT {
 
     @Autowired
     private AuditEventService auditEventService;
+
+    @Autowired
+    private IpMaskingService ipMaskingService;
 
     @Test
     public void testMetricsRegistered() throws Exception {
