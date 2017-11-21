@@ -45,7 +45,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -55,6 +54,7 @@ import static org.mockito.Mockito.mock;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -73,7 +73,9 @@ public class AuditEventControllerIT {
     private static final DateTime TIME_1990 = date("1990-01-01");
     private static final DateTime TIME_1995 = date("1995-01-01");
 
-    private static final String IP = "127.0.0.1";
+    private static final String IP = "128.1.2.3";
+    private static final String IP2 = "129.1.2.3";
+    private static final String LOCAL_IP = "127.0.0.1";
     private static final boolean SUCCESS = true;
     private static final String TYPE = "login";
     private static final String TYPE2 = "logout";
@@ -99,11 +101,11 @@ public class AuditEventControllerIT {
     private AuditLogEventRepository auditLogEventRepository;
 
     private AuditEventEntity event1 = new AuditEventEntity(convertDateTimeToObjectId(date("1993-03-09")), DOMAIN, USER1_LOGIN, date("1993-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
-    private AuditEventEntity event2 = new AuditEventEntity(convertDateTimeToObjectId(date("1995-03-09")), DOMAIN, USER2_LOGIN, date("1995-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+    private AuditEventEntity event2 = new AuditEventEntity(convertDateTimeToObjectId(date("1995-03-09")), DOMAIN, USER2_LOGIN, date("1995-03-09"), IP2, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
     private AuditEventEntity event3 = new AuditEventEntity(convertDateTimeToObjectId(date("1996-03-09")), DOMAIN, USER1_LOGIN, date("1996-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
-    private AuditEventEntity event4 = new AuditEventEntity(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN, USER1_LOGIN, date("2001-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
+    private AuditEventEntity event4 = new AuditEventEntity(convertDateTimeToObjectId(date("2001-03-09")), DOMAIN, USER1_LOGIN, date("2001-03-09"), IP2, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
     private AuditEventEntity event5 = new AuditEventEntity(convertDateTimeToObjectId(date("2016-03-09")), DOMAIN, USER2_LOGIN, date("2016-03-09"), IP, SUCCESS, TYPE, EMPTY_PARAMS, EMPTY_LINKS);
-    private AuditEventEntity event6 = new AuditEventEntity(convertDateTimeToObjectId(date("2016-03-09")), DOMAIN, USER2_LOGIN, date("2016-03-09"), IP, SUCCESS, TYPE2, EMPTY_PARAMS, EMPTY_LINKS);
+    private AuditEventEntity event6 = new AuditEventEntity(convertDateTimeToObjectId(date("2016-03-09")), DOMAIN, USER2_LOGIN, date("2016-03-09"), IP2, SUCCESS, TYPE2, EMPTY_PARAMS, EMPTY_LINKS);
 
     private C4User c4User1;
     private C4User c4User2;
@@ -151,6 +153,7 @@ public class AuditEventControllerIT {
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
         assertThat(result.getBody(), containsInAnyOrder(hasSameIdAs(event1), hasSameIdAs(event2), hasSameIdAs(event3),
                 hasSameIdAs(event4), hasSameIdAs(event5), hasSameIdAs(event6)));
+        assertThat(result.getBody().stream().map(e -> e.getUserIp()).collect(Collectors.toList()), contains(LOCAL_IP, IP2, LOCAL_IP, IP2, LOCAL_IP, IP2));
     }
 
     @Test
@@ -165,6 +168,7 @@ public class AuditEventControllerIT {
         assertThat(firstPage, is(notNullValue()));
         assertThat(firstPage.getStatusCode(), is(HttpStatus.OK));
         assertThat(firstPage.getBody(), containsInAnyOrder(hasSameIdAs(event1), hasSameIdAs(event2)));
+        assertThat(firstPage.getBody().stream().map(e -> e.getUserIp()).collect(Collectors.toList()), contains(LOCAL_IP, IP2));
         String secondPageUri = firstPage.getBody().getPaging().getNextUri();
         assertThat(secondPageUri, notNullValue());
 
@@ -173,6 +177,7 @@ public class AuditEventControllerIT {
         assertThat(secondPage, is(notNullValue()));
         assertThat(secondPage.getStatusCode(), is(HttpStatus.OK));
         assertThat(secondPage.getBody(), containsInAnyOrder(hasSameIdAs(event3), hasSameIdAs(event4)));
+        assertThat(secondPage.getBody().stream().map(e -> e.getUserIp()).collect(Collectors.toList()), contains(LOCAL_IP, IP2));
 
         String thirdPageUri = secondPage.getBody().getPaging().getNextUri();
         assertThat(thirdPageUri, notNullValue());
@@ -182,6 +187,7 @@ public class AuditEventControllerIT {
         assertThat(thirdPage, is(notNullValue()));
         assertThat(thirdPage.getStatusCode(), is(HttpStatus.OK));
         assertThat(thirdPage.getBody(), Matchers.containsInAnyOrder(hasSameIdAs(event5), hasSameIdAs(event6)));
+        assertThat(thirdPage.getBody().stream().map(e -> e.getUserIp()).collect(Collectors.toList()), contains(LOCAL_IP, IP2));
 
         String fourthPageUri = thirdPage.getBody().getPaging().getNextUri();
         assertThat(fourthPageUri, nullValue());

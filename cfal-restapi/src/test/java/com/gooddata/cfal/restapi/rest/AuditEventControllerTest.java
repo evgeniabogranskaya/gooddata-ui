@@ -17,6 +17,7 @@ import com.gooddata.cfal.restapi.exception.UserNotFoundException;
 import com.gooddata.cfal.restapi.exception.UserNotSpecifiedException;
 import com.gooddata.cfal.restapi.exception.ValidationException;
 import com.gooddata.cfal.restapi.service.AuditEventService;
+import com.gooddata.cfal.restapi.service.IpMaskingService;
 import com.gooddata.cfal.restapi.service.UserDomainService;
 import com.gooddata.collections.Paging;
 import org.apache.commons.io.IOUtils;
@@ -48,6 +49,7 @@ import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -107,6 +109,9 @@ public class AuditEventControllerTest {
 
     @MockBean
     private UserDomainService userDomainService;
+
+    @MockBean
+    private IpMaskingService ipMaskingService;
 
     private static final DateTime LOWER_BOUND = date("1990-01-01");
     private static final DateTime UPPER_BOUND = date("2005-01-01");
@@ -181,6 +186,8 @@ public class AuditEventControllerTest {
         AuditEventPageRequest pageRequestWithOffset = new AuditEventPageRequest();
         pageRequestWithOffset.setOffset(OFFSET.toString());
         pageRequestWithOffset.setFrom(LOWER_BOUND);
+
+        when(ipMaskingService.maskIps(any())).then(returnsFirstArg());
     }
 
     @Test

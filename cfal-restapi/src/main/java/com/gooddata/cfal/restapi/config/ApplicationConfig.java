@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.FileSystemResource;
 
@@ -24,6 +26,11 @@ public class ApplicationConfig {
     @Bean
     public static PropertySourcesPlaceholderConfigurer gdcPropertySourcesPlaceholderConfigurer() {
         return createPropertySourcesPlaceholderConfigurer(new FileSystemResource("/etc/gdc/cfal-restapi.properties"));
+    }
+
+    @Bean
+    public ConversionService conversionService() {
+        return new DefaultConversionService();
     }
 
     static PropertySourcesPlaceholderConfigurer createPropertySourcesPlaceholderConfigurer(final AbstractResource... resources) {
