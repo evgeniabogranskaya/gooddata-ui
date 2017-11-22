@@ -162,7 +162,9 @@ public abstract class AbstractAT {
 
     private boolean hasMessage(final Supplier<PageableList<AuditEvent>> serviceCall, final Predicate<AuditEvent> predicate, final int times) {
         final PageableList<AuditEvent> events = serviceCall.get();
-        return events.stream().filter(predicate).count() >= times;
+        final long countOfEvents = events.stream().filter(predicate).count();
+        logger.info("found {} matching events", countOfEvents);
+        return countOfEvents >= times;
     }
 
     private AuditEventPageRequest createRequestParameters(final String type) {
