@@ -233,6 +233,11 @@
             <artifactId>monitoring-http4</artifactId>
             <version>${monitoring.version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.3</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
