@@ -46,7 +46,7 @@ public class ProjectHelper {
 
         final String projectId = props.getProjectId();
         if (isBlank(projectId) && isBlank(props.getProjectToken())) {
-            this.existingProjectId = "FoodMartDemo";
+            this.existingProjectId = "defaultEmptyProject";
             this.keepProject = true;
         } else {
             this.keepProject = props.getKeepProject();
