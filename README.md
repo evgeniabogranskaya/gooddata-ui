@@ -43,26 +43,9 @@ gdc.logging.appender=CONSOLE
 monitoring.graphite.reporting-enabled=false
 ```
 
-## Release CFAL Java SDK
-```
-mvn release:prepare -DautoVersionSubmodules=true -DpushChanges=false
-git push origin --tags
-mvn release:perform
-git checkout -b sdk
-git push origin HEAD
-```
-and open pull request like https://github.com/gooddata/gdc-cfal/pull/80
+### CFAL SDK
 
-## CFAL SDK Monitoring
-
-To enable monitoring, please register [MetricAnnotationRegistrator](https://github.com/gooddata/gdc-jvm-monitoring/blob/master/monitoring-metrics/src/main/java/com/gooddata/commons/monitoring/metrics/MetricAnnotationRegistrator.java) as bean.
- List of monitored metrics:
-
-* `cfal.queue.size` - metric of `ConcurrentAuditLogService` representing size of internal queue 
-* `cfal.queue.rejected.count` - metric of `ConcurrentAuditLogService` representing count of rejected items, because the queue was full
-* `cfal.write.error.count` - metric representing count of events unable to be written to the log file
-* `cfal.rotate.error.count` - metric representing how many times log file could not be rotated
-* `cfal.log.call.count` - metric representing how many times `AuditLogService.logEvent` was called
+For your component to audit events, you can use CFAL SDK, see [cfal-sdk](https://github.com/gooddata/gdc-cfal-sdk)
 
 ## Enable CFAL for new component
 
