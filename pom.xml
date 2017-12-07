@@ -21,7 +21,6 @@
     </properties>
 
     <modules>
-        <module>cfal-sdk</module>
         <module>cfal-restapi</module>
         <module>cfal-test</module>
     </modules>
