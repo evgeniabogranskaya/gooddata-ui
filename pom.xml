@@ -237,6 +237,32 @@
                 </plugins>
             </build>
         </profile>
+        <!--
+        Please use 'showlicense.sh' script in repository root to display licenses.
+        Or one can use command mvn package -T 1C -DskipTests -P show-licenses -am -pl cfal-restapi'
+        -->
+        <profile>
+            <id>show-licenses</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>net.kozelka.maven</groupId>
+                        <artifactId>contentcheck-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>show-licenses</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <sourceFile>${project.build.directory}</sourceFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <scm>
