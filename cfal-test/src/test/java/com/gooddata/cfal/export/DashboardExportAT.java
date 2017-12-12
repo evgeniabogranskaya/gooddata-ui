@@ -32,12 +32,12 @@ public class DashboardExportAT extends AbstractAT {
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void testLoginMessageUserApi() throws Exception {
+    public void testDataExportMessageUserApi() throws Exception {
         doTestUserApi(eventCheck(), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void testLoginMessageAdminApi() throws Exception {
+    public void testDataExportMessageAdminApi() throws Exception {
         doTestAdminApi(eventCheck(), MESSAGE_TYPE);
     }
 
