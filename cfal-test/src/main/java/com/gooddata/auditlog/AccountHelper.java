@@ -3,6 +3,7 @@
  */
 package com.gooddata.auditlog;
 
+import com.gooddata.CfalGoodData;
 import com.gooddata.GoodData;
 import com.gooddata.account.Account;
 import org.slf4j.Logger;
@@ -15,7 +16,8 @@ import java.util.UUID;
 import static org.apache.commons.lang3.Validate.notNull;
 
 /**
- * Singleton for account related stuff. Not thread safe.
+ * Singleton for account related stuff.
+ * Lazy initialized. Not thread safe.
  */
 public class AccountHelper {
 
@@ -31,8 +33,10 @@ public class AccountHelper {
 
     private Account currentAccount;
 
-    public static AccountHelper getInstance(final GoodData gd, final TestEnvironmentProperties props) {
+    public static AccountHelper getInstance() {
         if (instance == null) {
+            final TestEnvironmentProperties props = TestEnvironmentProperties.getInstance();
+            final CfalGoodData gd = CfalGoodData.getInstance();
             instance = new AccountHelper(gd, props);
         }
         return instance;

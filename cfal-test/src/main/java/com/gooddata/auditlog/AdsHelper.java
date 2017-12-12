@@ -3,6 +3,7 @@
  */
 package com.gooddata.auditlog;
 
+import com.gooddata.CfalGoodData;
 import com.gooddata.FutureResult;
 import com.gooddata.GoodData;
 import com.gooddata.project.Environment;
@@ -19,7 +20,8 @@ import java.util.List;
 import static org.apache.commons.lang3.Validate.notNull;
 
 /**
- * Singleton for ADS related stuff. Not thread safe.
+ * Singleton for ADS related stuff.
+ * Lazy initialized. Not thread safe.
  */
 public class AdsHelper {
 
@@ -34,8 +36,10 @@ public class AdsHelper {
     private final GoodData gd;
     private final TestEnvironmentProperties props;
 
-    public static AdsHelper getInstance(final GoodData gd, final TestEnvironmentProperties props) {
+    public static AdsHelper getInstance() {
         if (instance == null) {
+            final TestEnvironmentProperties props = TestEnvironmentProperties.getInstance();
+            final CfalGoodData gd = CfalGoodData.getInstance();
             instance = new AdsHelper(gd, props);
         }
         return instance;

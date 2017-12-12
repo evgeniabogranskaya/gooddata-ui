@@ -4,14 +4,9 @@
 package com.gooddata.cfal;
 
 import com.gooddata.CfalGoodData;
-import com.gooddata.GoodDataEndpoint;
 import com.gooddata.account.Account;
-import com.gooddata.auditlog.AccountHelper;
-import com.gooddata.auditlog.AdsHelper;
+import com.gooddata.auditlog.*;
 import com.gooddata.auditevent.AuditEventService;
-import com.gooddata.auditlog.MetadataHelper;
-import com.gooddata.auditlog.ProjectHelper;
-import com.gooddata.auditlog.TestEnvironmentProperties;
 import com.gooddata.auditevent.AuditEvent;
 import com.gooddata.auditevent.AuditEventPageRequest;
 import com.gooddata.collections.PageableList;
@@ -39,7 +34,6 @@ public abstract class AbstractAT {
     private static final int DEFAULT_TIMES = 1;
 
     protected final CfalGoodData gd;
-    protected final GoodDataEndpoint endpoint;
 
     protected final AuditEventService service;
 
@@ -53,19 +47,18 @@ public abstract class AbstractAT {
     protected final MetadataHelper metadataHelper;
 
     public AbstractAT() {
-        props = new TestEnvironmentProperties();
+        props = TestEnvironmentProperties.getInstance();
 
-        endpoint = new GoodDataEndpoint(props.getHost());
+        gd = CfalGoodData.getInstance();
 
-        gd = new CfalGoodData(endpoint, props.getUser(), props.getPass());
         service = gd.getAuditEventService();
 
         startTime = new DateTime();
 
-        this.adsHelper = AdsHelper.getInstance(gd, props);
-        this.accountHelper = AccountHelper.getInstance(gd, props);
-        this.projectHelper = ProjectHelper.getInstance(gd, props);
-        this.metadataHelper = MetadataHelper.getInstance(gd);
+        adsHelper = AdsHelper.getInstance();
+        accountHelper = AccountHelper.getInstance();
+        projectHelper = ProjectHelper.getInstance();
+        metadataHelper = MetadataHelper.getInstance();
     }
 
     @BeforeSuite(alwaysRun = true)

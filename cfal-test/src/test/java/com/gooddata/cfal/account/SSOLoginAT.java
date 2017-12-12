@@ -4,7 +4,6 @@
 package com.gooddata.cfal.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gooddata.GoodDataEndpoint;
 import com.gooddata.cfal.sso.SSOLogin;
 import com.gooddata.security.pgp.PgpEncryptor;
 import org.apache.commons.io.IOUtils;
@@ -19,7 +18,6 @@ import org.testng.annotations.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import static com.gooddata.CfalGoodData.createRestTemplate;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -71,7 +69,7 @@ public class SSOLoginAT extends AbstractLoginAT {
 
     @Test(groups = MESSAGE_TYPE)
     public void shouldLoginUserWithSSO() throws Exception {
-        final RestTemplate rest = createRestTemplate(new GoodDataEndpoint(props.getHost()), HttpClientBuilder.create().build());
+        final RestTemplate rest = gd.createRestTemplate(HttpClientBuilder.create().build());
 
         final ResponseEntity<String> result = rest.getForEntity(URI, String.class, session, "smurfs");
         assertThat(result.getStatusCode(), is(HttpStatus.OK));

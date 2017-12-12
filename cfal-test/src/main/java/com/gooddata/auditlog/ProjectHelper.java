@@ -3,6 +3,7 @@
  */
 package com.gooddata.auditlog;
 
+import com.gooddata.CfalGoodData;
 import com.gooddata.FutureResult;
 import com.gooddata.GoodData;
 import com.gooddata.project.Project;
@@ -18,7 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Common parent for all tests using a project. Uses an existing one or creates a new and optionally removes is.
+ * Singleton for manipulating with projects. Uses an existing one or creates a new and optionally removes is.
+ * Lazy initialized. Not thread safe.
  */
 public class ProjectHelper {
 
@@ -33,8 +35,10 @@ public class ProjectHelper {
     private Project project;
     private final List<Project> projects = new LinkedList<>();
 
-    public static ProjectHelper getInstance(final GoodData gd, final TestEnvironmentProperties props) {
+    public static ProjectHelper getInstance() {
         if (instance == null) {
+            final TestEnvironmentProperties props = TestEnvironmentProperties.getInstance();
+            final CfalGoodData gd = CfalGoodData.getInstance();
             instance = new ProjectHelper(gd, props);
         }
         return instance;

@@ -31,7 +31,7 @@ public abstract class AbstractMongoAT extends AbstractAT {
     @BeforeClass
     public void setUpSshAndMongo() throws Exception {
         final Authentication auth = props.getSshAuth();
-        ssh = new SshClient(endpoint.getHostname(), auth).open();
+        ssh = new SshClient(gd.getEndpoint().getHostname(), auth).open();
 
         final String mongoPass = obtainMongoPass(ssh);
         final int mongoPort = ssh.createLocalPortForwarder(MONGO_PORT);

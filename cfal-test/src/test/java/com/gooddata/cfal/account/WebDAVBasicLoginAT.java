@@ -17,7 +17,6 @@ import java.net.URI;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.appendIfMissing;
-import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -48,7 +47,7 @@ public class WebDAVBasicLoginAT extends AbstractLoginAT {
     private UriPrefixer createUriPrefixer() {
         final String userStaging = gd.getGdcService().getRootLinks().getUserStagingUri();
         final URI userStagingUri = URI.create(userStaging);
-        final URI endpointUri = URI.create(endpoint.toUri());
+        final URI endpointUri = URI.create(gd.getEndpoint().toUri());
         return new UriPrefixer(userStagingUri.isAbsolute() ? userStagingUri : endpointUri.resolve(userStaging));
     }
 
