@@ -45,6 +45,9 @@ public abstract class AbstractAT {
     protected final AccountHelper accountHelper;
     protected final ProjectHelper projectHelper;
     protected final MetadataHelper metadataHelper;
+    protected final LoginHelper loginHelper;
+    protected final ProcessHelper processHelper;
+    protected final WebDavHelper webDavHelper;
 
     public AbstractAT() {
         props = TestEnvironmentProperties.getInstance();
@@ -59,6 +62,9 @@ public abstract class AbstractAT {
         accountHelper = AccountHelper.getInstance();
         projectHelper = ProjectHelper.getInstance();
         metadataHelper = MetadataHelper.getInstance();
+        loginHelper = LoginHelper.getInstance();
+        processHelper = ProcessHelper.getInstance();
+        webDavHelper = WebDavHelper.getInstance();
     }
 
     @BeforeSuite(alwaysRun = true)
@@ -70,6 +76,7 @@ public abstract class AbstractAT {
     public void serviceTearDown() throws Exception {
         accountHelper.destroy();
         adsHelper.destroy();
+        processHelper.destroy();
         projectHelper.destroy();
     }
 

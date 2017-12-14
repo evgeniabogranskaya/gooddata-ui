@@ -3,138 +3,74 @@
  */
 package com.gooddata.cfal.msf;
 
-import static com.gooddata.dataload.processes.ProcessType.DATALOAD;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
-
-import com.gooddata.FutureResult;
 import com.gooddata.cfal.AbstractAT;
 import com.gooddata.auditevent.AuditEvent;
-import com.gooddata.dataload.OutputStage;
-import com.gooddata.dataload.processes.DataloadProcess;
 import com.gooddata.dataload.processes.Schedule;
 import com.gooddata.dataload.processes.ScheduleExecution;
-import com.gooddata.model.ModelDiff;
 import com.gooddata.project.Project;
 import com.gooddata.warehouse.Warehouse;
-import com.gooddata.warehouse.WarehouseSchema;
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.InputStreamReader;
 import java.util.function.Predicate;
 
 public class ManualADDAT extends AbstractAT {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private static final String MESSAGE_TYPE = "ETL_ADD_MANUAL_EXECUTE";
+    private static final String ERROR_STATUS = "ERROR";
 
     private Warehouse warehouse;
-    private JdbcTemplate jdbcTemplate;
     private Project project;
 
     @BeforeClass(groups = MESSAGE_TYPE)
-    public void updateProjectModel() throws Exception {
+    public void createProjectWithModel() {
         project = projectHelper.createProject();
-        final ModelDiff projectModelDiff = gd.getModelService().getProjectModelDiff(project,
-                new InputStreamReader(getClass().getResourceAsStream("/model.json"))).get();
-        if (!projectModelDiff.getUpdateMaql().isEmpty()) {
-            gd.getModelService().updateProjectModel(project, projectModelDiff).get();
-        }
-        logger.info("updated model of project_id={}", project.getId());
+        projectHelper.setupDefaultModel(project);
     }
 
-    @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "updateProjectModel")
-    public void createWarehouse() {
+    @BeforeClass(groups = MESSAGE_TYPE)
+    public void createWarehouseWithModel() throws Exception {
         warehouse = adsHelper.getOrCreateWarehouse();
+        adsHelper.setupDefaultModel(warehouse);
     }
 
-    @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "createWarehouse")
-    public void setOutputStage() {
-        final OutputStage outputStage = gd.getOutputStageService().getOutputStage(project);
-        final WarehouseSchema schema = gd.getWarehouseService().getDefaultWarehouseSchema(warehouse);
-
-        outputStage.setSchemaUri(schema.getUri());
-
-        gd.getOutputStageService().updateOutputStage(outputStage);
-        logger.info("output stage of project_id={} is now set to warehouse_id={}", project.getId(), warehouse.getId());
-
+    @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = { "createProjectWithModel", "createWarehouseWithModel" })
+    public void setupOutputStage() {
+        projectHelper.setupOutputStage(project, warehouse);
     }
 
-    @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "createWarehouse")
-    public void createTemplate() {
-        jdbcTemplate = adsHelper.createJdbcTemplate(warehouse);
-    }
-
-    @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "createTemplate")
-    public void executeSql() throws Exception {
-        final File city = new File(getClass().getClassLoader().getResource("city.sql").toURI());
-        final File person = new File(getClass().getClassLoader().getResource("person.sql").toURI());
-
-        final String citySql = FileUtils.readFileToString(city);
-        final String personSql = FileUtils.readFileToString(person);
-
-        jdbcTemplate.execute(citySql);
-        jdbcTemplate.execute(personSql);
-
-        logger.info("executed sql scripts on warehouse_id={}", warehouse.getId());
-    }
-
-    @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = {"setOutputStage", "executeSql"})
+    @BeforeClass(groups = MESSAGE_TYPE, dependsOnMethods = "setupOutputStage")
     public void executeDataloadProcess() {
-        final DataloadProcess dataloadProcess = gd.getProcessService()
-                .listProcesses(project)
-                .stream()
-                .filter(e -> e.getType().equals(DATALOAD.name()))
-                .findFirst()
-                .get();
+        final Schedule schedule = processHelper.createADDSchedule(project);
+        final ScheduleExecution execution = processHelper.executeSchedule(schedule);
 
-        createAndExecuteSchedule(dataloadProcess);
+        if (ERROR_STATUS.equals(execution.getStatus())) {
+            throw new IllegalStateException("Execution of dataload process schedule '" + schedule.getId()
+                    + "' in project '" + project.getId() + "' should not fail.");
+        }
+
+        logger.info("executed schedule_id={} of DATALOAD process for project={}", schedule.getId(), project.getId());
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void tesADDManualExecutionMessageUserAPI() throws Exception {
-        doTestUserApi(eventCheck(true), MESSAGE_TYPE);
+    public void tesADDManualExecutionMessageUserAPI() {
+        doTestUserApi(eventCheck(), MESSAGE_TYPE);
     }
 
     @Test(groups = MESSAGE_TYPE)
-    public void tesADDManualExecutionMessageAdminAPI() throws Exception {
-        doTestAdminApi(eventCheck(true), MESSAGE_TYPE);
+    public void tesADDManualExecutionMessageAdminAPI() {
+        doTestAdminApi(eventCheck(), MESSAGE_TYPE);
     }
 
     @AfterClass(groups = MESSAGE_TYPE)
-    public void clearOutputStage() {
-        final OutputStage outputStage = gd.getOutputStageService().getOutputStage(project);
-
-        outputStage.setSchemaUri(null);
-
-        gd.getOutputStageService().updateOutputStage(outputStage);
+    public void cleanUp() {
+        processHelper.clearAllSchedules();
+        projectHelper.clearOutputStage(project);
     }
 
-    private void createAndExecuteSchedule(final DataloadProcess dataloadProcess) {
-        final Schedule schedule = new Schedule(dataloadProcess, null, "0 0 * * *");
-        schedule.addParam("GDC_DE_SYNCHRONIZE_ALL", "true");
-
-        Schedule createdSchedule = gd.getProcessService().createSchedule(project, schedule);
-
-        FutureResult<ScheduleExecution> futureResult = gd.getProcessService().executeSchedule(createdSchedule);
-        final ScheduleExecution scheduleExecution = futureResult.get();
-
-        assertThat(scheduleExecution.getStatus(), is(not("ERROR")));
-
-        logger.info("executed schedule_id={} of dataload process={}", createdSchedule.getId(), dataloadProcess.getId());
-    }
-
-    private Predicate<AuditEvent> eventCheck(final boolean isSuccess) {
-        return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE) && e.isSuccess() == isSuccess);
+    private Predicate<AuditEvent> eventCheck() {
+        return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(MESSAGE_TYPE) && e.isSuccess());
     }
 
 }
