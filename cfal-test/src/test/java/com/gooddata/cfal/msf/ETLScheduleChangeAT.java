@@ -22,7 +22,7 @@ public class ETLScheduleChangeAT extends AbstractAT {
     @BeforeClass(groups = MESSAGE_TYPE)
     public void setUp() throws URISyntaxException {
         final Project project = projectHelper.getOrCreateProject();
-        final DataloadProcess process = processHelper.createProcess(project);
+        final DataloadProcess process = processHelper.createRubyProcess(project);
         final Schedule schedule = processHelper.createSchedule(project, process);
         schedule.setCron("1 0 * * *");
         gd.getProcessService().updateSchedule(schedule);

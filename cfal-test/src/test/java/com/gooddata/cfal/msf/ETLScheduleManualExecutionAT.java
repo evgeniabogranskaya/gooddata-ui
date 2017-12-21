@@ -25,7 +25,7 @@ public class ETLScheduleManualExecutionAT extends AbstractAT {
     @Test(groups = MESSAGE_TYPE)
     public void executeSchedule() throws URISyntaxException {
         final Project project = projectHelper.getOrCreateProject();
-        final DataloadProcess process = processHelper.createProcess(project);
+        final DataloadProcess process = processHelper.createRubyProcess(project);
         final Schedule schedule = processHelper.createSchedule(project, process);
         processHelper.executeSchedule(schedule);
     }

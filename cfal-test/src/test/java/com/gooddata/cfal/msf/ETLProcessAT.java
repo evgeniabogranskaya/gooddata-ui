@@ -3,7 +3,7 @@
  */
 package com.gooddata.cfal.msf;
 
-import static com.gooddata.auditlog.ProcessHelper.SCRIPT_NAME;
+import static com.gooddata.auditlog.ProcessHelper.RUBY_SCRIPT_NAME;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.fail;
@@ -39,7 +39,7 @@ public class ETLProcessAT extends AbstractAT {
 
     @BeforeClass(groups = {EXECUTION_MESSAGE_TYPE, CREATE_MESSAGE_TYPE, DELETE_MESSAGE_TYPE, UPDATE_MESSAGE_TYPE})
     public void setUp() throws Exception {
-        final DataloadProcess process = processHelper.createProcess(projectHelper.getOrCreateProject());
+        final DataloadProcess process = processHelper.createRubyProcess(projectHelper.getOrCreateProject());
         processHelper.updateProcess(process);
         processHelper.executeProcess(process);
         badUpdateProcess(process);
@@ -152,7 +152,7 @@ public class ETLProcessAT extends AbstractAT {
 
     private void badCreateProcess() throws URISyntaxException {
         try {
-            final File file = processHelper.getScriptFile();
+            final File file = processHelper.getScriptFile(RUBY_SCRIPT_NAME);
             final Project project = projectHelper.getOrCreateProject();
             gd.getProcessService().createProcess(project, new DataloadProcess(getClass().getSimpleName(), ProcessType.GRAPH), file);
             fail("should throw exception");
@@ -180,7 +180,7 @@ public class ETLProcessAT extends AbstractAT {
             final Field executable = ProcessExecution.class.getDeclaredField("executable");
             executable.setAccessible(true);
 
-            final ProcessExecution execution = new ProcessExecution(process, SCRIPT_NAME);
+            final ProcessExecution execution = new ProcessExecution(process, RUBY_SCRIPT_NAME);
             executable.set(execution, "nonExistentExecutable");
 
             final FutureResult<ProcessExecutionDetail> result = gd.getProcessService().executeProcess(execution);

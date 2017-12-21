@@ -4,6 +4,7 @@
 package com.gooddata.auditlog;
 
 import static com.gooddata.dataload.processes.ProcessType.DATALOAD;
+import static org.apache.commons.lang3.Validate.notEmpty;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import com.gooddata.CfalGoodData;
@@ -22,15 +23,16 @@ import java.util.List;
 
 /**
  * Singleton for storing and manipulating with ETL processes and schedules.
- * The created process contains a RUBY "Hello world" script.
  * Lazy initialized. Not thread safe.
  */
 public class ProcessHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(ProcessHelper.class);
 
-    public static final String SCRIPT_NAME = "test.rb";
+    public static final String RUBY_SCRIPT_NAME = "test.rb";
 
+    private static final String CLOVER_GRAPH_FOLDER_NAME = "test_grf";
+    private static final String CLOVER_GRAPH_NAME = "test.grf";
     private static final String SCHEDULE_CRON_EXPRESSION = "0 0 * * *";
     private static final String APPSTORE_PATH = "${PUBLIC_APPSTORE}:branch/demo:/test/HelloApp";
 
@@ -51,27 +53,58 @@ public class ProcessHelper {
         if (instance == null) {
             final CfalGoodData gd = CfalGoodData.getInstance();
             final TestEnvironmentProperties props = TestEnvironmentProperties.getInstance();
-            ProcessHelper.instance = new ProcessHelper(gd, props);
+            instance = new ProcessHelper(gd, props);
         }
         return instance;
     }
 
     /**
-     * Creates and returns new ETL process for the given project.
+     * Creates and returns new ETL Ruby process for the given project.
+     * The created process contains a RUBY "Hello world" script.
      *
      * @param project GD project
-     * @return ETL process
+     * @return Ruby ETL process
      */
-    public DataloadProcess createProcess(final Project project) throws URISyntaxException {
+    public DataloadProcess createRubyProcess(final Project project) throws URISyntaxException {
+        notNull(project, "project cannot be null!");
+
         DataloadProcess process = gd.getProcessService().createProcess(project,
-                new DataloadProcess(testProcessName(SCRIPT_NAME), ProcessType.RUBY), getScriptFile());
+                new DataloadProcess(testProcessName(RUBY_SCRIPT_NAME), ProcessType.RUBY), getScriptFile(RUBY_SCRIPT_NAME));
 
         processes.add(process);
 
         return process;
     }
 
+    /**
+     * Creates and returns new ETL Clover process for the given project.
+     * The created process contains simple GRAPH which generates some data and throws them away right after that.
+     *
+     * @param project GD project
+     * @return Graph ETL process
+     */
+    public DataloadProcess createCloverProcess(final Project project) throws URISyntaxException {
+        notNull(project, "project cannot be null!");
+
+        final DataloadProcess process = gd.getProcessService().createProcess(project,
+                new DataloadProcess(testProcessName(CLOVER_GRAPH_NAME), ProcessType.GRAPH),
+                getScriptFile(CLOVER_GRAPH_FOLDER_NAME));
+
+        processes.add(process);
+
+        return process;
+    }
+
+    /**
+     * Creates process from appstore for the given project.
+     * Gets the default appstore path to the HelloApp RUBY script.
+     *
+     * @param project GD project
+     * @return RUBY ETL process created from appstore
+     */
     public DataloadProcess createProcessFromAppstore(final Project project) {
+        notNull(project, "project cannot be null!");
+
         final DataloadProcess process = gd.getProcessService().createProcessFromAppstore(project,
                 new DataloadProcess(testProcessName(APPSTORE_PATH), ProcessType.RUBY.toString(), APPSTORE_PATH)).get();
 
@@ -84,15 +117,17 @@ public class ProcessHelper {
 
     /**
      * Updates ETL process.
+     * This cannot update appstore process.
      */
     public void updateProcess(final DataloadProcess process) throws URISyntaxException {
         notNull(process, "process cannot be null!");
 
-        gd.getProcessService().updateProcess(process, getScriptFile());
+        gd.getProcessService().updateProcess(process, getScriptFile(getScriptNameForProcess(process)));
     }
 
     /**
      * Executes ETL process and returns its execution result.
+     * This cannot execute appstore process.
      *
      * @param process ETL process to be executed
      * @return ETL process execution result
@@ -100,7 +135,7 @@ public class ProcessHelper {
     public ProcessExecutionDetail executeProcess(final DataloadProcess process) {
         notNull(process, "process cannot be null!");
 
-        final ProcessExecution execution = new ProcessExecution(process, SCRIPT_NAME);
+        final ProcessExecution execution = new ProcessExecution(process, getScriptNameForProcess(process));
         final FutureResult<ProcessExecutionDetail> result = gd.getProcessService().executeProcess(execution);
         logger.info("Process execution uri={}", result.getPollingUri());
         return result.get(props.getPollTimeoutMinutes(), props.getPollTimeoutUnit());
@@ -124,9 +159,11 @@ public class ProcessHelper {
      * @return new schedule
      */
     public Schedule createSchedule(final Project project, final DataloadProcess process) {
+        notNull(project, "project cannot be null!");
+        notNull(process, "process cannot be null!");
 
         final Schedule schedule = gd.getProcessService().createSchedule(project,
-                new Schedule(process, SCRIPT_NAME, SCHEDULE_CRON_EXPRESSION));
+                new Schedule(process, RUBY_SCRIPT_NAME, SCHEDULE_CRON_EXPRESSION));
 
         schedules.add(schedule);
 
@@ -182,15 +219,18 @@ public class ProcessHelper {
     }
 
     /**
-     * Returns file of the "Hello world" script contained in the process
+     * Returns file of the script contained in the process according of the script name
      *
+     * @param scriptName the script name
      * @return {@link File} containing script for the ETL process
      * @throws URISyntaxException if the script file URL of this process cannot be converted to URI
      */
-    public File getScriptFile() throws URISyntaxException {
-        final URL resource = getClass().getClassLoader().getResource(SCRIPT_NAME);
+    public File getScriptFile(final String scriptName) throws URISyntaxException {
+        notEmpty(scriptName, "scriptName cannot be empty!");
+
+        final URL resource = getClass().getClassLoader().getResource(scriptName);
         if (resource == null) {
-            throw new IllegalArgumentException("ETL process script '" + SCRIPT_NAME + " not found.");
+            throw new IllegalArgumentException("ETL process script '" + scriptName + " not found.");
         }
 
         return new File(resource.toURI());
@@ -207,5 +247,14 @@ public class ProcessHelper {
 
     private String testProcessName(final String scriptName) {
         return "CFAL - ETL Process AT (" + scriptName + ")";
+    }
+
+    private String getScriptNameForProcess(final DataloadProcess process) {
+        final ProcessType processType = ProcessType.valueOf(process.getType().toUpperCase());
+        switch (processType) {
+            case RUBY: return RUBY_SCRIPT_NAME;
+            case GRAPH: return CLOVER_GRAPH_NAME;
+            default: throw new IllegalArgumentException("File for process type '" + process.getType() + "' not defined");
+        }
     }
 }
