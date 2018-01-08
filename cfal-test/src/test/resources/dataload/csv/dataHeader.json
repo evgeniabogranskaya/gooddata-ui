@@ -1,0 +1,17 @@
+{
+  "headerRowIndex": 2,
+  "columns": [
+    {
+      "column": {
+        "name": "column1",
+        "type": "ATTRIBUTE"
+      }
+    },
+    {
+      "column": {
+        "name": "column2",
+        "type": "FACT"
+      }
+    }
+  ]
+}

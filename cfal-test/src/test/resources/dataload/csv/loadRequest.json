@@ -1,0 +1,15 @@
+{
+  "load" : {
+    "stagingUrl": "https://s3.staging/url",
+    "fileName" : "data.csv",
+    "dataHeader" : {
+      "headerRowIndex": 1,
+      "columns" : [ {
+        "column" : {
+          "name" : "column1",
+          "type" : "FACT"
+        }
+      } ]
+    }
+  }
+}

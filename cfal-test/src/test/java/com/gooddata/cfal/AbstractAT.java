@@ -48,6 +48,7 @@ public abstract class AbstractAT {
     protected final LoginHelper loginHelper;
     protected final ProcessHelper processHelper;
     protected final WebDavHelper webDavHelper;
+    protected final CsvUploadHelper csvUploadHelper;
 
     public AbstractAT() {
         props = TestEnvironmentProperties.getInstance();
@@ -65,6 +66,7 @@ public abstract class AbstractAT {
         loginHelper = LoginHelper.getInstance();
         processHelper = ProcessHelper.getInstance();
         webDavHelper = WebDavHelper.getInstance();
+        csvUploadHelper = CsvUploadHelper.getInstance();
     }
 
     @BeforeSuite(alwaysRun = true)

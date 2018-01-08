@@ -26,7 +26,7 @@ public class SstEventsAT extends AbstractAT {
     /**
      * The expected number of SST_CREATE events when all components in setUp method did their work.
      */
-    private static final int EXPECTED_SST_EVENT_COUNT = 8;
+    private static final int EXPECTED_SST_EVENT_COUNT = 10;
 
     @BeforeClass(groups = MESSAGE_TYPE)
     public void tryLogins() throws Exception {
@@ -49,6 +49,15 @@ public class SstEventsAT extends AbstractAT {
         final DataloadProcess cloverProcess = processHelper.createCloverProcess(projectHelper.getOrCreateProject());
         // execute CLOVER process (+1 event)
         processHelper.executeProcess(cloverProcess);
+    }
+
+    @BeforeClass(groups = MESSAGE_TYPE)
+    public void csvUploaderExecution() throws Exception {
+        // execute CSV Upload (+1 event)
+        final Project project = projectHelper.getOrCreateProject();
+        final String datasetId = csvUploadHelper.uploadCsv(project);
+        // delete created CSV dataset (+1 event)
+        csvUploadHelper.deleteCsvDataset(project, datasetId);
     }
 
     @BeforeClass(groups = MESSAGE_TYPE)

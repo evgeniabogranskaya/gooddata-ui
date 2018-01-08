@@ -5,6 +5,7 @@ package com.gooddata;
 
 import com.gooddata.auditlog.TestEnvironmentProperties;
 import com.gooddata.authentication.LoginPasswordAuthentication;
+import com.gooddata.dataload.csv.SimpleCsvUploadService;
 import org.apache.http.client.HttpClient;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,6 +21,7 @@ public class CfalGoodData extends GoodData {
     private final ReportExecuteService reportExecuteService;
     private final ExtendedMetadataService extendedMetadataService;
     private final ScheduledMailsAccelerateService scheduledMailsAccelerateService;
+    private final SimpleCsvUploadService csvUploadService;
 
     private CfalGoodData(final GoodDataEndpoint endpoint, final String login, final String password) {
         super(endpoint, new LoginPasswordAuthentication(login, password));
@@ -28,6 +30,7 @@ public class CfalGoodData extends GoodData {
         this.reportExecuteService = new ReportExecuteService(getRestTemplate(), endpoint);
         this.extendedMetadataService = new ExtendedMetadataService(getRestTemplate());
         this.scheduledMailsAccelerateService = new ScheduledMailsAccelerateService(getRestTemplate());
+        this.csvUploadService = new SimpleCsvUploadService(getRestTemplate());
     }
 
     public static CfalGoodData getInstance() {
@@ -68,5 +71,9 @@ public class CfalGoodData extends GoodData {
 
     public ScheduledMailsAccelerateService getScheduledMailsAccelerateService() {
         return scheduledMailsAccelerateService;
+    }
+
+    public SimpleCsvUploadService getCsvUploadService() {
+        return csvUploadService;
     }
 }
