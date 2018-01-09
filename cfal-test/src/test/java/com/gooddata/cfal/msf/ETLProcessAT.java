@@ -3,6 +3,7 @@
  */
 package com.gooddata.cfal.msf;
 
+import static com.gooddata.auditlog.ProcessHelper.RUBY_SCRIPT_NAME;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.fail;
@@ -20,7 +21,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.util.function.Predicate;
@@ -34,22 +34,21 @@ public class ETLProcessAT extends AbstractAT {
     private static final String CREATE_MESSAGE_TYPE = "ETL_PROCESS_CREATE";
     private static final String DELETE_MESSAGE_TYPE = "ETL_PROCESS_DELETE";
     private static final String UPDATE_MESSAGE_TYPE = "ETL_PROCESS_UPDATE";
-    private static final String SCRIPT_NAME = "test.rb";
 
-    private DataloadProcess process;
     private DataloadProcess processAppstore;
 
     @BeforeClass(groups = {EXECUTION_MESSAGE_TYPE, CREATE_MESSAGE_TYPE, DELETE_MESSAGE_TYPE, UPDATE_MESSAGE_TYPE})
     public void setUp() throws Exception {
-        createProcessFromAppstore();
-        createProcess();
+        final DataloadProcess process = processHelper.createRubyProcess(projectHelper.getOrCreateProject());
+        processHelper.updateProcess(process);
+        processHelper.executeProcess(process);
+        badUpdateProcess(process);
+        badExecuteProcess(process);
+        processHelper.removeProcess(process);
         badCreateProcess();
-        updateProcess();
-        badUpdateProcess();
-        executeProcess();
-        badExecuteProcess();
-        removeProcess();
         badRemoveProcess();
+        processAppstore = processHelper.createProcessFromAppstore(projectHelper.getOrCreateProject());
+        processHelper.removeProcess(processAppstore);
     }
 
     @Test(groups = EXECUTION_MESSAGE_TYPE)
@@ -148,26 +147,12 @@ public class ETLProcessAT extends AbstractAT {
 
     private Predicate<AuditEvent> eventCheckCreateFromAppstore(final String messageType) {
         return (e -> e.getUserLogin().equals(getAccount().getLogin()) && e.getType().equals(messageType) &&
-                e.isSuccess() == true && processAppstore.getUri().equals(e.getLinks().get("process")));
-    }
-
-
-    private void createProcessFromAppstore() throws Exception {
-        processAppstore = gd.getProcessService().createProcessFromAppstore(projectHelper.getOrCreateProject(),
-                new DataloadProcess(getClass().getSimpleName() + "Appstore", ProcessType.RUBY.toString(),
-                        "${PUBLIC_APPSTORE}:branch/demo:/test/HelloApp")).get();
-
-        logger.info("deployed process_id={} from appstore", processAppstore.getId());
-    }
-
-    private void createProcess() throws URISyntaxException {
-        final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
-        process = gd.getProcessService().createProcess(projectHelper.getOrCreateProject(), new DataloadProcess(getClass().getSimpleName(), ProcessType.RUBY), file);
+                e.isSuccess() && processAppstore.getUri().equals(e.getLinks().get("process")));
     }
 
     private void badCreateProcess() throws URISyntaxException {
         try {
-            final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
+            final File file = processHelper.getScriptFile(RUBY_SCRIPT_NAME);
             final Project project = projectHelper.getOrCreateProject();
             gd.getProcessService().createProcess(project, new DataloadProcess(getClass().getSimpleName(), ProcessType.GRAPH), file);
             fail("should throw exception");
@@ -175,13 +160,7 @@ public class ETLProcessAT extends AbstractAT {
         }
     }
 
-    private void updateProcess() throws URISyntaxException {
-        final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
-
-        gd.getProcessService().updateProcess(process, file);
-    }
-
-    private void badUpdateProcess() throws IOException {
+    private void badUpdateProcess(final DataloadProcess process) throws Exception {
         try {
             final File tempFile = File.createTempFile("test", "test");
 
@@ -191,22 +170,17 @@ public class ETLProcessAT extends AbstractAT {
         }
     }
 
-    private void executeProcess() {
-        final ProcessExecution execution = new ProcessExecution(process, SCRIPT_NAME);
-        final FutureResult<ProcessExecutionDetail> result = gd.getProcessService().executeProcess(execution);
-        logger.info("Process execution uri={}", result.getPollingUri());
-        result.get(props.getPollTimeoutMinutes(), props.getPollTimeoutUnit());
-    }
-
     /**
      * Executes process with bad executable so it fails on creation of execution
      */
-    private void badExecuteProcess() throws NoSuchFieldException, IllegalAccessException {
+    private void badExecuteProcess(final DataloadProcess process) throws Exception {
         try {
+            // there's validation in ProcessExecution constructor for real existing process executable
+            // so we have to use reflection API to be able set executable to incorrect one after the construction
             final Field executable = ProcessExecution.class.getDeclaredField("executable");
             executable.setAccessible(true);
 
-            final ProcessExecution execution = new ProcessExecution(process, SCRIPT_NAME);
+            final ProcessExecution execution = new ProcessExecution(process, RUBY_SCRIPT_NAME);
             executable.set(execution, "nonExistentExecutable");
 
             final FutureResult<ProcessExecutionDetail> result = gd.getProcessService().executeProcess(execution);
@@ -214,11 +188,6 @@ public class ETLProcessAT extends AbstractAT {
             fail("should throw exception");
         } catch (GoodDataException ignored) {
         }
-    }
-
-    private void removeProcess() {
-        gd.getProcessService().removeProcess(process);
-        gd.getProcessService().removeProcess(processAppstore);
     }
 
     private void badRemoveProcess() {

@@ -1,0 +1,25 @@
+{
+  "load" : {
+    "fileName" : "data.csv",
+    "ownerLogin" : "bear@gooddata.com",
+    "ownerFullName" : "Bear Bear",
+    "created" : "2018-01-03T15:36:41.416Z",
+    "dataHeader" : {
+      "columns" : [ {
+        "column" : {
+          "name" : "column1",
+          "type" : "ATTRIBUTE"
+        }
+      } ]
+    },
+    "datasetId" : "dataset.csv_data",
+    "status": "ERROR",
+    "errorMessage" : "Error message.",
+    "links" : {
+      "self" : "/self/link",
+      "data" : "/self/link/download",
+      "dataset" : "/dataset/dataset.csv_data",
+      "owner" : "/bear"
+    }
+  }
+}

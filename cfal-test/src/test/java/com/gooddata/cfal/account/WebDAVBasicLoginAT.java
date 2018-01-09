@@ -8,6 +8,7 @@ import com.github.sardine.Sardine;
 import com.github.sardine.impl.SardineException;
 import com.github.sardine.impl.SardineImpl;
 import com.gooddata.UriPrefixer;
+import com.gooddata.auditlog.WebDavHelper;
 import org.apache.http.HttpStatus;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
@@ -17,7 +18,6 @@ import java.net.URI;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.appendIfMissing;
-import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -29,47 +29,21 @@ public class WebDAVBasicLoginAT extends AbstractLoginAT {
     private static final String LOGIN_TYPE = "BASIC";
     private static final String COMPONENT = "WEBDAV";
 
-    private final String path;
-    private final String host;
-
-    public WebDAVBasicLoginAT() {
-        final UriPrefixer prefixer = createUriPrefixer();
-        final URI uri = prefixer.getUriPrefix();
-        this.host = uri.getHost();
-        final String path = uri.toString();
-        this.path = appendIfMissing(path, "/");
-    }
-
     @BeforeSuite(groups = GROUP)
     public void logWebDAVConnectionInfo() throws Exception {
-        logger.info("host={} user={} path={}", host, props.getUser(), path);
-    }
-
-    private UriPrefixer createUriPrefixer() {
-        final String userStaging = gd.getGdcService().getRootLinks().getUserStagingUri();
-        final URI userStagingUri = URI.create(userStaging);
-        final URI endpointUri = URI.create(endpoint.toUri());
-        return new UriPrefixer(userStagingUri.isAbsolute() ? userStagingUri : endpointUri.resolve(userStaging));
-    }
-
-    private Sardine createSardine(final String pass) {
-        final Sardine sardine = new SardineImpl(props.getUser(), pass);
-        sardine.enablePreemptiveAuthentication(host);
-        return sardine;
+        logger.info("host={} user={} path={}", webDavHelper.getHost(), props.getUser(), webDavHelper.getPath());
     }
 
     @BeforeClass(groups = GROUP)
     public void shouldLoginUsingWebDAV() throws Exception {
-        final Sardine sardine = createSardine(props.getPass());
-        final List<DavResource> list = sardine.list(path);
+        final List<DavResource> list = webDavHelper.listWebdav(props.getPass());
         assertThat(list, is(notNullValue()));
     }
 
     @BeforeClass(groups = GROUP)
     public void shouldFailLoginUsingWebDAV() throws Exception {
-        final Sardine sardine = createSardine("certainly invalid password");
         try {
-            sardine.list(path);
+            webDavHelper.listWebdav("certainly invalid password");
             fail("Expected 401 unauthorized on invalid password");
         } catch (SardineException e) {
             assertThat("status code", e.getStatusCode(), is(HttpStatus.SC_UNAUTHORIZED));

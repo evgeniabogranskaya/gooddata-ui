@@ -29,7 +29,7 @@ public class ExportAT extends AbstractAT {
     private ReportDefinition definition;
 
     @BeforeClass
-    public void createMetadata() throws Exception {
+    public void createAndExportReport() throws Exception {
         project = projectHelper.createProject();
         report = metadataHelper.getOrCreateReport(project);
         definition = metadataHelper.getOrCreateReportDefinition(project);
@@ -78,7 +78,7 @@ public class ExportAT extends AbstractAT {
         doTestAdminApi(eventCheck(RAW_CSV_FORMAT, true), MESSAGE_TYPE);
     }
 
-    protected Predicate<AuditEvent> eventCheck(final String format, final boolean success) {
+    private Predicate<AuditEvent> eventCheck(final String format, final boolean success) {
         return (e ->
                 e.getUserLogin().equals(getAccount().getLogin()) &&
                         e.getType().equals(MESSAGE_TYPE) &&

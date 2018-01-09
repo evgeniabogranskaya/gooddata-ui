@@ -3,6 +3,7 @@
  */
 package com.gooddata.auditlog;
 
+import com.gooddata.CfalGoodData;
 import com.gooddata.GoodData;
 import com.gooddata.dataset.DatasetService;
 import com.gooddata.md.AbstractObj;
@@ -35,7 +36,8 @@ import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.Validate.notNull;
 
 /**
- * Singleton for metadata related stuff. Not thread safe.
+ * Singleton for metadata related stuff.
+ * Lazy initialized. Not thread safe.
  */
 public class MetadataHelper {
 
@@ -61,9 +63,9 @@ public class MetadataHelper {
         this.datasetService = gd.getDatasetService();
     }
 
-    public static MetadataHelper getInstance(final GoodData gd) {
+    public static MetadataHelper getInstance() {
         if (instance == null) {
-            instance = new MetadataHelper(gd);
+            instance = new MetadataHelper(CfalGoodData.getInstance());
         }
         return instance;
     }

@@ -12,9 +12,7 @@ public class LoginAT extends AbstractLoginAT {
 
     @BeforeClass(groups = MESSAGE_TYPE)
     public void setUp() {
-        gd.getAccountService().logout();
-
-        gd.getAccountService().getCurrent(); // do log
+        loginHelper.usernamePasswordLogin();
     }
 
     @Test(groups = MESSAGE_TYPE)

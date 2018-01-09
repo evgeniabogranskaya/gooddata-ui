@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Graph author="mawek" created="Sat Sep 01 16:34:47 CEST 2012" guiVersion="0.0.0.devel" id="1346510564962" licenseType="Evaluation Devel" modified="Sat Sep 01 23:25:35 CEST 2012" modifiedBy="mawek" name="simple_clover_graph" revision="1.3" showComponentDetails="true">
+<Global>
+<Metadata id="Metadata0">
+<Record fieldDelimiter="|" name="recordName1" recordDelimiter="\n" type="delimited">
+<Field name="field1" type="string"/>
+<Field name="field2" type="string"/>
+<Field name="field3" type="string"/>
+<Field name="field4" type="string"/>
+</Record>
+</Metadata>
+<Property fileURL="workspace.prm" id="GraphParameter0"/>
+<Note alignment="1" backgroundColorB="181" backgroundColorG="245" backgroundColorR="245" folded="false" height="293" id="Note0" textColorB="0" textColorG="0" textColorR="0" textFontSize="8" title="dummy graph" titleColorB="0" titleColorG="0" titleColorR="0" titleFontSize="10" width="704" x="98" y="63">
+<attr name="text"><![CDATA[it generates some rubish data and then throw them away.]]></attr>
+</Note>
+<Dictionary/>
+</Global>
+<Phase number="0">
+<Node enabled="enabled" guiHeight="69" guiName="DataGenerator" guiWidth="141" guiX="170" guiY="154" id="DATA_GENERATOR0" recordsNumber="100" type="DATA_GENERATOR">
+<attr name="generate"><![CDATA[//#CTL2
+
+// Generates output record.
+function integer generate() {
+	$out.0.field1 = randomString(3,5);
+	$out.0.field2 = randomString(3,5);
+	$out.0.field3 = randomString(3,5);
+	$out.0.field4 = randomString(3,5);
+
+	return OK;
+}
+
+// Called during component initialization.
+// function boolean init() {}
+
+// Called during each graph run before the transform is executed. May be used to allocate and initialize resources
+// required by the generate. All resources allocated within this method should be released
+// by the postExecute() method.
+// function void preExecute() {}
+
+// Called only if generate() throws an exception.
+// function integer generateOnError(string errorMessage, string stackTrace) {
+// }
+
+// Called during each graph run after the entire transform was executed. Should be used to free any resources
+// allocated within the preExecute() method.
+// function void postExecute() {}
+
+// Called to return a user-defined error message when an error occurs.
+// function string getMessage() {}
+]]></attr>
+</Node>
+<Node enabled="enabled" guiHeight="69" guiName="Trash" guiWidth="128" guiX="591" guiY="170" id="TRASH0" type="TRASH"/>
+<Edge fromNode="DATA_GENERATOR0:0" guiBendpoints="" guiRouter="Manhattan" id="Edge0" inPort="Port 0 (in)" metadata="Metadata0" outPort="Port 0 (out)" toNode="TRASH0:0"/>
+</Phase>
+</Graph>

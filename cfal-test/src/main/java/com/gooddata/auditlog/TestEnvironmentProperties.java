@@ -13,9 +13,12 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This class encapsulates environment properties for test
+ * This singleton encapsulates environment properties for test.
+ * Lazy initialized, not thread safe.
  */
 public class TestEnvironmentProperties {
+
+    private static TestEnvironmentProperties instance;
 
     private static final TimeUnit POLL_TIMEOUT_UNIT = TimeUnit.MINUTES;
 
@@ -32,7 +35,7 @@ public class TestEnvironmentProperties {
     private final int notificationWaitSeconds;
     private final int scheduledMailWaitSeconds;
 
-    public TestEnvironmentProperties() {
+    private TestEnvironmentProperties() {
         host = getProperty("host", "localhost");
         user = getProperty("user", "bear@gooddata.com");
         pass = getProperty("pass", "jindrisska");
@@ -50,6 +53,13 @@ public class TestEnvironmentProperties {
         final String sshKeyPass = getProperty("sshKeyPass", null);
         final String sshUser = getProperty("sshUser", getProperty("user.name"));
         sshAuth = isEmpty(sshKeyPass) ? pubKeyAuth(sshUser, sshKeyFile) : pubKeyAuth(sshUser, sshKeyFile, sshKeyPass);
+    }
+
+    public static TestEnvironmentProperties getInstance() {
+        if (instance == null) {
+            instance = new TestEnvironmentProperties();
+        }
+        return instance;
     }
 
     public String getHost() {

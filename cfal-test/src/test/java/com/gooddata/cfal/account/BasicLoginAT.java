@@ -26,20 +26,19 @@ import java.io.IOException;
 
 public class BasicLoginAT extends AbstractLoginAT {
 
-    private static final String HTTPS = "https://";
     private static final String WRONG_PASS = "123";
     private static final String BASIC = "BASIC";
 
     @Test(groups = MESSAGE_TYPE)
     public void shouldLogUsingBasicAuth() throws IOException {
-        final HttpResponse response = doBasicAuth(props.getPass());
+        final HttpResponse response = loginHelper.basicAuthLoginRequest(getAccount(), props.getPass());
 
         assertThat(response.getStatusLine().getStatusCode(), is(HttpStatus.SC_OK));
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void shouldNotLogWithBadPasswordUsingBasicAuth() throws IOException {
-        final HttpResponse response = doBasicAuth(WRONG_PASS);
+        final HttpResponse response = loginHelper.basicAuthLoginRequest(getAccount(), WRONG_PASS);
 
         assertThat(response.getStatusLine().getStatusCode(), is(HttpStatus.SC_UNAUTHORIZED));
     }
@@ -62,30 +61,5 @@ public class BasicLoginAT extends AbstractLoginAT {
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldNotLogWithBadPasswordUsingBasicAuth")
     public void testLoginBadPasswordMessageAdminApi() throws InterruptedException, IOException {
         doTestAdminApi(eventCheck(false, WEBAPP, BASIC), MESSAGE_TYPE);
-    }
-
-    private HttpResponse doBasicAuth(final String password) throws IOException {
-        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(new AuthScope(props.getHost(), 443), new UsernamePasswordCredentials(props.getUser(), password));
-
-        final AuthCache authCache = new BasicAuthCache();
-        authCache.put(new HttpHost(props.getHost(), 443, "https"), new BasicScheme());
-
-        final HttpClientContext context = HttpClientContext.create();
-        context.setCredentialsProvider(credentialsProvider);
-        context.setAuthCache(authCache);
-
-        final HttpClient httpClient = HttpClientBuilder.create().build();
-
-        final HttpGet get = new HttpGet(getUrl(getAccount().getUri()));
-        try {
-            return httpClient.execute(get, context);
-        } finally {
-            get.releaseConnection();
-        }
-    }
-
-    private String getUrl(final String uri) {
-        return HTTPS + props.getHost() + ":" + 443 + uri;
     }
 }

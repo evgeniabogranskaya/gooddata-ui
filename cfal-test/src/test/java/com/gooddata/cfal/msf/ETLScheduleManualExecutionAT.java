@@ -9,38 +9,25 @@ import static org.mockito.Mockito.when;
 import com.gooddata.cfal.AbstractAT;
 import com.gooddata.auditevent.AuditEvent;
 import com.gooddata.dataload.processes.DataloadProcess;
-import com.gooddata.dataload.processes.ProcessType;
 import com.gooddata.dataload.processes.Schedule;
 import com.gooddata.dataload.processes.ScheduleExecutionException;
+import com.gooddata.project.Project;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
-import java.io.File;
 import java.net.URISyntaxException;
 import java.util.function.Predicate;
 
 public class ETLScheduleManualExecutionAT extends AbstractAT {
 
     private static final String MESSAGE_TYPE = "ETL_SCHEDULE_MANUAL_EXECUTE";
-    private static final String SCRIPT_NAME = "test.rb";
-
-    private DataloadProcess process;
-    private Schedule schedule;
 
     @Test(groups = MESSAGE_TYPE)
-    public void createProcess() throws URISyntaxException {
-        final File file = new File(getClass().getClassLoader().getResource(SCRIPT_NAME).toURI());
-        process = gd.getProcessService().createProcess(projectHelper.getOrCreateProject(), new DataloadProcess(getClass().getSimpleName(), ProcessType.RUBY), file);
-    }
-
-    @Test(groups = MESSAGE_TYPE, dependsOnMethods = "createProcess")
-    public void createSchedule() throws Exception {
-        schedule = gd.getProcessService().createSchedule(projectHelper.getOrCreateProject(), new Schedule(process, SCRIPT_NAME, "0 0 * * *"));
-    }
-
-    @Test(groups = MESSAGE_TYPE, dependsOnMethods = "createSchedule")
-    public void executeSchedule() {
-        gd.getProcessService().executeSchedule(schedule);
+    public void executeSchedule() throws URISyntaxException {
+        final Project project = projectHelper.getOrCreateProject();
+        final DataloadProcess process = processHelper.createRubyProcess(project);
+        final Schedule schedule = processHelper.createSchedule(project, process);
+        processHelper.executeSchedule(schedule);
     }
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "executeSchedule", expectedExceptions = ScheduleExecutionException.class)
@@ -73,12 +60,7 @@ public class ETLScheduleManualExecutionAT extends AbstractAT {
 
     @AfterGroups(groups = MESSAGE_TYPE)
     public void tearDown() {
-        if (schedule != null) {
-            gd.getProcessService().removeSchedule(schedule);
-        }
-        if (process != null) {
-            gd.getProcessService().removeProcess(process);
-        }
+        processHelper.clearAllSchedules();
     }
 
     private Predicate<AuditEvent> eventCheck(final boolean isSuccess) {

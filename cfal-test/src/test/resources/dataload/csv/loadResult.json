@@ -1,0 +1,8 @@
+{
+  "loadResult": {
+    "status": "OK",
+    "links": {
+      "load": "/gdc/dataload/internal/projects/FoodMartDemo/csv/loads/my-load/executions/123"
+    }
+  }
+}
