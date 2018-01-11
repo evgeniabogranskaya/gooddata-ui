@@ -13,6 +13,8 @@ import com.gooddata.project.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -47,15 +49,16 @@ public class CsvUploadHelper {
      * @param project GD project
      * @return dataset ID
      */
-    public String uploadCsv(final Project project) {
+    public String uploadCsv(final Project project) throws URISyntaxException {
         final URL resource = getClass().getClassLoader().getResource(CSV_FILE_NAME);
         if (resource == null) {
             throw new IllegalArgumentException("File resource '" + CSV_FILE_NAME + "' not found.");
         }
 
-        final String csvFilePath = resource.getPath();
+        final File csvFile = new File(resource.toURI());
+        logger.info("Uploading CSV file '{}'", csvFile.getAbsolutePath());
 
-        return gd.getCsvUploadService().uploadCsv(project, csvFilePath, CSV_FILE_COLUMN_NAMES);
+        return gd.getCsvUploadService().uploadCsv(project, csvFile, CSV_FILE_COLUMN_NAMES);
     }
 
     /**
