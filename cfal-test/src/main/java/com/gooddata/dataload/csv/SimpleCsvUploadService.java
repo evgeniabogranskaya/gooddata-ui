@@ -102,7 +102,7 @@ public class SimpleCsvUploadService extends AbstractService {
         try {
             new RestTemplate().exchange(stagingUrl, HttpMethod.PUT, requestEntity, Void.class);
         } catch (RestClientException e) {
-            throw new GoodDataException("Unable to upload CSV data to S3 for project " + project.getId());
+            throw new GoodDataException("Unable to upload CSV data to S3 for project " + project.getId(), e);
         }
     }
 
