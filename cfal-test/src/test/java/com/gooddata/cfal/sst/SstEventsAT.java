@@ -11,7 +11,6 @@ import com.gooddata.project.Project;
 import com.gooddata.warehouse.Warehouse;
 import org.testng.annotations.*;
 
-import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -26,7 +25,7 @@ public class SstEventsAT extends AbstractAT {
     /**
      * The expected number of SST_CREATE events when all components in setUp method did their work.
      */
-    private static final int EXPECTED_SST_EVENT_COUNT = 10;
+    private static final int EXPECTED_SST_EVENT_COUNT = 11;
 
     @BeforeClass(groups = MESSAGE_TYPE)
     public void tryLogins() throws Exception {
@@ -75,6 +74,13 @@ public class SstEventsAT extends AbstractAT {
         // execution of ADD process (+1 event)
         final Schedule addSchedule = processHelper.createADDSchedule(addProject);
         processHelper.executeSchedule(addSchedule);
+    }
+
+    @BeforeClass(groups = MESSAGE_TYPE)
+    public void registerUser() {
+        // registration of new user generates SST for current user session (+1 event)
+        // calls Registration.pm
+        accountHelper.registerAndDeleteUser();
     }
 
     @AfterClass(groups = MESSAGE_TYPE)
