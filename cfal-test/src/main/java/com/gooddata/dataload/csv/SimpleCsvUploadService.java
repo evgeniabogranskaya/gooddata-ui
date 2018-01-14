@@ -14,6 +14,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriTemplate;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -42,18 +43,18 @@ public class SimpleCsvUploadService extends AbstractService {
      * The header column names must be specified.
      *
      * @param project GD project
-     * @param csvFilePath path to the CSV file
+     * @param csvFile CSV file which should be uploaded
      * @param columns header column names
      * @return ID of the new created CSV dataset
      */
-    public String uploadCsv(final Project project, final String csvFilePath, final List<String> columns) {
+    public String uploadCsv(final Project project, final File csvFile, final List<String> columns) {
         notNull(project, "project");
-        notEmpty(csvFilePath, "csvFilePath");
+        notNull(csvFile, "csvFile");
         notEmpty(columns, "columns");
 
         final String stagingUrl = getStagingUrl(project);
-        uploadToStaging(stagingUrl, csvFilePath, project);
-        final Load load = createLoad(project, stagingUrl, csvFilePath, columns);
+        uploadToStaging(stagingUrl, csvFile, project);
+        final Load load = createLoad(project, stagingUrl, csvFile, columns);
         final LoadResult loadResult = executeCsvUpload(load).get();
 
         if (!loadResult.isOk()) {
@@ -93,8 +94,8 @@ public class SimpleCsvUploadService extends AbstractService {
         }
     }
 
-    private void uploadToStaging(final String stagingUrl, final String csvFilePath, final Project project) {
-        final PathResource data = new PathResource(csvFilePath);
+    private void uploadToStaging(final String stagingUrl, final File csvFile, final Project project) {
+        final PathResource data = new PathResource(csvFile.toURI());
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("text/csv"));
         final HttpEntity<PathResource> requestEntity = new HttpEntity<>(data, headers);
@@ -106,10 +107,9 @@ public class SimpleCsvUploadService extends AbstractService {
         }
     }
 
-    private Load createLoad(final Project project, final String stagingUrl, final String csvFilePath,
+    private Load createLoad(final Project project, final String stagingUrl, final File csvFile,
             final List<String> columns) {
-        final String csvFileName = Paths.get(csvFilePath).getFileName().toString();
-        final Load loadRequest = Load.newLoadRequest(stagingUrl, csvFileName, columns);
+        final Load loadRequest = Load.newLoadRequest(stagingUrl, csvFile.getName(), columns);
 
         try {
             return restTemplate.postForObject(Load.LOADS_URI, loadRequest, Load.class, project.getId());
