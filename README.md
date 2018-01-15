@@ -153,7 +153,7 @@ parameter | value
 ----------|-------
 `HARDWARE_TYPE` | `c2r10e200` (at least)
 `TYPE`          | `rat`
-`EXTRA`         | `rat_cfal=1,rat_msf_csv=0,rat_hds=1,components=msf`
+`EXTRA`         | `rat_cfal=1,rat_hds=1,components=msf`
 
 `HIERA_OVERRIDES`:
 ```
