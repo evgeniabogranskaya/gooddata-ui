@@ -7,6 +7,7 @@ import com.gooddata.auditevent.AuditEvent;
 import com.gooddata.cfal.AbstractAT;
 import com.gooddata.dataload.processes.DataloadProcess;
 import com.gooddata.dataload.processes.Schedule;
+import com.gooddata.md.ProjectDashboard;
 import com.gooddata.project.Project;
 import com.gooddata.warehouse.Warehouse;
 import org.testng.annotations.*;
@@ -25,7 +26,7 @@ public class SstEventsAT extends AbstractAT {
     /**
      * The expected number of SST_CREATE events when all components in setUp method did their work.
      */
-    private static final int EXPECTED_SST_EVENT_COUNT = 12;
+    private static final int EXPECTED_SST_EVENT_COUNT = 13;
 
     @BeforeClass(groups = MESSAGE_TYPE)
     public void tryLogins() throws Exception {
@@ -88,6 +89,15 @@ public class SstEventsAT extends AbstractAT {
         final Project project = projectHelper.getOrCreateProject();
         // running of scheduled email should create own SST (+1 event)
         scheduledMailHelper.runScheduledMail(project, metadataHelper.getOrCreateReport(project));
+    }
+
+    @BeforeClass(groups = MESSAGE_TYPE)
+    public void exportDashboard() throws Exception {
+        final Project project = projectHelper.getOrCreateProject();
+        final ProjectDashboard dashboard = metadataHelper.getOrCreateDashboard(project);
+
+        // runs export dashboard (+1 event)
+        gd.getExportService().runExportDashboard(dashboard);
     }
 
     @AfterClass(groups = MESSAGE_TYPE)

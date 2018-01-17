@@ -84,6 +84,8 @@ public abstract class AbstractAT {
         //delete processes and schedules first
         processHelper.destroy();
         scheduledMailHelper.destroy();
+        //delete all unnecessary metadata (e.g. project dashboards)
+        metadataHelper.destroy();
         //delete projects before ADS instances (project links to existing ADS)
         projectHelper.destroy();
         //delete ADS instances before created accounts

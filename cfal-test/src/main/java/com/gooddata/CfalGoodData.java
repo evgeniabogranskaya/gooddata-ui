@@ -26,6 +26,7 @@ public class CfalGoodData extends GoodData {
     private final ScheduledMailsAccelerateService scheduledMailsAccelerateService;
     private final SimpleCsvUploadService csvUploadService;
     private final ExtendedAccountService extendedAccountService;
+    private final ExtendedExportService extendedExportService;
 
     /**
      * Creates new GoodData from the given endpoint and authenticated via given Super Secure Token.
@@ -53,6 +54,7 @@ public class CfalGoodData extends GoodData {
         this.scheduledMailsAccelerateService = new ScheduledMailsAccelerateService(getRestTemplate());
         this.csvUploadService = new SimpleCsvUploadService(getRestTemplate());
         this.extendedAccountService = new ExtendedAccountService(getRestTemplate());
+        this.extendedExportService = new ExtendedExportService(getRestTemplate(), endpoint);
     }
 
     public static CfalGoodData getInstance() {
@@ -102,5 +104,10 @@ public class CfalGoodData extends GoodData {
     @Override
     public ExtendedAccountService getAccountService() {
         return extendedAccountService;
+    }
+
+    @Override
+    public ExtendedExportService getExportService() {
+        return extendedExportService;
     }
 }
