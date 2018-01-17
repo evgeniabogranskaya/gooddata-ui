@@ -25,7 +25,7 @@ public class SstEventsAT extends AbstractAT {
     /**
      * The expected number of SST_CREATE events when all components in setUp method did their work.
      */
-    private static final int EXPECTED_SST_EVENT_COUNT = 11;
+    private static final int EXPECTED_SST_EVENT_COUNT = 12;
 
     @BeforeClass(groups = MESSAGE_TYPE)
     public void tryLogins() throws Exception {
@@ -83,9 +83,17 @@ public class SstEventsAT extends AbstractAT {
         accountHelper.registerAndDeleteUser();
     }
 
+    @BeforeClass(groups = MESSAGE_TYPE)
+    public void runScheduledEmail() throws Exception {
+        final Project project = projectHelper.getOrCreateProject();
+        // running of scheduled email should create own SST (+1 event)
+        scheduledMailHelper.runScheduledMail(project, metadataHelper.getOrCreateReport(project));
+    }
+
     @AfterClass(groups = MESSAGE_TYPE)
     public void tearDown() {
         processHelper.clearAllSchedules();
+        scheduledMailHelper.clearScheduledMails();
     }
 
     @Test(groups = MESSAGE_TYPE)
