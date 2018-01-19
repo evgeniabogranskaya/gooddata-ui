@@ -146,6 +146,11 @@ Actuator endpoints (except `/info`) are secured by basic-auth.
 curl localhost:8080/cfal-restapi/health -u cfal:cfal
 `
 
+## CFAL IP event masking
+CFAL employs local IP masking to prevent disclosure of internal node IPs to customer. Internal node IPs is masked on restapi as `127.0.0.1`. 
+IPs to mask is passed using property `gdc.cfal.mask.ips`, you can pass IP address range in CIDR notation like `172.26.0.0/16` or you can add concrete IP addresses `172.192.34.44` ,
+or combination of both comma separated.
+
 ## Deploy a PI
 Use [EL 7 PI deploy job](https://ci.intgdc.com/job/deploy-instance-el7/build?delay=0sec)
 
