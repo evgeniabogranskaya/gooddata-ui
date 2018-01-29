@@ -100,6 +100,7 @@ parameter                 | default                        | example
 `sshUser`                 | OS user                        | `-DsshUser=martin.caslavsky`
 `notificationWaitSeconds` | 30                             | `-DnotificationWaitSeconds=10`
 `scheduledMailWaitSeconds`| 60                             | `-DscheduledMailWaitSeconds=30`
+`sftpHost`                | `$host`                        | `-DsftpHost=mcl-cfal.na.intgdc.com`
 
 #### Test using SSH
 
