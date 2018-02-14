@@ -21,6 +21,7 @@ public class TestEnvironmentProperties {
     private static TestEnvironmentProperties instance;
 
     private static final TimeUnit POLL_TIMEOUT_UNIT = TimeUnit.MINUTES;
+    private static final String DEFAULT_DOMAIN = "default";
 
     private final String host;
     private final String user;
@@ -34,12 +35,14 @@ public class TestEnvironmentProperties {
     private final Authentication sshAuth;
     private final int notificationWaitSeconds;
     private final int scheduledMailWaitSeconds;
+    private final String sftpHost;
+    private final String sftpLogin;
 
     private TestEnvironmentProperties() {
         host = getProperty("host", "localhost");
         user = getProperty("user", "bear@gooddata.com");
         pass = getProperty("pass", "jindrisska");
-        domain = getProperty("domain", "default");
+        domain = getProperty("domain", DEFAULT_DOMAIN);
         projectToken = getProperty("projectToken");
         projectId = getProperty("projectId");
         datawarehouseToken = getProperty("datawarehouseToken", "vertica");
@@ -53,6 +56,10 @@ public class TestEnvironmentProperties {
         final String sshKeyPass = getProperty("sshKeyPass", null);
         final String sshUser = getProperty("sshUser", getProperty("user.name"));
         sshAuth = isEmpty(sshKeyPass) ? pubKeyAuth(sshUser, sshKeyFile) : pubKeyAuth(sshUser, sshKeyFile, sshKeyPass);
+
+        final String sftpHostVal = getProperty("sftpHost", host);
+        this.sftpHost = isEmpty(sftpHostVal) ? host : sftpHostVal;
+        sftpLogin = DEFAULT_DOMAIN.equals(domain) ? user : domain + "\\" + user;
     }
 
     public static TestEnvironmentProperties getInstance() {
@@ -112,5 +119,13 @@ public class TestEnvironmentProperties {
 
     public int getScheduledMailWaitSeconds() {
         return scheduledMailWaitSeconds;
+    }
+
+    public String getSftpLogin() {
+        return sftpLogin;
+    }
+
+    public String getSftpHost() {
+        return sftpHost;
     }
 }

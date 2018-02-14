@@ -9,6 +9,11 @@
     </parent>
     <artifactId>cfal-test</artifactId>
 
+    <properties>
+        <sardine.version>5.1</sardine.version>
+        <jsch.version>0.1.54</jsch.version>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -119,7 +124,12 @@
         <dependency>
             <groupId>com.github.lookfirst</groupId>
             <artifactId>sardine</artifactId>
-            <version>5.1</version>
+            <version>${sardine.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>${jsch.version}</version>
         </dependency>
         <dependency>
             <groupId>net.javacrumbs.json-unit</groupId>
