@@ -1,4 +1,5 @@
 {
+  "priority" : 1,
   "request": {
     "method": "GET",
     "url": "/gdc/c4/user/876ec68f5630b38de65852ed5d6236ff/setting/cfal"
