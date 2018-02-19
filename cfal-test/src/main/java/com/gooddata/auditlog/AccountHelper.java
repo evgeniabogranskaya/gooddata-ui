@@ -88,13 +88,15 @@ public class AccountHelper {
      * remove all created users
      */
     public void destroy() {
-        accounts.forEach(e -> {
+        accounts.forEach(account -> {
             try {
-                gd.getAccountService().removeAccount(e);
-                logger.info("removed account_id={}", e.getId());
+                logger.info("removing account_id={}", account.getId());
+                gd.getAccountService().removeAccount(account);
+                logger.info("account_id={} removed", account.getId());
             } catch (Exception ex) {
-                logger.warn("could not remove account_id={}", e.getId());
+                logger.warn("could not remove account_id=" + account.getId(), ex);
             }
         });
+        accounts.clear();
     }
 }

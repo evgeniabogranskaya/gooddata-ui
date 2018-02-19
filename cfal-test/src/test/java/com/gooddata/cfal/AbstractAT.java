@@ -78,10 +78,11 @@ public abstract class AbstractAT {
 
     @AfterSuite(alwaysRun = true)
     public void serviceTearDown() throws Exception {
-        accountHelper.destroy();
-        adsHelper.destroy();
+        logger.info("clearing unnecessary thrash after tests...");
         processHelper.destroy();
+        adsHelper.destroy();
         projectHelper.destroy();
+        accountHelper.destroy();
     }
 
     /**
