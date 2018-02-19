@@ -115,14 +115,16 @@ public class AdsHelper {
      * Removes all created warehouses
      */
     public void destroy() {
-        warehouses.forEach(e -> {
+        warehouses.forEach(warehouse -> {
             try {
-                gd.getWarehouseService().removeWarehouse(e);
-                logger.info("removed warehouse_id={}", e.getId());
+                logger.info("removing warehouse_id={}", warehouse.getId());
+                gd.getWarehouseService().removeWarehouse(warehouse);
+                logger.info("warehouse_id={} removed", warehouse.getId());
             } catch (Exception ex) {
-                logger.warn("could not remove warehouse_id={}", e.getId());
+                logger.warn("could not remove warehouse_id=" + warehouse.getId(), ex);
             }
         });
+        warehouses.clear();
     }
 
     private DriverManagerDataSource createDataSource(final Warehouse warehouse) {

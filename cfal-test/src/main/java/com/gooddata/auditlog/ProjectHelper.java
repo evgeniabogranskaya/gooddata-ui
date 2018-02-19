@@ -152,18 +152,22 @@ public class ProjectHelper {
             if (keepProject) {
                 logger.debug("Keeping project_id={}", project.getId());
             } else {
-                logger.debug("Removing project_id={}", project.getId());
-                gd.getProjectService().removeProject(project);
+                removeProject(project);
+                project = null;
             }
         }
 
-        projects.forEach(e -> {
-            try {
-                gd.getProjectService().removeProject(e);
-                logger.info("removed project_id={}", e.getId());
-            } catch (Exception ex) {
-                logger.warn("could not remove project_id={}", e.getId());
-            }
-        });
+        projects.forEach(this::removeProject);
+        projects.clear();
+    }
+
+    private void removeProject(final Project project) {
+        try {
+            logger.info("removing project_id={}", project.getId());
+            gd.getProjectService().removeProject(project);
+            logger.info("removed project_id={}", project.getId());
+        } catch (Exception ex) {
+            logger.warn("could not remove project_id=" + project.getId(), ex);
+        }
     }
 }
