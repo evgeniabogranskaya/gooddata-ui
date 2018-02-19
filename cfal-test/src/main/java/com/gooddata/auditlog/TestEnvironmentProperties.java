@@ -37,6 +37,7 @@ public class TestEnvironmentProperties {
     private final int scheduledMailWaitSeconds;
     private final String sftpHost;
     private final String sftpLogin;
+    private final int sftpLoginTimeoutSeconds;
 
     private TestEnvironmentProperties() {
         host = getProperty("host", "localhost");
@@ -60,6 +61,7 @@ public class TestEnvironmentProperties {
         final String sftpHostVal = getProperty("sftpHost", host);
         this.sftpHost = isEmpty(sftpHostVal) ? host : sftpHostVal;
         sftpLogin = DEFAULT_DOMAIN.equals(domain) ? user : domain + "\\" + user;
+        sftpLoginTimeoutSeconds = Integer.getInteger("sftpLoginTimeoutSeconds", 60);
     }
 
     public static TestEnvironmentProperties getInstance() {
@@ -127,5 +129,9 @@ public class TestEnvironmentProperties {
 
     public String getSftpHost() {
         return sftpHost;
+    }
+
+    public int getSftpLoginTimeoutSeconds() {
+        return sftpLoginTimeoutSeconds;
     }
 }

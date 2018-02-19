@@ -39,7 +39,7 @@ public class SftpHelper {
         session.setUserInfo(new SftpUserInfo(password));
 
         try {
-            session.connect();
+            session.connect(props.getSftpLoginTimeoutSeconds() * 1000);
             logger.info("SFTP logged in to the host={}", props.getSftpHost());
         } finally {
             session.disconnect();

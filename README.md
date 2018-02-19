@@ -101,6 +101,7 @@ parameter                 | default                        | example
 `notificationWaitSeconds` | 30                             | `-DnotificationWaitSeconds=10`
 `scheduledMailWaitSeconds`| 60                             | `-DscheduledMailWaitSeconds=30`
 `sftpHost`                | `$host`                        | `-DsftpHost=mcl-cfal.na.intgdc.com`
+`sftpLoginTimeoutSeconds` | 60                             | `-DsftpLoginTimeoutSeconds=60`
 
 #### Test using SSH
 
