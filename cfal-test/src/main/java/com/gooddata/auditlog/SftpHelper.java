@@ -35,6 +35,7 @@ public class SftpHelper {
     }
 
     public void login(final String password) throws JSchException {
+        logger.info("log in user={} to SFTP host={}", props.getSftpLogin(), props.getSftpHost());
         final Session session = new JSch().getSession(props.getSftpLogin(), props.getSftpHost());
         session.setUserInfo(new SftpUserInfo(password));
 
