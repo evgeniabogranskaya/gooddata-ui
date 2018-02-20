@@ -7,7 +7,6 @@ package com.gooddata.auditlog;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.jcraft.jsch.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,52 +36,17 @@ public class SftpHelper {
     public void login(final String password) throws JSchException {
         logger.info("log in user={} to SFTP host={}", props.getSftpLogin(), props.getSftpHost());
         final Session session = new JSch().getSession(props.getSftpLogin(), props.getSftpHost());
-        session.setUserInfo(new SftpUserInfo(password));
+        session.setConfig("StrictHostKeyChecking", "no");
+        session.setConfig("PreferredAuthentications", "password");
+        session.setPassword(password);
+        session.setTimeout(props.getSftpLoginTimeoutSeconds() * 1000);
 
         try {
-            session.connect(props.getSftpLoginTimeoutSeconds() * 1000);
+            session.connect();
             logger.info("SFTP logged in to the host={}", props.getSftpHost());
         } finally {
             session.disconnect();
             logger.info("SFTP logged out from the host={}", props.getSftpHost());
-        }
-    }
-
-    private static class SftpUserInfo implements UserInfo {
-
-        private final String password;
-
-        private SftpUserInfo(final String password) {
-            this.password = password;
-        }
-
-        @Override
-        public String getPassphrase() {
-            return null;
-        }
-
-        @Override
-        public String getPassword() {
-            return password;
-        }
-
-        @Override
-        public boolean promptPassword(final String message) {
-            return true;
-        }
-
-        @Override
-        public boolean promptPassphrase(final String message) {
-            return true;
-        }
-
-        @Override
-        public boolean promptYesNo(final String message) {
-            return true;
-        }
-
-        @Override
-        public void showMessage(String message) {
         }
     }
 }
