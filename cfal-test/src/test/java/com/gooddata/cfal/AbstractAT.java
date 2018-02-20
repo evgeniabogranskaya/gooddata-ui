@@ -79,9 +79,13 @@ public abstract class AbstractAT {
     @AfterSuite(alwaysRun = true)
     public void serviceTearDown() throws Exception {
         logger.info("clearing unnecessary thrash after tests...");
+        //delete processes and schedules first
         processHelper.destroy();
-        adsHelper.destroy();
+        //delete projects before ADS instances (project links to existing ADS)
         projectHelper.destroy();
+        //delete ADS instances before created accounts
+        adsHelper.destroy();
+        //delete accounts at last
         accountHelper.destroy();
     }
 
