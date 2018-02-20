@@ -90,6 +90,7 @@ parameter                 | default                        | example
 `host`                    | `localhost`                    | `-Dhost=mcl-cfal.na.intgdc.com`
 `user`                    | `bear@gooddata.com`            | `-Duser=bear@gooddata.com`
 `pass`                    | `jindrisska`                   | `-Dpass=jindrisska`
+`domain`                  | `default`                      | `-Ddomain=default`
 `projectId`               | `defaultEmptyProject`          | `-DprojectId=defaultEmptyProject`
 `projectToken`            | _none_                         | `-DprojectToken=pgroup2`
 `keepProject`             | `true` for defaultEmptyProject | `-DkeepProject=true`
