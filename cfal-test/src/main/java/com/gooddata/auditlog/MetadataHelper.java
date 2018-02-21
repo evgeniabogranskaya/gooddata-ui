@@ -6,14 +6,7 @@ package com.gooddata.auditlog;
 import com.gooddata.CfalGoodData;
 import com.gooddata.GoodData;
 import com.gooddata.dataset.DatasetService;
-import com.gooddata.md.AbstractObj;
-import com.gooddata.md.Attribute;
-import com.gooddata.md.Dataset;
-import com.gooddata.md.Entry;
-import com.gooddata.md.Fact;
-import com.gooddata.md.MetadataService;
-import com.gooddata.md.Metric;
-import com.gooddata.md.Queryable;
+import com.gooddata.md.*;
 import com.gooddata.md.report.AttributeInGrid;
 import com.gooddata.md.report.Filter;
 import com.gooddata.md.report.GridReportDefinitionContent;
@@ -25,9 +18,7 @@ import com.gooddata.project.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static com.gooddata.md.Restriction.identifier;
@@ -48,12 +39,11 @@ public class MetadataHelper {
     private static MetadataHelper instance;
 
     // indexed by project id
-    private static final Map<String, ProjectMetadataState> projectMetadataStates = new HashMap<>();
+    private final Map<String, ProjectMetadataState> projectMetadataStates = new HashMap<>();
+    private final Map<String, ProjectDashboard> projectDashboards = new HashMap<>();
 
     private final MetadataService metadataService;
-
     private final ModelService modelService;
-
     private final DatasetService datasetService;
 
     private MetadataHelper(final GoodData gd) {
@@ -84,6 +74,54 @@ public class MetadataHelper {
             createMetadata(project);
         }
         return projectMetadataState.getReportDefinition();
+    }
+
+    /**
+     * Gets existing or creates new CFAL testing dashboard for the given project.
+     * There's no need for creating more dashboards for individual testing projects so one dashboard per project is
+     * enough.
+     *
+     * @param project GD project
+     * @return project dashboard
+     */
+    public ProjectDashboard getOrCreateDashboard(final Project project) {
+        notNull(project, "project cannot be null!");
+
+        ProjectDashboard dashboard = projectDashboards.get(project.getId());
+        if (dashboard == null) {
+            final ProjectDashboard newDashboard =
+                    new ProjectDashboard("CFAL testing dashboard", new ProjectDashboard.Tab("CFAL testing tab"));
+
+            dashboard = metadataService.createObj(project, newDashboard);
+            projectDashboards.put(project.getId(), dashboard);
+        }
+        return dashboard;
+    }
+
+    /**
+     * Removes default CFAL testing dashboard from the given project.
+     *
+     * @param project GD project
+     */
+    public void removeDashboard(final Project project) {
+        removeDashboard(project.getId());
+    }
+
+    /**
+     * Clears all metadata garbage stuff created during acceptance tests.
+     */
+    public void destroy() {
+        //we must create new list from ids first to avoid concurrent modification of the HashMap
+        final List<String> projects = new ArrayList<>(projectDashboards.keySet());
+        projects.forEach(this::removeDashboard);
+    }
+
+    private void removeDashboard(final String projectId) {
+        final ProjectDashboard dashboard = projectDashboards.get(projectId);
+        if (dashboard != null) {
+            metadataService.removeObj(dashboard);
+            projectDashboards.remove(projectId);
+        }
     }
 
     private void createMetadata(final Project project) {

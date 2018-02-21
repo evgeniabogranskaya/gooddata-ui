@@ -5,12 +5,15 @@ package com.gooddata;
 
 import com.gooddata.auditlog.TestEnvironmentProperties;
 import com.gooddata.authentication.LoginPasswordAuthentication;
+import com.gooddata.authentication.SstAuthentication;
 import com.gooddata.dataload.csv.SimpleCsvUploadService;
 import org.apache.http.client.HttpClient;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * CFAL extension of GoodData Java client. Singleton for keeping only one GD session during ATs run.
+ * CFAL extension of GoodData Java client.
+ * Singleton for keeping only one GD session during ATs run.
+ * Contains one public constructor for being able to initialize new GD client via SST (used in registrations).
  * Lazy initialized. Not thread safe.
  */
 public class CfalGoodData extends GoodData {
@@ -22,15 +25,36 @@ public class CfalGoodData extends GoodData {
     private final ExtendedMetadataService extendedMetadataService;
     private final ScheduledMailsAccelerateService scheduledMailsAccelerateService;
     private final SimpleCsvUploadService csvUploadService;
+    private final ExtendedAccountService extendedAccountService;
+    private final ExtendedExportService extendedExportService;
 
+    /**
+     * Creates new GoodData from the given endpoint and authenticated via given Super Secure Token.
+     *
+     * @param endpoint GD endpoint
+     * @param sst Super Secure Token
+     */
+    public CfalGoodData(final GoodDataEndpoint endpoint, final String sst) {
+        this(endpoint, new SstAuthentication(sst));
+    }
+
+    /**
+     * Created and returned as singleton.
+     */
     private CfalGoodData(final GoodDataEndpoint endpoint, final String login, final String password) {
-        super(endpoint, new LoginPasswordAuthentication(login, password));
+        this(endpoint, new LoginPasswordAuthentication(login, password));
+    }
+
+    private CfalGoodData(final GoodDataEndpoint endpoint, final Authentication authentication) {
+        super(endpoint, authentication);
 
         this.endpoint = endpoint;
         this.reportExecuteService = new ReportExecuteService(getRestTemplate(), endpoint);
         this.extendedMetadataService = new ExtendedMetadataService(getRestTemplate());
         this.scheduledMailsAccelerateService = new ScheduledMailsAccelerateService(getRestTemplate());
         this.csvUploadService = new SimpleCsvUploadService(getRestTemplate());
+        this.extendedAccountService = new ExtendedAccountService(getRestTemplate());
+        this.extendedExportService = new ExtendedExportService(getRestTemplate(), endpoint);
     }
 
     public static CfalGoodData getInstance() {
@@ -75,5 +99,15 @@ public class CfalGoodData extends GoodData {
 
     public SimpleCsvUploadService getCsvUploadService() {
         return csvUploadService;
+    }
+
+    @Override
+    public ExtendedAccountService getAccountService() {
+        return extendedAccountService;
+    }
+
+    @Override
+    public ExtendedExportService getExportService() {
+        return extendedExportService;
     }
 }

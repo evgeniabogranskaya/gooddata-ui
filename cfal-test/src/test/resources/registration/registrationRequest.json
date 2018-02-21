@@ -1,0 +1,12 @@
+{
+  "postRegistration": {
+    "login": "my@email.com",
+    "licence": "1",
+    "firstName": "Vulpes",
+    "lastName": "Lagopus",
+    "password": "new_password",
+    "verifyPassword": "new_password",
+    "captcha": "x7jp8",
+    "verifyCaptcha": "b4eb5b9d56edfed5bf759dca84217044"
+  }
+}

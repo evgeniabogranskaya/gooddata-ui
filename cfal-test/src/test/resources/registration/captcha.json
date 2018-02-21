@@ -1,0 +1,7 @@
+{
+  "captcha" : {
+    "captchaString" : "cptch",
+    "captchaPic" : "/captcha/captchaabdc.png",
+    "verifyCaptcha" : "captchaabcd"
+  }
+}

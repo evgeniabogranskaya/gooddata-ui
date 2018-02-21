@@ -50,6 +50,7 @@ public abstract class AbstractAT {
     protected final WebDavHelper webDavHelper;
     protected final CsvUploadHelper csvUploadHelper;
     protected final SftpHelper sftpHelper;
+    protected final ScheduledMailHelper scheduledMailHelper;
 
     public AbstractAT() {
         props = TestEnvironmentProperties.getInstance();
@@ -69,6 +70,7 @@ public abstract class AbstractAT {
         webDavHelper = WebDavHelper.getInstance();
         csvUploadHelper = CsvUploadHelper.getInstance();
         sftpHelper = SftpHelper.getInstance();
+        scheduledMailHelper = ScheduledMailHelper.getInstance();
     }
 
     @BeforeSuite(alwaysRun = true)
@@ -81,6 +83,9 @@ public abstract class AbstractAT {
         logger.info("clearing unnecessary thrash after tests...");
         //delete processes and schedules first
         processHelper.destroy();
+        scheduledMailHelper.destroy();
+        //delete all unnecessary metadata (e.g. project dashboards)
+        metadataHelper.destroy();
         //delete projects before ADS instances (project links to existing ADS)
         projectHelper.destroy();
         //delete ADS instances before created accounts

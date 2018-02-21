@@ -6,12 +6,11 @@ package com.gooddata.auditlog;
 import com.gooddata.CfalGoodData;
 import com.gooddata.GoodData;
 import com.gooddata.account.Account;
+import com.gooddata.registration.RegisteredAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
@@ -27,7 +26,7 @@ public class AccountHelper {
 
     private final List<Account> accounts = new ArrayList<>();
 
-    private final GoodData gd;
+    private final CfalGoodData gd;
 
     private final TestEnvironmentProperties props;
 
@@ -42,7 +41,7 @@ public class AccountHelper {
         return instance;
     }
 
-    private AccountHelper(final GoodData gd, final TestEnvironmentProperties props) {
+    private AccountHelper(final CfalGoodData gd, final TestEnvironmentProperties props) {
         this.gd = notNull(gd, "gd");
         this.props = notNull(props, "props");
     }
@@ -75,13 +74,24 @@ public class AccountHelper {
      * @return created user
      */
     public Account createUser() {
-        final Account create = new Account(UUID.randomUUID() + "@mail.com", "passpasspass", "hugo", "boss");
-
-        final Account account = gd.getAccountService().createAccount(create, props.getDomain());
+        final Account account = gd.getAccountService().createAccount(createRandomAccount(), props.getDomain());
         logger.info("created user_id={}", account.getId());
 
         accounts.add(account);
         return account;
+    }
+
+    /**
+     * Registers new account and deletes it immediately to prevent piling up of unverified accounts.
+     */
+    public void registerAndDeleteUser() {
+        final RegisteredAccount newAccount = gd.getAccountService().registerAccount(createRandomAccount());
+        logger.info("registered user_uri={}", newAccount.getProfileUri());
+
+        final GoodData sstGd = new CfalGoodData(gd.getEndpoint(), newAccount.getSst());
+        final Account current = sstGd.getAccountService().getCurrent();
+        sstGd.getAccountService().removeAccount(current);
+        logger.info("deleted registered user_id={}", current.getId());
     }
 
     /**
@@ -99,4 +109,9 @@ public class AccountHelper {
         });
         accounts.clear();
     }
+
+    private Account createRandomAccount() {
+        return new Account(UUID.randomUUID() + "@mail.com", "passpasspass", "hugo", "boss");
+    }
+
 }

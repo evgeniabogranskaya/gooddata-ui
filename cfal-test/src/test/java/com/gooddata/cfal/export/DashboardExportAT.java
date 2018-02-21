@@ -23,12 +23,9 @@ public class DashboardExportAT extends AbstractAT {
 
     @BeforeClass(groups = MESSAGE_TYPE)
     public void createAndExportDashboard() throws Exception {
-        final ProjectDashboard dashboard = new ProjectDashboard("My dashboard", new Tab("My tab"));
-
-        this.project = projectHelper.getOrCreateProject();
-        this.dashboard = gd.getMetadataService().createObj(project, dashboard);
-
-        gd.getExportService().exportPdf(this.dashboard, this.dashboard.getTabs().iterator().next(), new NullOutputStream()).get();
+        project = projectHelper.getOrCreateProject();
+        dashboard = metadataHelper.getOrCreateDashboard(project);
+        gd.getExportService().runExportDashboard(dashboard);
     }
 
     @Test(groups = MESSAGE_TYPE)
