@@ -35,6 +35,8 @@ import static org.apache.commons.lang3.Validate.notNull;
 @Monitored("cfal.AuditLogEventRepository")
 public class AuditLogEventRepository {
 
+    static final String INVALID_RECORD_COLLECTION = "cfalinvalid";
+
     private static final Logger logger = LoggerFactory.getLogger(AuditLogEventRepository.class);
 
     private final long recordTtlDays;
@@ -133,6 +135,9 @@ public class AuditLogEventRepository {
                 .stream()
                 .filter(n -> n.startsWith(mongoCollectionPrefix))
                 .forEach(this::createTtlIndex);
+
+        // and don't forget to create index on invalid-records collection!
+        createTtlIndex(INVALID_RECORD_COLLECTION);
     }
 
     /**

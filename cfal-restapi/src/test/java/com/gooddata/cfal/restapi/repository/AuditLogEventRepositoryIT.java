@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.gooddata.cfal.restapi.repository.AuditLogEventRepository.INVALID_RECORD_COLLECTION;
 import static com.gooddata.cfal.restapi.util.DateUtils.convertDateTimeToObjectId;
 import static com.gooddata.cfal.restapi.util.DateUtils.date;
 import static java.util.concurrent.TimeUnit.DAYS;
@@ -395,6 +396,22 @@ public class AuditLogEventRepositoryIT {
         auditLogEventRepository.createTtlIndexes();
 
         final List<DBObject> indexInfo = mongoTemplate.getCollection(mongoCollectionName).getIndexInfo();
+        // there should be at least one (new) index
+        assertThat(indexInfo, hasSize(greaterThanOrEqualTo(1)));
+        // make sure there's an index with 'expireAfterSeconds' set to 7-days on top of 'occurred' key
+        assertThat(indexInfo, hasItem(Matchers
+                .both(dbObjectMatch("expireAfterSeconds", is(DAYS.toSeconds(7 + 1))))
+                .and(dbObjectMatch("key", dbObjectMatch("eventdate", is(1))))));
+    }
+
+    @Test
+    public void testCreateTtlIndexesHandlesInvalidCollection() {
+        TestEntity objectToSave = new TestEntity(date("1993-03-09").toString());
+
+        mongoTemplate.save(objectToSave, INVALID_RECORD_COLLECTION);
+        auditLogEventRepository.createTtlIndexes();
+
+        final List<DBObject> indexInfo = mongoTemplate.getCollection(INVALID_RECORD_COLLECTION).getIndexInfo();
         // there should be at least one (new) index
         assertThat(indexInfo, hasSize(greaterThanOrEqualTo(1)));
         // make sure there's an index with 'expireAfterSeconds' set to 7-days on top of 'occurred' key
