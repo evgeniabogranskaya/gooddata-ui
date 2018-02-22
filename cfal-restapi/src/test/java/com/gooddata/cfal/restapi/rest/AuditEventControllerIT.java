@@ -506,7 +506,8 @@ public class AuditEventControllerIT {
 
     private HttpEntity<AuditEvents> requestWithGdcHeader(final String userId) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-GDC-PUBLIC-USER-ID", userId);
+        headers.add("X-GDC-PUBLIC-USER-ID", userId);
+        headers.add("Content-Type", "application/json");
         return new HttpEntity<>(headers);
     }
 

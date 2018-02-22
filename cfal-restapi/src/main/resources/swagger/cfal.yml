@@ -183,6 +183,7 @@ parameters:
     description: The maximum number of records per page
     required: false
     type: integer
+    minimum: 1
   fromParam:
     name: from
     in: query

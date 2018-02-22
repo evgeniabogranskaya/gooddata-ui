@@ -10,6 +10,7 @@ import com.gooddata.commons.monitoring.rest.RequestMonitoringInterceptor;
 import com.gooddata.commons.monitoring.servlet.ResponseMonitoringFilter;
 import com.gooddata.commons.monitoring.servlet.ResponseMonitoringService;
 import com.gooddata.commons.web.filter.LoggingContextSetupFilter;
+import com.gooddata.commons.web.filter.ResetableRequestFilter;
 import com.gooddata.context.GdcCallContextFilter;
 import com.gooddata.exception.servlet.HttpExceptionTranslator;
 import org.apache.http.HttpStatus;
@@ -42,6 +43,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private static final String GDC_FILTER_NAME = "GDC_FILTER";
     private static final String GDC_LOGGING_CONTEXT_FILTER_NAME = "GDC_LOGGING_CONTEXT_FILTER";
     private static final String RESPONSE_MONITORING_FILTER_NAME = "RESPONSE_MONITORING_FILTER";
+    private static final String RESETABLE_REQUEST_FILTER = "RESETABLE_REQUEST_FILTER";
 
     private static final String DISPATCHER_SERVLET = "dispatcherServlet";
 
@@ -87,6 +89,16 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registrationBean.setOrder(3);
         registrationBean.addServletNames(DISPATCHER_SERVLET);
         return registrationBean;
+    }
+
+    @Bean
+    public FilterRegistrationBean resetableRequestFilter() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new ResetableRequestFilter());
+        registration.addUrlPatterns(URL_PATTERN);
+        registration.setName(RESETABLE_REQUEST_FILTER);
+        registration.setOrder(4);
+        return registration;
     }
 
     @Bean
