@@ -78,6 +78,16 @@ public abstract class AbstractAT {
         logger.info("host={} user={} domain={}", props.getHost(), props.getUser(), props.getDomain());
     }
 
+    /**
+     * When tests are aborted without giving them a chance to run serviceTearDown, objects necessary for tests are not deleted.
+     * Therefore delete these objects at next tests run.
+     */
+    @BeforeSuite(alwaysRun = true)
+    public void preDestroy(){
+        projectHelper.preDestroy();
+        adsHelper.preDestroy();
+    }
+
     @AfterSuite(alwaysRun = true)
     public void serviceTearDown() throws Exception {
         logger.info("clearing unnecessary thrash after tests...");
