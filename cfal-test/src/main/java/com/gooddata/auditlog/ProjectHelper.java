@@ -12,6 +12,8 @@ import com.gooddata.project.Project;
 import com.gooddata.project.ProjectEnvironment;
 import com.gooddata.warehouse.Warehouse;
 import com.gooddata.warehouse.WarehouseSchema;
+import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +24,7 @@ import static org.apache.commons.lang3.Validate.notNull;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Singleton for manipulating with projects. Uses an existing one or creates a new and optionally removes is.
@@ -32,6 +35,8 @@ public class ProjectHelper {
     private static final Logger logger = LoggerFactory.getLogger(ProjectHelper.class);
 
     private static final String PROJECT_MODEL_JSON = "/model.json";
+    private static final String CFAL_PROJECT_NAME_PREFIX = "CFAL Test";
+    private static final String CFAL_PROJECT_NAME_FORMAT = "%s-%s";
 
     private static ProjectHelper instance;
 
@@ -90,7 +95,10 @@ public class ProjectHelper {
     }
 
     private Project createProject(final String projectToken) {
-        final Project project = new Project("CFAL Test", projectToken);
+        final Project project = new Project(
+                String.format(CFAL_PROJECT_NAME_FORMAT, CFAL_PROJECT_NAME_PREFIX, new DateTime().toInstant().getMillis()),
+                projectToken
+        );
         project.setEnvironment(ProjectEnvironment.TESTING);
         final FutureResult<Project> result = gd.getProjectService().createProject(project);
         logger.info("Creating project uri={}", result.getPollingUri());
@@ -140,6 +148,8 @@ public class ProjectHelper {
     public void clearOutputStage(final Project project) {
         notNull(project, "project cannot be null!");
 
+        logger.info("clearing output stage of project_id={}", project.getId());
+
         final OutputStage outputStage = gd.getOutputStageService().getOutputStage(project);
 
         outputStage.setSchemaUri(null);
@@ -147,10 +157,36 @@ public class ProjectHelper {
         gd.getOutputStageService().updateOutputStage(outputStage);
     }
 
+    /**
+     * finds all cfal projects and delete those older than 1 hour
+     */
+    public void preDestroy() {
+        final List<Project> cfalProjects = gd.getProjectService().getProjects()
+                .stream()
+                .filter(project -> project.getTitle().contains(CFAL_PROJECT_NAME_PREFIX))
+                .collect(Collectors.toList());
+
+        for (Project project : cfalProjects) {
+            if (project.getTitle().equals(CFAL_PROJECT_NAME_PREFIX)) {
+                logger.info("found cfal project_id={} to be deleted", project.getId());
+                removeProject(project);
+            } else if (project.getTitle().matches(CFAL_PROJECT_NAME_PREFIX + "-.*")) {
+                logger.info("found cfal project_id={} to be deleted", project.getId());
+
+                final String[] split = project.getTitle().split("-");
+                final Instant projectTime = new Instant(Long.parseLong(split[1]));
+                if (projectTime.isBefore(new DateTime().minusHours(1))) {
+                    removeProject(project);
+                }
+            }
+        }
+    }
+
     public void destroy() {
         if (project != null) {
             if (keepProject) {
                 logger.debug("Keeping project_id={}", project.getId());
+                clearOutputStage(project);
             } else {
                 removeProject(project);
                 project = null;
@@ -164,6 +200,7 @@ public class ProjectHelper {
     private void removeProject(final Project project) {
         try {
             logger.info("removing project_id={}", project.getId());
+            clearOutputStage(project);
             gd.getProjectService().removeProject(project);
             logger.info("removed project_id={}", project.getId());
         } catch (Exception ex) {

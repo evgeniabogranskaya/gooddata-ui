@@ -9,6 +9,8 @@ import com.gooddata.GoodData;
 import com.gooddata.project.Environment;
 import com.gooddata.warehouse.Warehouse;
 import org.apache.commons.io.FileUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,7 +21,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.Validate.notNull;
 
@@ -35,7 +39,8 @@ public class AdsHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(AdsHelper.class);
 
-    private static final String CFAL_INSTANCE_NAME = "CFAL test";
+    private static final String CFAL_INSTANCE_NAME_PREFIX = "CFAL test";
+    private static final String CFAL_INSTANCE_NAME_FORMAT = "%s-%s";
     private static final List<String> DEFAULT_MODEL_DDL_SCRIPTS = asList("city.sql", "person.sql");
 
     private final GoodData gd;
@@ -112,19 +117,48 @@ public class AdsHelper {
     }
 
     /**
+     * finds all cfal warehouses and delete those older than 1 hour
+     */
+    public void preDestroy() {
+        final List<Warehouse> cfalWarehouses = gd.getWarehouseService().listWarehouses()
+                .stream()
+                .filter(project -> project.getTitle().contains(CFAL_INSTANCE_NAME_PREFIX))
+                .collect(Collectors.toList());
+
+        for (Warehouse warehouse : cfalWarehouses) {
+            if (warehouse.getTitle().equals(CFAL_INSTANCE_NAME_PREFIX)) {
+                logger.info("found cfal warehouse_id={} to be deleted", warehouse.getId());
+                removeInstance(warehouse);
+            } else if (warehouse.getTitle().matches(CFAL_INSTANCE_NAME_PREFIX + "-.*")) {
+                logger.info("found cfal warehouse_id={} to be deleted", warehouse.getId());
+
+                final String[] split = warehouse.getTitle().split("-");
+                final Instant warehouseTime = new Instant(Long.parseLong(split[1]));
+                if (warehouseTime.isBefore(new DateTime().minusHours(1))) {
+                    removeInstance(warehouse);
+                }
+            }
+        }
+    }
+
+    /**
      * Removes all created warehouses
      */
     public void destroy() {
         warehouses.forEach(warehouse -> {
-            try {
-                logger.info("removing warehouse_id={}", warehouse.getId());
-                gd.getWarehouseService().removeWarehouse(warehouse);
-                logger.info("warehouse_id={} removed", warehouse.getId());
-            } catch (Exception ex) {
-                logger.warn("could not remove warehouse_id=" + warehouse.getId(), ex);
-            }
+            removeInstance(warehouse);
         });
         warehouses.clear();
+    }
+
+    private void removeInstance(Warehouse warehouse) {
+        try {
+            logger.info("removing warehouse_id={}", warehouse.getId());
+            gd.getWarehouseService().removeWarehouse(warehouse);
+            logger.info("warehouse_id={} removed", warehouse.getId());
+        } catch (Exception ex) {
+            logger.warn("could not remove warehouse_id=" + warehouse.getId(), ex);
+        }
     }
 
     private DriverManagerDataSource createDataSource(final Warehouse warehouse) {
@@ -132,7 +166,10 @@ public class AdsHelper {
     }
 
     private Warehouse createWarehouseRequest() {
-        final Warehouse warehouse = new Warehouse(CFAL_INSTANCE_NAME, props.getDatawarehouseToken());
+        final Warehouse warehouse = new Warehouse(
+                format(CFAL_INSTANCE_NAME_FORMAT, CFAL_INSTANCE_NAME_PREFIX, new DateTime().toInstant().getMillis()),
+                props.getDatawarehouseToken()
+        );
         warehouse.setEnvironment(Environment.TESTING);
         return warehouse;
     }
