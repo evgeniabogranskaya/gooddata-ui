@@ -26,6 +26,7 @@ import static org.testng.Assert.fail;
 
 public abstract class AbstractAT {
 
+    protected static final String SSH_GROUP = "ssh";
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected static final int POLL_LIMIT = 10;
