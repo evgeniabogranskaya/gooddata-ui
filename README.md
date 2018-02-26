@@ -106,7 +106,7 @@ parameter                 | default                        | example
 
 #### Test using SSH
 
-Skip them with `-DexcludeGroups=ssh`
+Skip them with `-DexcludedGroups=ssh`
 
 
 ### Manual tests
