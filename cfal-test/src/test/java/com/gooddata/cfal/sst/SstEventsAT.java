@@ -26,13 +26,14 @@ public class SstEventsAT extends AbstractAT {
     /**
      * The expected number of SST_CREATE events when all components in setUp method did their work.
      */
-    private static final int EXPECTED_SST_EVENT_COUNT = 13;
+    private int expectedEventsCount = 0;
 
     @BeforeClass(groups = MESSAGE_TYPE)
     public void tryLogins() throws Exception {
         // WebApp components (+2 events)
         loginHelper.usernamePasswordLogin();
         loginHelper.ssoLogin(getAccount());
+        expectedEventsCount += 2;
     }
 
     @BeforeClass(groups = MESSAGE_TYPE)
@@ -41,6 +42,7 @@ public class SstEventsAT extends AbstractAT {
         final DataloadProcess rubyProcess = processHelper.createRubyProcess(projectHelper.getOrCreateProject());
         // execute RUBY process (+1 event)
         processHelper.executeProcess(rubyProcess);
+        expectedEventsCount += 2;
     }
 
     @BeforeClass(groups = MESSAGE_TYPE)
@@ -49,6 +51,7 @@ public class SstEventsAT extends AbstractAT {
         final DataloadProcess cloverProcess = processHelper.createCloverProcess(projectHelper.getOrCreateProject());
         // execute CLOVER process (+1 event)
         processHelper.executeProcess(cloverProcess);
+        expectedEventsCount++;
     }
 
     @BeforeClass(groups = MESSAGE_TYPE)
@@ -58,6 +61,7 @@ public class SstEventsAT extends AbstractAT {
         final String datasetId = csvUploadHelper.uploadCsv(project);
         // delete created CSV dataset (+1 event)
         csvUploadHelper.deleteCsvDataset(project, datasetId);
+        expectedEventsCount += 2;
     }
 
     @BeforeClass(groups = MESSAGE_TYPE)
@@ -75,13 +79,16 @@ public class SstEventsAT extends AbstractAT {
         // execution of ADD process (+1 event)
         final Schedule addSchedule = processHelper.createADDSchedule(addProject);
         processHelper.executeSchedule(addSchedule);
+        expectedEventsCount += 3;
     }
 
-    @BeforeClass(groups = MESSAGE_TYPE)
+    // registration test can be only done on PI where the captchaString property is enabled
+    @BeforeClass(groups = {MESSAGE_TYPE, SSH_GROUP})
     public void registerUser() {
         // registration of new user generates SST for current user session (+1 event)
         // calls Registration.pm
         accountHelper.registerAndDeleteUser();
+        expectedEventsCount++;
     }
 
     @BeforeClass(groups = MESSAGE_TYPE)
@@ -89,6 +96,7 @@ public class SstEventsAT extends AbstractAT {
         final Project project = projectHelper.getOrCreateProject();
         // running of scheduled email should create own SST (+1 event)
         scheduledMailHelper.runScheduledMail(project, metadataHelper.getOrCreateReport(project));
+        expectedEventsCount++;
     }
 
     @BeforeClass(groups = MESSAGE_TYPE)
@@ -98,6 +106,7 @@ public class SstEventsAT extends AbstractAT {
 
         // runs export dashboard (+1 event)
         gd.getExportService().runExportDashboard(dashboard);
+        expectedEventsCount++;
     }
 
     @AfterClass(groups = MESSAGE_TYPE)
@@ -108,12 +117,12 @@ public class SstEventsAT extends AbstractAT {
 
     @Test(groups = MESSAGE_TYPE)
     public void testSstCreateUserApi() {
-        doTestUserApi(eventCheck(), MESSAGE_TYPE, EXPECTED_SST_EVENT_COUNT);
+        doTestUserApi(eventCheck(), MESSAGE_TYPE, expectedEventsCount);
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void testSstCreateAdminApi() {
-        doTestAdminApi(eventCheck(), MESSAGE_TYPE, EXPECTED_SST_EVENT_COUNT);
+        doTestAdminApi(eventCheck(), MESSAGE_TYPE, expectedEventsCount);
     }
 
     private Predicate<AuditEvent> eventCheck() {
