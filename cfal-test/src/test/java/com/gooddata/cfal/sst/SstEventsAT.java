@@ -3,37 +3,47 @@
  */
 package com.gooddata.cfal.sst;
 
+import com.gooddata.account.Account;
 import com.gooddata.auditevent.AuditEvent;
-import com.gooddata.cfal.AbstractAT;
+import com.gooddata.cfal.AbstractMongoAT;
 import com.gooddata.dataload.processes.DataloadProcess;
 import com.gooddata.dataload.processes.Schedule;
 import com.gooddata.md.ProjectDashboard;
 import com.gooddata.project.Project;
+import com.gooddata.test.ssh.CommandResult;
 import com.gooddata.warehouse.Warehouse;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.testng.annotations.*;
 
-import java.util.Objects;
+import java.util.Collections;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Tests only positive (success=true) SST create events as the negative creation would be hard to simulate and is not
  * necessary.
  */
-public class SstEventsAT extends AbstractAT {
+public class SstEventsAT extends AbstractMongoAT {
 
     private static final String MESSAGE_TYPE = "SST_CREATE";
+    private Account registeredAccount;
 
     /**
-     * The expected number of SST_CREATE events when all components in setUp method did their work.
+     * The expected number of SST_CREATE events for users and admins when all components in setUp method did their work.
      */
-    private int expectedEventsCount = 0;
+    private int expectedAdminEventsCount = 0;
+    private int expectedUserEventsCount = 0;
 
     @BeforeClass(groups = MESSAGE_TYPE)
     public void tryLogins() throws Exception {
         // WebApp components (+2 events)
         loginHelper.usernamePasswordLogin();
         loginHelper.ssoLogin(getAccount());
-        expectedEventsCount += 2;
+        expectedUserEventsCount += 2;
+        expectedAdminEventsCount += 2;
     }
 
     @BeforeClass(groups = MESSAGE_TYPE)
@@ -42,7 +52,8 @@ public class SstEventsAT extends AbstractAT {
         final DataloadProcess rubyProcess = processHelper.createRubyProcess(projectHelper.getOrCreateProject());
         // execute RUBY process (+1 event)
         processHelper.executeProcess(rubyProcess);
-        expectedEventsCount += 2;
+        expectedUserEventsCount += 2;
+        expectedAdminEventsCount += 2;
     }
 
     @BeforeClass(groups = MESSAGE_TYPE)
@@ -51,7 +62,8 @@ public class SstEventsAT extends AbstractAT {
         final DataloadProcess cloverProcess = processHelper.createCloverProcess(projectHelper.getOrCreateProject());
         // execute CLOVER process (+1 event)
         processHelper.executeProcess(cloverProcess);
-        expectedEventsCount++;
+        expectedUserEventsCount++;
+        expectedAdminEventsCount++;
     }
 
     @BeforeClass(groups = MESSAGE_TYPE)
@@ -61,7 +73,8 @@ public class SstEventsAT extends AbstractAT {
         final String datasetId = csvUploadHelper.uploadCsv(project);
         // delete created CSV dataset (+1 event)
         csvUploadHelper.deleteCsvDataset(project, datasetId);
-        expectedEventsCount += 2;
+        expectedUserEventsCount += 2;
+        expectedAdminEventsCount += 2;
     }
 
     @BeforeClass(groups = MESSAGE_TYPE)
@@ -79,16 +92,8 @@ public class SstEventsAT extends AbstractAT {
         // execution of ADD process (+1 event)
         final Schedule addSchedule = processHelper.createADDSchedule(addProject);
         processHelper.executeSchedule(addSchedule);
-        expectedEventsCount += 3;
-    }
-
-    // registration test can be only done on PI where the captchaString property is enabled
-    @BeforeClass(groups = {MESSAGE_TYPE, SSH_GROUP})
-    public void registerUser() {
-        // registration of new user generates SST for current user session (+1 event)
-        // calls Registration.pm
-        accountHelper.registerAndDeleteUser();
-        expectedEventsCount++;
+        expectedUserEventsCount += 3;
+        expectedAdminEventsCount += 3;
     }
 
     @BeforeClass(groups = MESSAGE_TYPE)
@@ -96,7 +101,8 @@ public class SstEventsAT extends AbstractAT {
         final Project project = projectHelper.getOrCreateProject();
         // running of scheduled email should create own SST (+1 event)
         scheduledMailHelper.runScheduledMail(project, metadataHelper.getOrCreateReport(project));
-        expectedEventsCount++;
+        expectedUserEventsCount++;
+        expectedAdminEventsCount++;
     }
 
     @BeforeClass(groups = MESSAGE_TYPE)
@@ -106,7 +112,42 @@ public class SstEventsAT extends AbstractAT {
 
         // runs export dashboard (+1 event)
         gd.getExportService().runExportDashboard(dashboard);
-        expectedEventsCount++;
+        expectedUserEventsCount++;
+        expectedAdminEventsCount++;
+    }
+
+    @BeforeClass(groups = {MESSAGE_TYPE, SSH_GROUP})
+    public void enablePublicArtifact() {
+        final Project project = projectHelper.createProject();
+        projectHelper.enablePublicAccess(project, ssh);
+        // we cannot list event for the anonymous user which is internally generated by the platform
+        // listing events by specific domain still works
+        expectedAdminEventsCount++;
+    }
+
+    @BeforeClass(groups = {MESSAGE_TYPE, SSH_GROUP})
+    public void runExecuteDashboard() {
+        final Project project = projectHelper.createProject();
+        // new project -> one user -> one SST (+1 event)
+        final String cmd = String.format("sudo /opt/common/util/execute_dashboard.pl -p %s", project.getId());
+        final CommandResult cmdRes = ssh.execCmd(cmd);
+        if (cmdRes.getExitCode() != 0) {
+            throw new IllegalStateException("Could not run execute_dashboard.pl for project " + project.getId() +
+                    ", reason: " + cmdRes.getStderr());
+        }
+        expectedUserEventsCount++;
+        expectedAdminEventsCount++;
+    }
+
+    // registration test can be only done on PI where the captchaString property is enabled
+    @BeforeClass(groups = {MESSAGE_TYPE, SSH_GROUP})
+    public void registerUser() {
+        // registration of new user generates SST for current user session (+1 event)
+        // calls Registration.pm
+        registeredAccount = accountHelper.createRandomAccount();
+        accountHelper.registerAndDeleteUser(registeredAccount);
+        // it's useless to check registration of new user under his account (just admin API should be enough)
+        expectedAdminEventsCount++;
     }
 
     @AfterClass(groups = MESSAGE_TYPE)
@@ -117,16 +158,33 @@ public class SstEventsAT extends AbstractAT {
 
     @Test(groups = MESSAGE_TYPE)
     public void testSstCreateUserApi() {
-        doTestUserApi(eventCheck(), MESSAGE_TYPE, expectedEventsCount);
+        doTestUserApi(eventCheck(Collections.singleton(getAccount().getLogin())), MESSAGE_TYPE, expectedUserEventsCount);
     }
 
     @Test(groups = MESSAGE_TYPE)
     public void testSstCreateAdminApi() {
-        doTestAdminApi(eventCheck(), MESSAGE_TYPE, expectedEventsCount);
+        doTestAdminApi(eventCheck(getLogins()), MESSAGE_TYPE, expectedAdminEventsCount);
     }
 
-    private Predicate<AuditEvent> eventCheck() {
-        return (e -> Objects.equals(getAccount().getLogin(), e.getUserLogin()) &&
+    @Test(groups = {MESSAGE_TYPE, SSH_GROUP})
+    public void testNoSstCreateInInvalidCollection() throws Exception {
+        Query query = new Query()
+                .addCriteria(Criteria.where("type").is(MESSAGE_TYPE))
+                .addCriteria(Criteria.where("eventdate").gte(startTime))
+                .addCriteria(Criteria.where("userLogin").in(getLogins()));
+        assertNotQuery(query, INVALID_COLLECTION);
+    }
+
+    private Set<String> getLogins() {
+        if (registeredAccount != null) {
+            return Stream.of(getAccount(), registeredAccount).map(Account::getLogin).collect(Collectors.toSet());
+        } else {
+            return Collections.singleton(getAccount().getLogin());
+        }
+    }
+
+    private static Predicate<AuditEvent> eventCheck(final Set<String> logins) {
+        return (e -> logins.contains(e.getUserLogin()) &&
                 MESSAGE_TYPE.equals(e.getType()) &&
                 e.isSuccess()
         );

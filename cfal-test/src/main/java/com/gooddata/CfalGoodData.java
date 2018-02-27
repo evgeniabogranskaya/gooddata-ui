@@ -27,6 +27,7 @@ public class CfalGoodData extends GoodData {
     private final SimpleCsvUploadService csvUploadService;
     private final ExtendedAccountService extendedAccountService;
     private final ExtendedExportService extendedExportService;
+    private final ExtendedProjectService extendedProjectService;
 
     /**
      * Creates new GoodData from the given endpoint and authenticated via given Super Secure Token.
@@ -55,6 +56,7 @@ public class CfalGoodData extends GoodData {
         this.csvUploadService = new SimpleCsvUploadService(getRestTemplate());
         this.extendedAccountService = new ExtendedAccountService(getRestTemplate());
         this.extendedExportService = new ExtendedExportService(getRestTemplate(), endpoint);
+        this.extendedProjectService = new ExtendedProjectService(getRestTemplate(), getAccountService());
     }
 
     public static CfalGoodData getInstance() {
@@ -109,5 +111,10 @@ public class CfalGoodData extends GoodData {
     @Override
     public ExtendedExportService getExportService() {
         return extendedExportService;
+    }
+
+    @Override
+    public ExtendedProjectService getProjectService() {
+        return extendedProjectService;
     }
 }

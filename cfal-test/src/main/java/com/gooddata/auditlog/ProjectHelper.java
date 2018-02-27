@@ -5,11 +5,12 @@ package com.gooddata.auditlog;
 
 import com.gooddata.CfalGoodData;
 import com.gooddata.FutureResult;
-import com.gooddata.GoodData;
 import com.gooddata.dataload.OutputStage;
 import com.gooddata.model.ModelDiff;
 import com.gooddata.project.Project;
 import com.gooddata.project.ProjectEnvironment;
+import com.gooddata.test.ssh.CommandResult;
+import com.gooddata.test.ssh.SshClient;
 import com.gooddata.warehouse.Warehouse;
 import com.gooddata.warehouse.WarehouseSchema;
 import org.joda.time.DateTime;
@@ -42,7 +43,7 @@ public class ProjectHelper {
 
     private final String existingProjectId; // may be null
     private final boolean keepProject;
-    private final GoodData gd;
+    private final CfalGoodData gd;
     private final TestEnvironmentProperties props;
     private Project project;
     private final List<Project> projects = new LinkedList<>();
@@ -56,7 +57,7 @@ public class ProjectHelper {
         return instance;
     }
 
-    private ProjectHelper(final GoodData gd, final TestEnvironmentProperties props) {
+    private ProjectHelper(final CfalGoodData gd, final TestEnvironmentProperties props) {
         this.gd = notNull(gd, "gd");
         this.props = notNull(props, "props");
 
@@ -155,6 +156,30 @@ public class ProjectHelper {
         outputStage.setSchemaUri(null);
 
         gd.getOutputStageService().updateOutputStage(outputStage);
+    }
+
+    /**
+     * Enables public access for the given project.
+     * <br/>
+     * We have to enable 'canManagePublicAccessCode' permission for project admin to be able to do that. For
+     * this purpose we need given ssh connection.
+     * <br/>
+     * See <a href="https://confluence.intgdc.com/display/plat/Public+Access+Codes+management">Public Access Codes management</a>
+     * page and {@link com.gooddata.ExtendedProjectService#enablePublicAccess(Project)} for more info.
+     *
+     * @param project GD project which should be enabled for public access
+     * @param ssh ssh connection - must be sudo user
+     */
+    public void enablePublicAccess(final Project project, final SshClient ssh) {
+        final String cmd = String.format("sudo /opt/common/util/roles.pl -p %s adminRole canManagePublicAccessCode 1",
+                project.getId());
+        final CommandResult cmdRes = ssh.execCmd(cmd);
+        if (cmdRes.getExitCode() != 0) {
+            throw new IllegalStateException("Could not add 'canManagePublicAccessCode' permission to 'adminRole' of "
+                    + "project: " + project.getId() + ", error: " + cmdRes.getStderr());
+        }
+
+        gd.getProjectService().enablePublicAccess(project);
     }
 
     /**

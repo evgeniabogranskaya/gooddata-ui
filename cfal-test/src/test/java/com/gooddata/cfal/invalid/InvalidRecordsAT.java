@@ -18,8 +18,6 @@ import java.util.UUID;
 
 public class InvalidRecordsAT extends AbstractMongoAT {
 
-    private static final String INVALID_COLLECTION = "cfalinvalid";
-
     private static final String LOGIN = "bear@gooddata.com";
     private static final String IP = "127.0.0.1";
     private static final String DOMAIN = "test";
