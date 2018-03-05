@@ -20,10 +20,12 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 
+@Ignore
 public class BasicLoginAT extends AbstractLoginAT {
 
     private static final String WRONG_PASS = "123";
