@@ -84,8 +84,8 @@ public class AccountHelper {
     /**
      * Registers new account and deletes it immediately to prevent piling up of unverified accounts.
      */
-    public void registerAndDeleteUser() {
-        final RegisteredAccount newAccount = gd.getAccountService().registerAccount(createRandomAccount());
+    public void registerAndDeleteUser(final Account account) {
+        final RegisteredAccount newAccount = gd.getAccountService().registerAccount(account);
         logger.info("registered user_uri={}", newAccount.getProfileUri());
 
         final GoodData sstGd = new CfalGoodData(gd.getEndpoint(), newAccount.getSst());
@@ -110,7 +110,10 @@ public class AccountHelper {
         accounts.clear();
     }
 
-    private Account createRandomAccount() {
+    /**
+     * Creates and returns new random generated account
+     */
+    public Account createRandomAccount() {
         return new Account(UUID.randomUUID() + "@mail.com", "passpasspass", "hugo", "boss");
     }
 

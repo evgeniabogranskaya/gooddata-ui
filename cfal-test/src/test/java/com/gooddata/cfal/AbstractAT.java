@@ -40,7 +40,7 @@ public abstract class AbstractAT {
 
     protected final TestEnvironmentProperties props;
 
-    private final DateTime startTime;
+    protected final DateTime startTime;
 
     protected final AdsHelper adsHelper;
     protected final AccountHelper accountHelper;

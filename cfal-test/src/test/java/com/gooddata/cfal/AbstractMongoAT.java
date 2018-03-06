@@ -20,20 +20,22 @@ import static org.testng.Assert.fail;
 
 public abstract class AbstractMongoAT extends AbstractAT {
 
+    protected static final String INVALID_COLLECTION = "cfalinvalid";
+
     private static final int MONGO_PORT = 27017;
+    private static final int DEFAULT_EVENT_WAIT_SECONDS = 60;
 
     private MongoTemplate mongo;
-
     private MongoClient mongoClient;
 
     protected SshClient ssh;
 
-    @BeforeClass
+    @BeforeClass(groups = SSH_GROUP)
     public void setUpSshAndMongo() throws Exception {
         final Authentication auth = props.getSshAuth();
         ssh = new SshClient(gd.getEndpoint().getHostname(), auth).open();
 
-        final String mongoPass = obtainMongoPass(ssh);
+        final String mongoPass = obtainMongoPass();
         final int mongoPort = ssh.createLocalPortForwarder(MONGO_PORT);
         final String uri = new UriTemplate("mongodb://gdc_root:{pass}@localhost:{port}")
                 .expand(mongoPass, mongoPort)
@@ -42,7 +44,7 @@ public abstract class AbstractMongoAT extends AbstractAT {
         this.mongo = new MongoTemplate(mongoClient, "cfal");
     }
 
-    private String obtainMongoPass(final SshClient ssh) {
+    private String obtainMongoPass() {
         final CommandResult result = ssh.execCmd("sudo cat /etc/gdc/etc/mongo");
         if (result.getExitCode() != 0) {
             throw new IllegalStateException("Unable to obtain mongo password: " + result.toString());
@@ -50,8 +52,8 @@ public abstract class AbstractMongoAT extends AbstractAT {
         return result.getStdout();
     }
 
-    @AfterClass
-    public void tearDownSsh() throws Exception {
+    @AfterClass(groups = SSH_GROUP)
+    public void tearDownMongoAndSsh() throws Exception {
         if (mongoClient != null) {
             mongoClient.close();
         }
@@ -72,4 +74,14 @@ public abstract class AbstractMongoAT extends AbstractAT {
             TimeUnit.SECONDS.sleep(POLL_INTERVAL_SECONDS);
         }
         logger.info("{}(): message in collection {} found", testMethodName, collectionName);
-    }}
+    }
+
+    protected void assertNotQuery(final Query query, final String collectionName) throws Exception {
+        final String testMethodName = getTestMethodName();
+        TimeUnit.SECONDS.sleep(DEFAULT_EVENT_WAIT_SECONDS);
+        if (mongo.exists(query, collectionName)) {
+            fail("Query in collection " + collectionName + " should not return any result: " + query);
+        }
+        logger.info("{}(): no message in collection {} found", testMethodName, collectionName);
+    }
+}
