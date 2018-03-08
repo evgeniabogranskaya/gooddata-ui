@@ -3,6 +3,10 @@
  */
 package com.gooddata.cfal.restapi.config;
 
+import com.netflix.appinfo.EurekaInstanceConfig;
+import org.springframework.cloud.commons.util.InetUtils;
+import org.springframework.cloud.commons.util.InetUtilsProperties;
+import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -31,6 +35,11 @@ public class ApplicationConfig {
     @Bean
     public ConversionService conversionService() {
         return new DefaultConversionService();
+    }
+
+    @Bean
+    public EurekaInstanceConfig eurekaConfigBean() {
+        return new EurekaInstanceConfigBean(new InetUtils(new InetUtilsProperties()));
     }
 
     static PropertySourcesPlaceholderConfigurer createPropertySourcesPlaceholderConfigurer(final AbstractResource... resources) {

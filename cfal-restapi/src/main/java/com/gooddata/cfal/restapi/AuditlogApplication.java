@@ -7,10 +7,12 @@ import com.gooddata.boot.autoconfigure.GdcBootApplication;
 import com.gooddata.c4.boot.EnableC4Client;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableC4Client
 @EnableScheduling
+@EnableDiscoveryClient
 @GdcBootApplication
 public class AuditlogApplication extends SpringBootServletInitializer {
 
