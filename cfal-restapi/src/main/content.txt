@@ -107,8 +107,8 @@ stax-api-1.0.1.jar
 stax2-api-3.1.4.jar
 stringtemplate-3.2.1.jar
 validation-api-1.1.0.Final.jar
-validator-java-native-binding-0.0.2.jar
-validator-spring-support-0.0.2.jar
+validator-java-native-binding-0.0.4.jar
+validator-spring-support-0.0.4.jar
 woodstox-core-asl-4.4.1.jar
 xmlpull-1.1.3.1.jar
 xpp3_min-1.1.4c.jar
