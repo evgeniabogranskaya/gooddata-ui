@@ -48,7 +48,7 @@ public class TestEnvironmentProperties {
         projectId = getProperty("projectId");
         datawarehouseToken = getProperty("datawarehouseToken", "vertica");
         keepProject = Boolean.getBoolean("keepProject");
-        pollTimeoutMinutes = Integer.getInteger("pollTimeoutMinutes", 5);
+        pollTimeoutMinutes = Integer.getInteger("pollTimeoutMinutes", 10);
         notificationWaitSeconds = Integer.getInteger("notificationWaitSeconds", 30);
         scheduledMailWaitSeconds = Integer.getInteger("scheduledMailWaitSeconds",60);
 
