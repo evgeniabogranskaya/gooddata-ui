@@ -19,6 +19,8 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.security.web.firewall.DefaultHttpFirewall;
+import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.validation.BindException;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -145,5 +147,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(requestMonitoringInterceptor);
+    }
+
+    //TODO - use properly configured StrictHttpFirewall - ticket https://jira.intgdc.com/browse/WA-8871 (test:  ProxyStrictHttpRules)
+    //https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#request-matching
+    @Bean
+    public HttpFirewall httpFirewall() {
+        return new DefaultHttpFirewall();
     }
 }
