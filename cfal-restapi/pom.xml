@@ -160,7 +160,7 @@
         <dependency>
             <groupId>com.gooddata.commons</groupId>
             <artifactId>gdc-commons-web</artifactId>
-            <version>4.1.2</version>
+            <version>4.3.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.gooddata.commons</groupId>
@@ -183,7 +183,7 @@
         <dependency>
             <groupId>com.gooddata</groupId>
             <artifactId>gdc-c4</artifactId>
-            <version>6.0.1</version>
+            <version>10.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.gooddata.commons</groupId>
@@ -240,7 +240,7 @@
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
-            <version>3.3</version>
+            <version>3.6</version>
         </dependency>
         <dependency>
             <groupId>com.gooddata.validator.swagger</groupId>
@@ -254,7 +254,7 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.2.2</version>
+            <version>1.3.3</version>
         </dependency>
         <dependency>
             <groupId>org.jolokia</groupId>
@@ -275,7 +275,7 @@
         <dependency>
             <groupId>com.netflix.eureka</groupId>
             <artifactId>eureka-client</artifactId>
-            <version>1.7.0</version>
+            <version>1.7.2</version>
         </dependency>
 
         <dependency>
@@ -399,19 +399,19 @@
             <plugin>
                 <groupId>net.kozelka.maven</groupId>
                 <artifactId>contentcheck-maven-plugin</artifactId>
+                <configuration>
+                    <failOnMissing>true</failOnMissing>
+                    <sourceFile>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</sourceFile>
+                    <checkFilesPattern>**/*.jar</checkFilesPattern>
+                    <ignoreVendorArchives>false</ignoreVendorArchives>
+                    <skipPOMPackaging>true</skipPOMPackaging>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
-                        <configuration>
-                            <failOnMissing>true</failOnMissing>
-                            <sourceFile>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</sourceFile>
-                            <checkFilesPattern>**/*.jar</checkFilesPattern>
-                            <ignoreVendorArchives>false</ignoreVendorArchives>
-                            <skipPOMPackaging>true</skipPOMPackaging>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
