@@ -25,7 +25,7 @@ commons-math-2.2.jar
 commons-net-3.6.jar
 eureka-client-1.7.2.jar
 eureka-core-1.7.2.jar
-gdc-c4-10.1.0.jar
+gdc-c4-7.0.0.jar
 gdc-commons-exception-2.1.1.jar
 gdc-commons-http-client-2.1.11.jar
 gdc-commons-web-4.3.1.jar

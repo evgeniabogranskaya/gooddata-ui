@@ -183,7 +183,7 @@
         <dependency>
             <groupId>com.gooddata</groupId>
             <artifactId>gdc-c4</artifactId>
-            <version>10.1.0</version>
+            <version>7.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.gooddata.commons</groupId>
