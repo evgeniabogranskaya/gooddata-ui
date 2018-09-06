@@ -7,8 +7,9 @@ import com.gooddata.auditevent.AuditEventPageRequest;
 import com.gooddata.cfal.restapi.dto.UserInfo;
 import com.gooddata.cfal.restapi.model.AuditEventEntity;
 import com.gooddata.cfal.restapi.util.EntityIdMatcher;
-import com.mongodb.DBObject;
+import com.mongodb.client.ListIndexesIterable;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
@@ -38,7 +39,6 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -395,11 +395,10 @@ public class AuditLogEventRepositoryIT {
         mongoTemplate.save(objectToSave, mongoCollectionName);
         auditLogEventRepository.createTtlIndexes();
 
-        final List<DBObject> indexInfo = mongoTemplate.getCollection(mongoCollectionName).getIndexInfo();
-        // there should be at least one (new) index
-        assertThat(indexInfo, hasSize(greaterThanOrEqualTo(1)));
+        final ListIndexesIterable<Document> indexes = mongoTemplate.getCollection(INVALID_RECORD_COLLECTION).listIndexes();
+
         // make sure there's an index with 'expireAfterSeconds' set to 7-days on top of 'occurred' key
-        assertThat(indexInfo, hasItem(Matchers
+        assertThat(indexes, hasItem(Matchers
                 .both(dbObjectMatch("expireAfterSeconds", is(DAYS.toSeconds(7 + 1))))
                 .and(dbObjectMatch("key", dbObjectMatch("eventdate", is(1))))));
     }
@@ -411,13 +410,13 @@ public class AuditLogEventRepositoryIT {
         mongoTemplate.save(objectToSave, INVALID_RECORD_COLLECTION);
         auditLogEventRepository.createTtlIndexes();
 
-        final List<DBObject> indexInfo = mongoTemplate.getCollection(INVALID_RECORD_COLLECTION).getIndexInfo();
-        // there should be at least one (new) index
-        assertThat(indexInfo, hasSize(greaterThanOrEqualTo(1)));
+        final ListIndexesIterable<Document> indexes = mongoTemplate.getCollection(INVALID_RECORD_COLLECTION).listIndexes();
+
         // make sure there's an index with 'expireAfterSeconds' set to 7-days on top of 'occurred' key
-        assertThat(indexInfo, hasItem(Matchers
+        assertThat(indexes, hasItem(Matchers
                 .both(dbObjectMatch("expireAfterSeconds", is(DAYS.toSeconds(7 + 1))))
                 .and(dbObjectMatch("key", dbObjectMatch("eventdate", is(1))))));
+
     }
 
     @Test
@@ -428,20 +427,22 @@ public class AuditLogEventRepositoryIT {
         mongoTemplate.save(objectToSave, mongoCollectionName);
         auditLogEventRepository.createUserLoginIndexes();
 
-        final List<DBObject> indexInfo = mongoTemplate.getCollection(mongoCollectionName).getIndexInfo();
-        // there should be at least one (new) index
-        assertThat(indexInfo, hasSize(greaterThanOrEqualTo(1)));
-        assertThat(indexInfo, hasItem(dbObjectMatch("key", dbObjectMatch("userLogin", is(1)))));
+        final ListIndexesIterable<Document> indexes = mongoTemplate.getCollection(mongoCollectionName).listIndexes();
+    
+        assertThat(indexes, hasItem(dbObjectMatch("key", dbObjectMatch("userLogin", is(1)))));
+
     }
 
-    private <T> FeatureMatcher<DBObject, T> dbObjectMatch(String feature, Matcher<T> matcher) {
-        return new FeatureMatcher<DBObject, T>(matcher, feature, feature) {
+
+    private <T> FeatureMatcher<Document, T> dbObjectMatch(String feature, Matcher<T> matcher) {
+        return new FeatureMatcher<Document, T>(matcher, feature, feature) {
             @Override
-            protected T featureValueOf(DBObject dbObject) {
+            protected T featureValueOf(Document dbObject) {
                 return (T) dbObject.get(feature);
             }
         };
     }
+
 
     /**
      * Test entity for String to DateTime conversion

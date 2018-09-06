@@ -12,6 +12,7 @@ import com.gooddata.auditevent.AuditEvents;
 import com.gooddata.auditevent.AuditEventPageRequest;
 import com.gooddata.cfal.restapi.model.AuditEventEntity;
 import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
+import com.gooddata.commons.monitoring.metrics.boot.EnableMonitoring;
 import com.gooddata.exception.servlet.ErrorStructure;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
@@ -56,6 +57,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -82,10 +84,10 @@ public class AuditEventControllerIT {
     private static final Map<String, String> EMPTY_PARAMS = new HashMap<>();
     private static final Map<String, String> EMPTY_LINKS = new HashMap<>();
 
-    @Value("${security.user.name}")
+    @Value("${cfal.restapi.security.user.name}")
     private String name;
 
-    @Value("${security.user.password}")
+    @Value("${cfal.restapi.security.user.password}")
     private String password;
 
     @MockBean
@@ -474,7 +476,7 @@ public class AuditEventControllerIT {
 
     @Test
     public void testInfoEndpointAvailableWithoutAuth() {
-        ResponseEntity<String> result = testRestTemplate.exchange("/info", HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class);
+        ResponseEntity<String> result = testRestTemplate.exchange("/actuator/info", HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.OK));
@@ -482,7 +484,7 @@ public class AuditEventControllerIT {
 
     @Test
     public void testHealthEndpointIsAvailableWithAuth() throws Exception {
-        ResponseEntity<String> result = testRestTemplate.exchange("/health", HttpMethod.GET, requestWithBasicAuth(), String.class);
+        ResponseEntity<String> result = testRestTemplate.exchange("/actuator/health", HttpMethod.GET, requestWithBasicAuth(), String.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(not(HttpStatus.UNAUTHORIZED)));
@@ -490,7 +492,7 @@ public class AuditEventControllerIT {
 
     @Test
     public void testEnvEndpointIsNotAvailableWithoutAuth() {
-        ResponseEntity<String> result = testRestTemplate.exchange("/env", HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class);
+        ResponseEntity<String> result = testRestTemplate.exchange("/actuator/env", HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
@@ -498,7 +500,7 @@ public class AuditEventControllerIT {
 
     @Test
     public void testEnvEndpointIsAvailableWithAuth() throws Exception {
-        ResponseEntity<String> result = testRestTemplate.exchange("/env", HttpMethod.GET, requestWithBasicAuth(), String.class);
+        ResponseEntity<String> result = testRestTemplate.exchange("/actuator/env", HttpMethod.GET, requestWithBasicAuth(), String.class);
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getStatusCode(), is(not(HttpStatus.UNAUTHORIZED)));

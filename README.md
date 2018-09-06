@@ -19,7 +19,7 @@ mvn package
 ```
 cd cfal-restapi
 mvn spring-boot:run
-curl localhost:8080/info
+curl localhost:8080/cfal-restapi/actuator/info
 ```
 
 ### Run REST API Locally from IntelliJ IDEA
@@ -146,7 +146,7 @@ Actuator endpoints (except `/info`) are secured by basic-auth.
   
 ### Example call of health endpoint
 `
-curl localhost:8080/cfal-restapi/health -u cfal:cfal
+curl localhost:8080/cfal-restapi/actuator/health -u cfal:cfal
 `
 
 ## CFAL IP event masking
