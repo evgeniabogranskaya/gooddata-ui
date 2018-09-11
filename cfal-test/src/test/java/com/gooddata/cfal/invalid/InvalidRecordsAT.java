@@ -35,13 +35,16 @@ public class InvalidRecordsAT extends AbstractMongoAT {
                 .addCriteria(Criteria.where("type").is(uniqueType));
     }
 
-    @Test(groups = {SSH_GROUP, INVALID})
-    public void shouldAddDomainWithDollarToInvalidCollection() throws Exception {
-        final AuditLogEvent event = new AuditLogEvent(uniqueType, LOGIN, IP, "$domain");
-        auditLog.appendEvent(event);
-
-        assertQuery(query, INVALID_COLLECTION);
-    }
+// FluentD now filters out all non-listed domains therefore invalid domain will not be propagated into
+// Mongo DB. This test should be disabled until the filtering in fluentD is ON.
+//
+//    @Test(groups = {SSH_GROUP, INVALID})
+//    public void shouldAddDomainWithDollarToInvalidCollection() throws Exception {
+//        final AuditLogEvent event = new AuditLogEvent(uniqueType, LOGIN, IP, "$domain");
+//        auditLog.appendEvent(event);
+//
+//        assertQuery(query, INVALID_COLLECTION);
+//    }
 
     @Test(groups = {SSH_GROUP, INVALID})
     public void shouldAddNoDomainToInvalidCollection() throws Exception {
