@@ -1,4 +1,4 @@
-CREATE TABLE "person" (
+CREATE TABLE IF NOT EXISTS "person" (
     "a__department" VARCHAR(512),
     "a__role" VARCHAR(512),
     "cp__name" VARCHAR(512),
