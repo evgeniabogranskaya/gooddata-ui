@@ -8,11 +8,10 @@
         <version>0.7.2-SNAPSHOT</version>
     </parent>
     <artifactId>cfal-restapi</artifactId>
-    <packaging>war</packaging>
 
     <properties>
-        <gdc.boot.version>1.4.0</gdc.boot.version>
-        <monitoring.version>3.3.2</monitoring.version>
+        <gdc.boot.version>2.0.0</gdc.boot.version>
+        <monitoring.version>4.0.1</monitoring.version>
     </properties>
 
     <dependencies>
@@ -47,6 +46,10 @@
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-jvm</artifactId>
+        </dependency>
         <!-- GDC Spring Boot deps -->
         <dependency>
             <groupId>com.gooddata.boot</groupId>
@@ -80,6 +83,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-actuator-autoconfigure</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -183,7 +190,7 @@
         <dependency>
             <groupId>com.gooddata</groupId>
             <artifactId>gdc-c4</artifactId>
-            <version>7.0.0</version>
+            <version>10.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.gooddata.commons</groupId>
@@ -233,6 +240,10 @@
             <artifactId>spring-security-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.gooddata.commons.monitoring</groupId>
             <artifactId>monitoring-http4</artifactId>
             <version>${monitoring.version}</version>
@@ -245,7 +256,7 @@
         <dependency>
             <groupId>com.gooddata.validator.swagger</groupId>
             <artifactId>validator-spring-support</artifactId>
-            <version>0.0.4</version>
+            <version>0.0.5</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -308,6 +319,11 @@
             <artifactId>hamcrest-library</artifactId>
         </dependency>
         <dependency>
+            <groupId>info.faljse</groupId>
+            <artifactId>SDNotify</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
@@ -368,50 +384,32 @@
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
-            <!--This needs to be in place because we don't use spring-boot as a parent.
-            Without it, WAR packaging would fail on "webxml attribute is required" error
-            -->
             <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                </configuration>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring.boot.version}</version>
                 <executions>
                     <execution>
-                        <!-- don't create the war -->
-                        <id>default-war</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>war-exploded</id>
-                        <phase>package</phase>
                         <goals>
-                            <goal>exploded</goal>
+                            <goal>repackage</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring.boot.version}</version>
-            </plugin>
-            <plugin>
                 <groupId>net.kozelka.maven</groupId>
                 <artifactId>contentcheck-maven-plugin</artifactId>
-                <configuration>
-                    <failOnMissing>true</failOnMissing>
-                    <sourceFile>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</sourceFile>
-                    <checkFilesPattern>**/*.jar</checkFilesPattern>
-                    <ignoreVendorArchives>false</ignoreVendorArchives>
-                    <skipPOMPackaging>true</skipPOMPackaging>
-                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
+                        <configuration>
+                            <failOnMissing>true</failOnMissing>
+                            <licenseMappingFile>cfal-restapi/src/main/content.txt</licenseMappingFile>
+                            <ignoreVendorArchives>true</ignoreVendorArchives>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

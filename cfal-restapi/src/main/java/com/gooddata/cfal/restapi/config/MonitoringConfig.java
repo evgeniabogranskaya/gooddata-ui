@@ -63,7 +63,7 @@ public class MonitoringConfig {
 
         final Map<String, Metric> metrics = new HashMap<>();
 
-        for(ObjectInstance objectInstance : objectInstances) {
+        for (ObjectInstance objectInstance : objectInstances) {
             metrics.put(name("cfal", "mongo", "connection-pool", objectInstance.getObjectName().getKeyProperty("host")),
                     new JmxAttributeGaugeSet(objectInstance.getObjectName().toString(), JMX_ATTRIBUTES));
         }

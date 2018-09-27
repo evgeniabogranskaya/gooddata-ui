@@ -25,8 +25,13 @@ Group:          Applications/Productivity
 AutoReqProv:    no
 BuildRequires:  java-1.8.0-openjdk-devel
 BuildRequires:  maven
+
+BuildRequires:  systemd
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
+
 Requires:       java >= 1.8.0
-Requires:       tomcat
 %description restapi
 GoodData CFAL REST API
 
@@ -40,16 +45,32 @@ mvn -DskipTests=true -Dmaven.test.skip=true --update-snapshots clean package
 %install
 rm -rf $RPM_BUILD_ROOT
 
-# Web App
-install -d $RPM_BUILD_ROOT%{webapps}
-cp -a cfal-restapi/target/cfal-restapi $RPM_BUILD_ROOT%{webapps}
+mkdir -p $RPM_BUILD_ROOT%{_javadir}/cfal-restapi
+mkdir -p $RPM_BUILD_ROOT%{_bindir}
+
+cp cfal-restapi/target/cfal-restapi.jar $RPM_BUILD_ROOT%{_javadir}/cfal-restapi
+
+install $(find -path '*/bin7/*' -executable -type f) $RPM_BUILD_ROOT%{_bindir}
+install -d $RPM_BUILD_ROOT%{_unitdir}
+install $(find -path '*/systemd/*') $RPM_BUILD_ROOT%{_unitdir}/
+
+%post
+%systemd_post
+
+%preun
+%systemd_preun cfal-restapi.service
+
+%postun
+%systemd_postun
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files restapi
 %defattr(-,root,root,0755)
-%{webapps}/cfal-restapi/*
+%{_bindir}/cfal-restapi
+%{_javadir}/cfal-restapi/*
+%{_unitdir}/cfal-restapi.service
 
 %changelog
 

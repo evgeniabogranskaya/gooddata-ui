@@ -1,0 +1,18 @@
+[Unit]
+Description=CFAL REST API
+
+[Service]
+Type=notify
+EnvironmentFile=/etc/java/java.conf
+EnvironmentFile=-/etc/sysconfig/cfal-restapi
+User=tomcat
+Group=tomcat
+ExecStart=/usr/bin/cfal-restapi $BASE_FLAGS
+Restart=always
+ExecReload=/bin/kill -HUP $MAINPID
+# JVM exits with 143 exit code on SIGTERM
+SuccessExitStatus=143
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
