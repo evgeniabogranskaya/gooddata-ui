@@ -3,9 +3,8 @@
  */
 package com.gooddata.auditlog;
 
-import static org.apache.commons.lang3.Validate.notEmpty;
-import static org.apache.commons.lang3.Validate.notNull;
-
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gooddata.CfalGoodData;
 import com.gooddata.account.Account;
@@ -26,12 +25,18 @@ import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import static org.apache.commons.lang3.Validate.notEmpty;
+import static org.apache.commons.lang3.Validate.notNull;
 
 /**
  * Singleton for login related stuff.
@@ -42,10 +47,13 @@ public class LoginHelper {
     private static final String GD_SSO_PUBLIC_KEY_PATH = "/sso/dev-gooddata.com.pub";
     private static final String SMURFS_SSO_PRIVATE_KEY_PATH = "/sso/smurfs.priv";
     private static final String SMURFS_SERVER_URL = "smurfs";
+    public static final String SSO_LOGIN_TARGET_URL = "/gdc";
     private static final String SSO_LOGIN_URI =
-            "/gdc/account/customerlogin?sessionId={sessionId}&serverURL={server}&targetURL=/gdc";
+            "/gdc/account/customerlogin";
 
     private static LoginHelper instance;
+
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     private final CfalGoodData gd;
     private final TestEnvironmentProperties props;
@@ -143,7 +151,7 @@ public class LoginHelper {
                 .setSecretKeyForSigning(new ClassPathResource(SMURFS_SSO_PRIVATE_KEY_PATH).getInputStream())
                 .createPgpEncryptor();
 
-        final String json = new ObjectMapper().writeValueAsString(new SSOLogin(account.getLogin()));
+        final String json = objectMapper.writeValueAsString(new SSOLogin(account.getLogin()));
 
         final ByteArrayOutputStream signedMessageOut = new ByteArrayOutputStream();
         encryptor.signMessage(IOUtils.toInputStream(json), signedMessageOut, true);
@@ -153,12 +161,59 @@ public class LoginHelper {
 
         final String session = encryptedMessageOut.toString();
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
         final RestTemplate rest = gd.createRestTemplate(HttpClientBuilder.create().build());
 
-        return rest.getForEntity(SSO_LOGIN_URI, String.class, session, SMURFS_SERVER_URL);
+        HttpEntity<PgpLoginRequest> entity = new HttpEntity<>(new PgpLoginRequest(SMURFS_SERVER_URL,  SSO_LOGIN_TARGET_URL, session), headers);
+
+        return rest.postForEntity(SSO_LOGIN_URI, entity, String.class);
     }
 
     private String getAccountUrl(final Account account) {
         return gd.getEndpoint().toUri() + account.getUri();
+    }
+
+    @JsonTypeInfo(
+            include = JsonTypeInfo.As.WRAPPER_OBJECT,
+            use = JsonTypeInfo.Id.NAME
+    )
+    @JsonTypeName("pgpLoginRequest")
+    private class PgpLoginRequest {
+
+        private String ssoProvider;
+        private String targetUrl;
+        private String encryptedClaims;
+
+        private PgpLoginRequest(String ssoProvider, String targetUrl, String encryptedClaims) {
+            this.ssoProvider = ssoProvider;
+            this.targetUrl = targetUrl;
+            this.encryptedClaims = encryptedClaims;
+        }
+
+        public String getEncryptedClaims() {
+            return encryptedClaims;
+        }
+
+        public void setEncryptedClaims(String encryptedClaims) {
+            this.encryptedClaims = encryptedClaims;
+        }
+
+        public String getTargetUrl() {
+            return targetUrl;
+        }
+
+        public void setTargetUrl(String targetUrl) {
+            this.targetUrl = targetUrl;
+        }
+
+        public String getSsoProvider() {
+            return ssoProvider;
+        }
+
+        public void setSsoProvider(String ssoProvider) {
+            this.ssoProvider = ssoProvider;
+        }
     }
 }
