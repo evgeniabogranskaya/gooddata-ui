@@ -3,6 +3,7 @@
  */
 package com.gooddata.cfal.account;
 
+import com.gooddata.auditlog.LoginHelper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.testng.annotations.BeforeClass;
@@ -15,6 +16,7 @@ public class SSOLoginAT extends AbstractLoginAT {
 
     private static final String SSO = "SSO";
 
+
     private ResponseEntity<String> ssoLoginResult;
 
     @BeforeClass(groups = MESSAGE_TYPE)
@@ -24,7 +26,8 @@ public class SSOLoginAT extends AbstractLoginAT {
 
     @Test(groups = MESSAGE_TYPE)
     public void shouldLoginUserWithSSO() {
-        assertThat(ssoLoginResult.getStatusCode(), is(HttpStatus.OK));
+        assertThat(ssoLoginResult.getHeaders().getLocation().getPath(), is(LoginHelper.SSO_LOGIN_TARGET_URL));
+        assertThat(ssoLoginResult.getStatusCode(), is(HttpStatus.FOUND));
     }
 
     @Test(groups = MESSAGE_TYPE, dependsOnMethods = "shouldLoginUserWithSSO")
