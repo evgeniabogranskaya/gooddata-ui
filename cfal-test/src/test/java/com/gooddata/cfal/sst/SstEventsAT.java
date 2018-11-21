@@ -67,17 +67,6 @@ public class SstEventsAT extends AbstractMongoAT {
     }
 
     @BeforeClass(groups = MESSAGE_TYPE)
-    public void csvUploaderExecution() throws Exception {
-        // execute CSV Upload (+1 event)
-        final Project project = projectHelper.getOrCreateProject();
-        final String datasetId = csvUploadHelper.uploadCsv(project);
-        // delete created CSV dataset (+1 event)
-        csvUploadHelper.deleteCsvDataset(project, datasetId);
-        expectedUserEventsCount += 2;
-        expectedAdminEventsCount += 2;
-    }
-
-    @BeforeClass(groups = MESSAGE_TYPE)
     public void addExecution() throws Exception {
         final Project addProject = projectHelper.createProject();
         // call project model worker DIFF (+1 event)
