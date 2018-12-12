@@ -10,7 +10,9 @@ import com.gooddata.registration.RegisteredAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
@@ -48,6 +50,7 @@ public class AccountHelper {
 
     /**
      * Get current account
+     *
      * @return current account
      */
     public Account getCurrentAccount() {
@@ -59,6 +62,7 @@ public class AccountHelper {
 
     /**
      * Gets user created before or creates it
+     *
      * @return Account instance
      */
     public Account getOrCreateUser() {
@@ -71,6 +75,7 @@ public class AccountHelper {
 
     /**
      * Creates new user for testing purposes
+     *
      * @return created user
      */
     public Account createUser() {
@@ -114,7 +119,6 @@ public class AccountHelper {
      * Creates and returns new random generated account
      */
     public Account createRandomAccount() {
-        return new Account(UUID.randomUUID() + "@mail.com", "passpasspass", "hugo", "boss");
+        return new Account(UUID.randomUUID() + "@mail.com", "b0hXr7fqSTfY8kgld7tK%7gdZjFPa@in", "hugo", "boss");
     }
-
 }
