@@ -37,11 +37,6 @@ public class ApplicationConfig {
         return new DefaultConversionService();
     }
 
-    @Bean
-    public EurekaInstanceConfig eurekaConfigBean() {
-        return new EurekaInstanceConfigBean(new InetUtils(new InetUtilsProperties()));
-    }
-
     static PropertySourcesPlaceholderConfigurer createPropertySourcesPlaceholderConfigurer(final AbstractResource... resources) {
         PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer = new PropertySourcesPlaceholderConfigurer();
         propertySourcesPlaceholderConfigurer.setLocalOverride(true);
