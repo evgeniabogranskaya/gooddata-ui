@@ -1,0 +1,11 @@
+microservices:
+  cfal-restapi:
+    build:
+      env: 'mvnw'
+      path: '.'
+      args: 'clean package -Pk8s -am -pl cfal-restapi/'
+    docker:
+      dockerfile': 'cfal-restapi/Dockerfile'
+    chartPath : 'cfal.restapi.image'
+charts:
+  - 'cfal'
