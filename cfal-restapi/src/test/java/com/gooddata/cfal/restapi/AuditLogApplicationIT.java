@@ -3,22 +3,21 @@
  */
 package com.gooddata.cfal.restapi;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsMapContaining.hasEntry;
-
-import com.codahale.metrics.JmxAttributeGauge;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jvm.JmxAttributeGauge;
 import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
 import com.gooddata.cfal.restapi.service.AuditEventService;
-import com.gooddata.cfal.restapi.service.IpMaskingService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -33,9 +32,6 @@ public class AuditLogApplicationIT {
 
     @Autowired
     private AuditEventService auditEventService;
-
-    @Autowired
-    private IpMaskingService ipMaskingService;
 
     @Test
     public void testMetricsRegistered() throws Exception {

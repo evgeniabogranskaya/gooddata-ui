@@ -3,16 +3,15 @@
  */
 package com.gooddata.cfal.restapi.rest;
 
+import com.gooddata.auditevent.AuditEventPageRequest;
+import com.gooddata.auditevent.AuditEvents;
 import com.gooddata.c4.domain.C4Domain;
 import com.gooddata.c4.domain.DomainService;
 import com.gooddata.c4.setting.C4SettingEntry;
 import com.gooddata.c4.user.C4User;
 import com.gooddata.c4.user.UserService;
-import com.gooddata.auditevent.AuditEvents;
-import com.gooddata.auditevent.AuditEventPageRequest;
 import com.gooddata.cfal.restapi.model.AuditEventEntity;
 import com.gooddata.cfal.restapi.repository.AuditLogEventRepository;
-import com.gooddata.commons.monitoring.metrics.boot.EnableMonitoring;
 import com.gooddata.exception.servlet.ErrorStructure;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
