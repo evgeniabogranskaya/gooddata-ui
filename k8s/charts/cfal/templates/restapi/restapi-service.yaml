@@ -1,12 +1,13 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ template "fullname" . }}-restapi
+  name: {{ include "cfal.fullname" . }}-restapi
   labels:
-    app: cfal
-    component: restapi
+    app.kubernetes.io/name: {{ include "cfal.name" . }}
+    app.kubernetes.io/component: restapi
     team: smurfs
-    chart: "{{ .Chart.Name }}"
+    helm.sh/chart: {{ include "cfal.chart" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   ports:
   - name: http
@@ -14,6 +15,6 @@ spec:
     port: {{ .Values.cfal.restapi.service.externalPort }}
     targetPort: 8080
   selector:
-    app: cfal
-    component: restapi
+    app.kubernetes.io/name: {{ include "cfal.name" . }}
+    app.kubernetes.io/component: restapi
   type: NodePort
