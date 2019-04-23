@@ -3,17 +3,18 @@ apiVersion: apps/v1beta1
 metadata:
   name: {{ template "fullname" . }}-restapi
   labels:
-    app: cfal
-    component: restapi
+    app.kubernetes.io/name: cfal
+    app,kubernetes.io/component: restapi
     team: smurfs
-    chart: "{{ .Chart.Name }}"
+    helm.sh/chart: "{{ .Chart.Name }}"
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.cfal.restapi.replicaCount }}
   template:
     metadata:
       labels:
-        app: cfal
-        component: restapi
+        app.kubernetes.io/name: cfal
+        app.kubernetes.io/component: restapi
         team: smurfs
     spec:
       containers:
