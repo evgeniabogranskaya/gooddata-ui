@@ -145,16 +145,6 @@ public class SstEventsAT extends AbstractMongoAT {
         scheduledMailHelper.clearScheduledMails();
     }
 
-    @Test(groups = MESSAGE_TYPE)
-    public void testSstCreateUserApi() {
-        doTestUserApi(eventCheck(Collections.singleton(getAccount().getLogin())), MESSAGE_TYPE, expectedUserEventsCount);
-    }
-
-    @Test(groups = MESSAGE_TYPE)
-    public void testSstCreateAdminApi() {
-        doTestAdminApi(eventCheck(getLogins()), MESSAGE_TYPE, expectedAdminEventsCount);
-    }
-
     @Test(groups = {MESSAGE_TYPE, SSH_GROUP})
     public void testNoSstCreateInInvalidCollection() throws Exception {
         Query query = new Query()
@@ -170,12 +160,5 @@ public class SstEventsAT extends AbstractMongoAT {
         } else {
             return Collections.singleton(getAccount().getLogin());
         }
-    }
-
-    private static Predicate<AuditEvent> eventCheck(final Set<String> logins) {
-        return (e -> logins.contains(e.getUserLogin()) &&
-                MESSAGE_TYPE.equals(e.getType()) &&
-                e.isSuccess()
-        );
     }
 }
