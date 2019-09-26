@@ -309,14 +309,14 @@ public class AuditEventControllerTest {
     @Test
     public void testListAuditEventsOverLimit() throws Exception {
         mockMvc.perform(get(adminUri())
-                .param("limit", "10001")
+                .param("limit", "2001")
                 .header(X_PUBLIC_USER_ID, ADMIN_USER_ID))
                 .andExpect(status().isOk())
         ;
         final ArgumentCaptor<AuditEventPageRequest> captor = ArgumentCaptor.forClass(AuditEventPageRequest.class);
         verify(auditEventService).findByDomain(eq("default"), captor.capture());
         final AuditEventPageRequest params = captor.getValue();
-        assertThat(params.getLimit(), is(10000));
+        assertThat(params.getLimit(), is(2000));
     }
 
     @Test
@@ -381,14 +381,14 @@ public class AuditEventControllerTest {
     @Test
     public void testListAuditEventsForUserOverLimit() throws Exception {
         mockMvc.perform(get(userUri(ADMIN_USER_ID))
-                .param("limit", "10001")
+                .param("limit", "2001")
                 .header(X_PUBLIC_USER_ID, ADMIN_USER_ID))
                 .andExpect(status().isOk())
         ;
         final ArgumentCaptor<AuditEventPageRequest> captor = ArgumentCaptor.forClass(AuditEventPageRequest.class);
         verify(auditEventService).findByUser(any(), captor.capture());
         final AuditEventPageRequest params = captor.getValue();
-        assertThat(params.getLimit(), is(10000));
+        assertThat(params.getLimit(), is(2000));
     }
 
     @Test
