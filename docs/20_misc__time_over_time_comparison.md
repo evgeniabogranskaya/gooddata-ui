@@ -21,56 +21,34 @@ You can compare data to:
 
 **Period**: 1 year
  
-To add a SP derived measure to a visualization, use the following `PopMeasureDefinition` structure (for the full TypeScript definition, see [this code section](https://github.com/gooddata/gooddata-typings/blob/v2.6.0/src/VisualizationObject.ts#L128)):
+To add a SP derived measure to a visualization, use the following `newPopMeasure` factory function:
  
- ```javascript
-// Type: IMeasure 
-{        
-     localIdentifier: '<sp-derived-measure-local-identifier>',
-     // Type: IPopMeasureDefinition
-     definition: { 
-         popMeasureDefinition: {
-             measureIdentifier: '<master-measure-local-identifier>', // a reference to localIdentifier of the master measure
-             // Type: IObjUriQualifier
-             popAttribute: { 
-                 uri: '<attribute-year-uri>' // or `identifier: '<attribute-year-identifier>'`, defines both shift and period, currently supports a year only
-             }
-         }
-     }
- }
- ```
+```javascript
+newPopMeasure(masterMeasureOrLocalId, overPeriodAttributeId, modifications)
+```
+
+Where:
+ 
+-  `masterMeasureOrLocalId` is the measure with data to compare; specify either measure's localIdentifier or measure itself
+-  `overPeriodAttributeId` is the identifier of date dimension year attribute to use for shift
+-  `modifications` is a function which receives an object with functions to customize `format()` and `alias()` 
+ 
 
 ### Example
 
 ```jsx
+import { PivotTable } from "@gooddata/sdk-ui-pivot";
+import { newMeasure, newPopMeasure } from "@gooddata/sdk-model";
+
+const masterMeasure = newMeasure('measureIdentifier', m => m.alias('Master Measure'));
+const popMeasure = newPopMeasure(masterMeasure, 'attributeYearIdentifier', m => m.alias("Same Period Previous Year"));
+
 const measures = [
-    // derived - previous year measure
-    {
-        localIdentifier: 'spDerivedMeasureLocalIdentifier',
-        definition: {
-            popMeasureDefinition: {
-                measureIdentifier: 'spMasterMeasureLocalIdentifier',
-                popAttribute: {
-                    identifier: 'attributeYearIdentifier'
-                }
-            }
-        }
-    },
-    // master measure
-    {
-        localIdentifier: 'spMasterMeasureLocalIdentifier',
-        definition: {
-            measureDefinition: {
-                item: {
-                    identifier: 'measureIdentifier'
-                }
-            }
-        }
-    }
+    masterMeasure,
+    popMeasure
 ];
 
-<Table
-    projectId={projectId}
+<PivotTable
     measures={measures}
 />
 ```  
@@ -86,82 +64,44 @@ const measures = [
 
 If no global date filter is defined, the derived measure returns the same data as the master measure.
 
-To add a PP derived measure to a visualization, use the following `PreviousPeriodMeasureDefinition` structure (for the full TypeScript definition, see [this code section](https://github.com/gooddata/gooddata-typings/blob/v2.6.0/src/VisualizationObject.ts#L135)):
+To add a PP derived measure to a visualization, use the following `newPreviousPeriodMeasure` factory function:
 
 ```javascript
-// Type: IMeasure 
-{        
-    localIdentifier: '<pp-derived-measure-local-identifier>',
-    definition: {
-        // Type: IPreviousPeriodMeasureDefinition
-        previousPeriodMeasure: { 
-            measureIdentifier: '<measure-local-identifier>', // a reference to localIdentifier of the master measure    
-            // Type: IPreviousPeriodDateDataSet[]
-            // currently, only a single date data set is supported
-            dateDataSets: [
-                {    
-                    // Type: IObjUriQualifier
-                    dataSet: { 
-                         uri: '<global-filter-date-data-set-uri>' // or `identifier: '<global-filter-date-data-set-identifier>'`
-                    },
-                    periodsAgo: 1 // the number of periods the data is shifted back to, currently only the value "1" is supported
-                }       
-            ]
-        }
-    }
-}
-````
+newPreviousPeriodMeasure(masterMeasureOrLocalId, dateDataSetsShift, modifications);
+```
+
+Where:
+
+-  `masterMeasureOrLocalId` is the measure with data to compare; specify either measure's localIdentifier or measure itself
+-  `dateDataSetsShift` is definition of period shift to apply; it is an object that with `dataSet` prop for date data set identifier and
+   `periodsAgo` prop to specify the period shift
+-  `modifications` is a fucntion which receives an object with functions to customize `format()` and `alias()`.
 
 ### Example
 
 ```jsx
-const measures = [
-    // derived - previous 7 days measure
-    {
-        localIdentifier: 'ppDerivedMeasureLocalIdentifier',
-        definition: {
-            previousPeriodMeasure: { 
-                measureIdentifier: 'ppMasterMeasureLocalIdentifier',
-                dateDataSets: [ 
-                    {    
-                        dataSet: {
-                             identifier: 'dateDatasetIdentifier'
-                        },
-                        periodsAgo: 1 
-                    }       
-                ]
-            }
-        }
-    },
-    // master - last 7 days measure
-    {
-        localIdentifier: 'ppMasterMeasureLocalIdentifier',
-        definition: {
-            measureDefinition: {
-                item: {
-                    identifier: 'measureIdentifier'
-                }
-            }
-        }
-    }
-];
+import { newMeasure, newPreviousPeriodMeasure, newRelativeDateFilter } from "@gooddata/sdk-model";
+import { PivotTable } from "@gooddata/sdk-ui-pivot";
 
 const filters = [
-    // last 7 days filter
-    {
-        relativeDateFilter: {
-            dataSet: {
-                identifier: 'dateDatasetIdentifier'
-            },
-            granularity: 'GDC.time.date',
-            from: -7, 
-            to: -1  
-        }
-    }
+    newRelativeDateFilter('dateDatasetIdentifier', 'GDC.time.date', -7, -1)
 ];
 
-<Table
-    projectId={projectId}
+// master - last 7 days measure
+const masterMeasure = newMeasure('measureIdentifier', m => m.alias("Master Measure"));
+// derived - previous 7 days measure
+const previousPeriod = newPreviousPeriodMeasure(
+                            masterMeasure, 
+                            { dataSet: 'dateDatasetIdentifier', periodsAgo: 1},
+                            m => m.alias("Previous Period Measure")
+                        );
+
+const measures = [
+    masterMeasure,
+    previousPeriod
+];
+
+<PivotTable
     measures={measures}
     filters={filters}
 />
