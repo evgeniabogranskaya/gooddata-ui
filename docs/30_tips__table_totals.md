@@ -5,7 +5,7 @@ copyright: (C) 2007-2020 GoodData Corporation
 id: table_totals
 ---
 
-You can display rows with aggregated measure data in both Table and Pivot Table components using the `totals` prop.
+You can display rows with aggregated measure data in the Pivot Table component using the `totals` prop.
 
 ## Supported aggregation functions
 
@@ -31,60 +31,22 @@ Totals cannot be calculated for tables without row attributes or for tables with
 ![Grand Totals for Columns](assets/pivot_table_totals.png)
 
 ```jsx
-const measures = [
-    {
-        measure: {
-            localIdentifier: 'franchiseFeesIdentifier',
-            definition: {
-                measureDefinition: {
-                    item: {
-                        identifier: franchiseFeesIdentifier
-                    }
-                }
-            }
-        }
-    }
-];
+import { PivotTable } from "@gooddata/sdk-ui-pivot";
+import { newTotal } from "@gooddata/sdk-model";
+import { Ldm } from "./ldm";
 
-const columns = [
-    {
-        visualizationAttribute: {
-            displayForm: {
-                identifier: monthDateIdentifier
-            },
-            localIdentifier: 'month'
-        }
-    }
-];
-
-const rows = [
-    {
-        visualizationAttribute: {
-            displayForm: {
-                identifier: locationStateDisplayFormIdentifier
-            },
-            localIdentifier: 'location'
-        }
-    }
-];
+const measures = [ Ldm.$FranchiseFees ];
+const columns = [ Ldm.DateMonth.Short ];
+const rows = [ Ldm.LocationCity ];
 
 const totals = [
-    {
-        measureIdentifier: 'franchiseFeesIdentifier',
-        type: 'sum',
-        attributeIdentifier: 'location' // To create a grand total, this needs to be the localIdentifier of the FIRST row attribute.
-    },
-    {
-        measureIdentifier: 'franchiseFeesIdentifier',
-        type: 'avg',
-        attributeIdentifier: 'location' // To create a grand total, this needs to be the localIdentifier of the FIRST row attribute.
-    }
+    newTotal("sum", Ldm.$FranchiseFees, Ldm.LocationCity),
+    newTotal("avg", Ldm.$FranchiseFees, Ldm.LocationCity)
 ];
 
 return (
     <div style={{ height: 300 }}>
         <PivotTable
-            projectId={projectId}
             measures={measures}
             columns={columns}
             rows={rows}
@@ -107,68 +69,22 @@ A subtotal is defined the same way a grand total is, except `attributeIdentifier
 ![Subtotals for Columns](assets/pivot_table_subtotals.png)
 
 ```jsx
-const measures = [
-    {
-        measure: {
-            localIdentifier: 'franchiseFeesIdentifier',
-            definition: {
-                measureDefinition: {
-                    item: {
-                        identifier: franchiseFeesIdentifier
-                    }
-                }
-            }
-        }
-    }
-];
+import { PivotTable } from "@gooddata/sdk-ui-pivot";
+import { newTotal } from "@gooddata/sdk-model";
+import { Ldm } from "./ldm";
 
-const rows = [
-    {
-        visualizationAttribute: {
-            displayForm: {
-                identifier: locationStateDisplayFormIdentifier
-            },
-            localIdentifier: 'location'
-        }
-    },
-    {
-        visualizationAttribute: {
-            displayForm: {
-                identifier: menuCategoryAttributeDFIdentifier
-            },
-            localIdentifier: 'menu'
-        }
-    }
-];
-
-const columns = [
-    {
-        visualizationAttribute: {
-            displayForm: {
-                identifier: monthDateIdentifier
-            },
-            localIdentifier: 'month'
-        }
-    }
-];
+const measures = [ Ldm.$FranchiseFees ];
+const columns = [ Ldm.DateMonth.Short ];
+const rows = [ Ldm.LocationState, Ldm.MenuCategory ];
 
 const totals = [
-    {
-        type: 'sum',
-        measureIdentifier: 'franchiseFeesIdentifier',
-        attributeIdentifier: 'location' // Grand total
-    },
-    {
-        type: 'sum',
-        measureIdentifier: 'franchiseFeesIdentifier',
-        attributeIdentifier: 'menu' // Subtotal
-    }
+    newTotal("sum", Ldm.$FranchiseFees, Ldm.LocationState),
+    newTotal("sum", Ldm.$FranchiseFees, Ldm.MenuCategory)
 ];
 
 return (
     <div style={{ height: 300 }}>
         <PivotTable
-            projectId={projectId}
             measures={measures}
             rows={rows}
             columns={columns}
