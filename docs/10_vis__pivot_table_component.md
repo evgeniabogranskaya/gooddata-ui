@@ -210,7 +210,7 @@ columnSizing: {
     ```
     **NOTE**: `measureColumnWidthItem` defined for a specific column overrides the value set by `allMeasureColumnWidthItem` for this column. The width of this column is set to the value of the `width` prop in `measureColumnWidthItem`.
 
-**TIP:** Instead of creating `attributeColumnWidthItem`, `measureColumnWidthItem`, and `allMeasureColumnWidthItem` manually, you can use the [width item helpers](30_tips__model_helpers.md#width-item-helpers-for-pivot-tables).
+**TIP:** Instead of creating `attributeColumnWidthItem`, `measureColumnWidthItem`, and `allMeasureColumnWidthItem` manually, you can use the [width item helpers](02_start__model_helpers.md#width-item-helpers-for-pivot-tables).
 
 ### Combining auto resizing and manual resizing
 
@@ -418,3 +418,109 @@ const config = {
 | onError | false | Function | A callback when the component updates its error state |
 | onExportReady | false | Function | A callback when the component is ready for exporting its data |
 | onLoadingChanged | false | Function | A callback when the component updates its loading state |
+
+
+## Width item helpers for pivot tables << TODO: REVISIT AFTER MERGE FROM 7
+
+You can use the following width item helpers for setting the column width in [pivot tables](10_vis__pivot_table_component.md#manual-resizing):
+
+* `attributeColumnWidthItem` for creating attribute width items
+* `measureColumnWidthItem` for creating measure width items
+* `allMeasureColumnWidthItem` for creating measure width items for all measure columns
+
+### attributeColumnWidthItem helper
+
+This helper creates attribute width items.
+
+The helper takes the following parameters:
+
+* `attributeIdentifier` is the attribute's local identifier.
+* `width` specifies the width of the attribute column.
+
+**Example:**
+
+```js harmony
+import { Model } from '@gooddata/react-components';
+
+const attributeWidth = Model.attributeColumnWidthItem('state', 200);
+
+/*
+attributeWidth is equivalent to
+{
+    attributeColumnWidthItem: {
+        width: 200,
+        attributeIdentifier: 'state'
+    }
+}
+*/
+```
+
+### measureColumnWidthItem helper
+
+This helper creates measure width items.
+
+The helper takes the following parameters:
+
+* `measureIdentifier` is the measure's local identifier.
+* `width` specifies the width of the attribute column.
+
+The resulting object has one customization method, `attributeLocators(...locators)`, that adds specified attribute locators. The attribute locators are objects with the following properties:
+  * `attributeIdentifier` is an identifier or an URI.
+  * `element` is the attribute element identifier or URI.
+
+**Example:**
+
+```js harmony
+import { Model } from '@gooddata/react-components';
+
+const measureWidth = Model.measureColumnWidthItem('franchiseFees', 100)
+    .attributeLocators({
+        attributeIdentifier: 'month',
+        element: monthDateIdentifierJanuary
+    });
+
+/*
+measureWidth is equivalent to
+{
+    measureColumnWidthItem: {
+        width: 100,
+        locators: [
+            {
+                attributeLocatorItem: {
+                    attributeIdentifier: 'franchiseFees',
+                    element: monthDateIdentifierJanuary
+                }
+            },
+            {
+                measureLocatorItem: {
+                    measureIdentifier: 'franchiseFees'
+                }
+            }
+        ]
+    }
+}
+*/
+```
+
+### allMeasureColumnWidthItem helper
+
+This helper creates measure width items for all measure columns.
+
+The helper takes one parameter, `width`, that specifies the width of all measure columns.
+
+**Example:**
+
+```js harmony
+import { Model } from '@gooddata/react-components';
+
+const allMeasureWidth = Model.allMeasureColumnWidthItem(100);
+
+/*
+allMeasureWidth is equivalent to
+{
+    measureColumnWidthItem: {
+        width: 100,
+    }
+}
+*/
+```

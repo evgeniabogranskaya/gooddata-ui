@@ -15,6 +15,7 @@
       "ht_create_your_first_visualization",
       "analytical_backend_integration",
       "gdc_catalog_export",
+      "model_helpers",
       "api_maturity"
     ],
     "Visual Components": [
@@ -66,7 +67,6 @@
     ],
     "Development Tips": [
       "ht_embed_visualization",
-      "model_helpers",
       "sso",
       "cors",
       "table_totals",
