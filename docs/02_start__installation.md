@@ -14,15 +14,21 @@ This article describes how to install GoodData.UI  and a few steps to accomplish
 Run the following to install packages necessary to render charts:
 
 ```bash
-yarn add @gooddata/sdk-backend-bear @gooddata/sdk-model @gooddata/sdk-ui @gooddata/sdk-ui-charts
+yarn add @gooddata/sdk-backend-bear @gooddata/sdk-model @gooddata/sdk-ui @gooddata/sdk-ui-charts @gooddata/sdk-ui-pivot @gooddata/sdk-ui-geo @gooddata/sdk-ui-ext
 ```
 
 ```bash
-$ npm install @gooddata/sdk-backend-bear @gooddata/sdk-model @gooddata/sdk-ui @gooddata/sdk-ui-charts
+$ npm install @gooddata/sdk-backend-bear @gooddata/sdk-model @gooddata/sdk-ui @gooddata/sdk-ui-charts @gooddata/sdk-ui-pivot @gooddata/sdk-ui-geo @gooddata/sdk-ui-ext
 ```
 
 **NOTE:** Check out the [Architecture Overview](01_intro__framework_overview.md) to learn about additional packages which
 you can include and render for instance Pivot Tables or Geo Charts.
+
+### Important Notice
+
+For smooth developer experience, please make sure that your application always uses same versions of all GoodData.UI packages. Do not
+mix and match different versions. Always upgrade to same versions of all `@gooddata` packages.
+
 
 ## Before you start coding
 
