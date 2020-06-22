@@ -29,196 +29,77 @@ To change the format, use the `format` attribute of the measure (see the [exampl
 
 ## Arithmetic measure structure
 
-To add an arithmetic measure to a visualization, use the following `IArithmeticMeasureDefinition` structure:
+To add an arithmetic measure to a visualization, use the `newArithmeticMeasure` factory function:
 
-````javascript
-// Type: IMeasure 
-{
-    localIdentifier: '<arithmetic-measure-local-identifier>',
-    // Type: IArithmeticMeasureDefinition 
-    definition: {
-        arithmeticMeasure: {
-            measureIdentifiers: ['<referenced-measure-local-identifier>', '<referenced-measure-local-identifier>'] // a reference to localIdentifier of the measures from which the calculation is made
-            //Type: ArithmeticMeasureOperator
-            operator: '<arithmetic-operator>' // possible values: sum, difference, multiplication, ratio, change 
-        }
-    }
-}
-````
-
-For the full TypeScript definition, see [this code section](https://github.com/gooddata/gooddata-typings/blob/v2.6.0/src/VisualizationObject.ts#L121).
+```javascript
+newArithmeticMeasure(operands, operator, modifications)
+```
 
 An arithmetic measure can reference the following as its operand:
 * Simple measures
 * Derived measures (see [Time Over Time Comparison](20_misc__time_over_time_comparison.md))
 * Another arithmetic measures
 
+You can specify operands either by their `localIdentifier` or by their value and the factory function will extract
+the local identifier for you.
+
+The operator is one of: "sum", "difference", "multiplication", "ratio" or "change".
+
+The modifications is optional and is a function with single parameter - an object with functions which you can use
+to override measure `format()` or `alias()`. 
+
 If arithmetic measures reference each other in an infinite loop or the referenced measure is not found in the visualization (there is no measure with the referenced *localIdentifier*), the error message is rendered instead of the visualization.
 
 ## Examples
 
-### A difference between two measures
+### A difference between two measures - arithmetic measure constructed using localIdentifier references
 
 ````jsx harmony
+import { newMeasure, newArithmeticMeasure } from "@gooddata/sdk-model";
+import { PivotTable } from "@gooddata/sdk-ui-pivot";
+
 const measures = [
     // the first simple measure (operand)
-    {
-        localIdentifier: 'boughtProductsLocalIdentifier',
-        definition: {
-            measureDefinition: {
-                item: {
-                    identifier: 'boughtProductsIdentifier'
-                }
-            }
-        },
-        alias: 'Bought products from supplier'
-    },
-    // the second simple measure (operand)
-    {
-        localIdentifier: 'soldProductsLocalIdentifier',
-        definition: {
-            measureDefinition: {
-                item: {
-                    identifier: 'soldProductsIdentifier'
-                }
-            }
-        },
-        alias: 'Sold products to customers'
-    },
-    // arithmetic measure (arithmetic operation with referenced operands)
-    {
-        localIdentifier: 'arithmeticMeasureLocalIdentifier',
-        definition: {
-            arithmeticMeasure: {
-                measureIdentifiers: ['boughtProductsLocalIdentifier', 'soldProductsLocalIdentifier'],
-                operator: 'difference'
-            }
-        },
-        alias: 'Products remaining in warehouse'
-    }
+    newMeasure('boughtProductsIdentifier', m => m.alias('Bought products from supplier')),
+    newMeasure('soldProductsLocalIdentifier', m => m.alias('Sold products to customers')),
+    newArithmeticMeasure(
+        ['boughtProductsLocalIdentifier', 'soldProductsLocalIdentifier'], 
+        'difference', 
+        m => m.alias('Products remaining in warehouse')
+    )
 ];
 
-<Table
-    projectId={projectId}
+<PivotTable
     measures={measures}
 />
 ````
 
 ### Calculation with a derived measure (percentage change between two years)
 
-The result of a `change` operation is returned as a percentage value in the default `#,##0.00%` format. 
+The result of a `change` operation is returned as a percentage value in the default `#,##0.00%` format. This example
+demonstrates passing measures by value to the different measure factory functions.
 
 ```jsx harmony
+import { newMeasure, newPopMeasure, newArithmeticMeasure } from "@gooddata/sdk-model";
+import { PivotTable } from "@gooddata/sdk-ui-pivot";
+
+const currentYear = newMeasure('measureIdentifier', m => m.alias("Current Year"));
+// derived - data from previous year
+const previousYear = newPopMeasure(currentYear, 'attributeDisplayFormYearIdentifier',  m => m.alias("Previous Year"));
+// arithmetic measure with custom format
+const change = newArithmeticMeasure(previousYear, currentYear, "change", m => m.alias("Change between years").format("$#,#0.0%"));
+
 const measures = [
-    // derived - data from previous year
-    {
-        localIdentifier: 'spDerivedMeasureLocalIdentifier',
-        definition: {
-            popMeasureDefinition: {
-                measureIdentifier: 'spMasterMeasureLocalIdentifier',
-                popAttribute: {
-                    identifier: 'attributeDisplayFormYearIdentifier'
-                }
-            }
-        },
-        alias: 'Previous year'
-    },
-    // master measure - data from this year
-    {
-        localIdentifier: 'spMasterMeasureLocalIdentifier',
-        definition: {
-            measureDefinition: {
-                item: {
-                    identifier: 'measureIdentifier'
-                }
-            }
-        },
-        alias: 'Current year'
-    },
-    // arithmetic measure - percentage change between the previous and the current year 
-    {
-        localIdentifier: 'arithmeticMeasureLocalIdentifier',
-        definition: {
-            arithmeticMeasure: {
-                measureIdentifiers: ['spDerivedMeasureLocalIdentifier', 'spMasterMeasureLocalIdentifier'],
-                operator: 'change'
-            }
-        },
-        alias: 'Change between the previous and the current year'
-    }
+    currentYear,
+    previousYear,
+    change
 ];
 
-<Table
+<PivotTable
     projectId={projectId}
     measures={measures}
 />
 ```
-
-### Calculation with an arithmetic measure and format override
-
-````jsx harmony
-const measures = [
-    {
-        localIdentifier: 'soldProductA_localIdentifier',
-        definition: {
-            measureDefinition: {
-                item: {
-                    identifier: 'soldProductA_identifier'
-                }
-            }
-        },
-        alias: 'Units of sold product A'
-    },
-    {
-        localIdentifier: 'soldProductB_localIdentifier',
-        definition: {
-            measureDefinition: {
-                item: {
-                    identifier: 'soldProductB_identifier'
-                }
-            }
-        },
-        alias: 'Units of sold product B'
-    },
-    {
-        localIdentifier: 'soldProductC_localIdentifier',
-        definition: {
-            measureDefinition: {
-                item: {
-                    identifier: 'soldProductC_identifier'
-                }
-            }
-        },
-         alias: 'Units of sold product C'
-    },
-    {
-        localIdentifier: 'soldProductsAB_localIdentifier',
-        definition: {
-            arithmeticMeasure: {
-                measureIdentifiers: ['soldProductA_localIdentifier', 'soldProductB_localIdentifier'],
-                operator: 'sum'
-            }
-        },
-        alias: 'Sum of sold product A and B'
-    },
-    {
-        localIdentifier: 'soldProductAB_vs_C_localIdentifier',
-        definition: {
-            arithmeticMeasure: {
-                measureIdentifiers: ['soldProductsAB_localIdentifier', 'soldProductC_localIdentifier'],
-                operator: 'difference'
-            }
-        },
-        format: '#,##0.00%',
-        alias: 'Difference of sold product A and B vs C returned as percentage'
-    }
-];
-
-<Table
-    projectId={projectId}
-    measures={measures}
-/>
-````
 
 ## More information
 
