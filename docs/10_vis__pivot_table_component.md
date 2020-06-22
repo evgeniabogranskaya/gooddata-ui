@@ -210,7 +210,7 @@ columnSizing: {
     ```
     **NOTE**: `measureColumnWidthItem` defined for a specific column overrides the value set by `allMeasureColumnWidthItem` for this column. The width of this column is set to the value of the `width` prop in `measureColumnWidthItem`.
 
-**TIP:** Instead of creating `attributeColumnWidthItem`, `measureColumnWidthItem`, and `allMeasureColumnWidthItem` manually, you can use the [width item helpers](02_start__model_helpers.md#width-item-helpers-for-pivot-tables).
+**TIP:** Instead of creating `attributeColumnWidthItem`, `measureColumnWidthItem`, and `allMeasureColumnWidthItem` manually, you can use the [width item helpers](02_start__execution_model.md#width-item-helpers-for-pivot-tables).
 
 ### Combining auto resizing and manual resizing
 
