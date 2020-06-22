@@ -10,41 +10,44 @@ With GoodData.UI, you can create your new visual components to address your spec
 Your component code must be wrapped within the Execute component. This component lets you conveniently specify
 the data to render and then access the results:
 
-```javascript
+```jsx
 import { Execute } from '@gooddata/sdk-ui';
 
-<Execute
-    workspace={<project-id>} 
-    seriesBy={measuresAndAttributes} 
-    slicesBy={attributes} 
-    onLoadingChanged={e=>{}} onError={e=>{}}>
-
-    {
-        (execution) => {
-            const { isLoading, error, result } = execution;
-            if (isLoading) {
-                return (<div>Loading data...</div>);
-            } else if (error) {
-                return (<div>There was an error</div>);
+function CustomVisualization() {
+    return (
+        <Execute 
+            seriesBy={measuresAndAttributes} 
+            slicesBy={attributes} 
+            onLoadingChanged={e=>{}} 
+            onError={e=>{}}>
+            {
+                (execution) => {
+                    const { isLoading, error, result } = execution;
+                    if (isLoading) {
+                        return (<div>Loading data...</div>);
+                    } else if (error) {
+                        return (<div>There was an error</div>);
+                    }
+                    
+                    // access result by slices (rows); 
+                    const slices = result.data().slices().toArray();
+        
+                    return (
+                        <div>
+                            {slices.map((slice, idx) => {
+                                // for each slice (row), print the header and then the actual formatted data points
+                                return (
+                                    <div key="idx">
+                                        {slice.sliceTitles().join(">")} - {slice.dataPoints().map(dp => dp.formattedValue())}
+                                    </div>)
+                                })}
+                        </div>
+                    );
+                }
             }
-            
-            // access result by slices (rows); 
-            const slices = result.data().slices().toArray();
-
-            return (
-                <div>
-                    {slices.map((slice, idx) => {
-                        // for each slice (row), print the header and then the actual formatted data points
-                        return (
-                            <div key="idx">
-                                {slice.sliceTitles().join(">")} - {slice.dataPoints().map(dp => dp.formattedValue())}
-                            </div>)
-                })}
-            </div>
-            )
-        }
-    }
-</Execute>
+        </Execute>
+    )
+}
 ```
 
 ## Data Series and Data Slices
