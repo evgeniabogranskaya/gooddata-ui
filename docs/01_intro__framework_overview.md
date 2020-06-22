@@ -29,8 +29,8 @@ developer you can pick and choose packages according to requirements of your app
 | @gooddata/sdk-backend-bear | contains the analytical backend implementation for GoodData platform | 
 | @gooddata/sdk-model | contains the APIs and models used to construct inputs to executions and charts |
 | @gooddata/sdk-ui | contains the React infrastructure and headless components such as the Execute component | 
-| @gooddata/sdk-ui-charts | contains the components for all charts| 
-| @gooddata/sdk-ui-geo | contains the Geo Pushpin chart| 
-| @gooddata/sdk-ui-pivot | contains the Pivot Table component| 
+| @gooddata/sdk-ui-charts | contains the React components for all charts| 
+| @gooddata/sdk-ui-geo | contains the React components for Geo Pushpin chart| 
+| @gooddata/sdk-ui-pivot | contains the React component for Pivot Table| 
 | @gooddata/sdk-ui-filters | contains the filtering components| 
-| @gooddata/sdk-ui-ext | contains the components for embedding insights created in|  
+| @gooddata/sdk-ui-ext | contains the components for embedding insights created in Analytical Designer|  
