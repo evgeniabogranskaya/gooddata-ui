@@ -31,9 +31,10 @@ const allData = await result.readAll();
 In the above example, the code starts an execution in workspace with `project_id`. It specifies execution for `measuresAndAttributes` array, 
 filtered by `filters` array. 
 
-On top of that, it configures `sorting` of the result data and how to lay out the data into `dimensions`.
+On top of that, it configures `sorting` of the result data and how to lay out the data into `dimensions`. 
 
-The code then waits for the results. From these it then reads first page of data and then all the data. 
+This page describes the different items and filters that you can input as execution items. For description of sorting
+and dimensionality setup, please see [result specification](50_custom__result_specification.md) page.
 
 ## Attribute
 
@@ -64,57 +65,25 @@ The structure of individual filters is identical to the `filters` prop that is u
 
 ## Measure
 
+Measures in the scope of execution indicate what values must the Analytical Backend calculate and include in the result,
+potentially sliced as indicated by the the different attributes.
 
+You can construct measures of multiple types:
 
-```javascript
-// Items of AFM.measures
-// Type: IMeasure
-{
-    localIdentifier: '<measure-local-identifier>',
-    // Type: SimpleMeasureDefinition
-    definition: {
-        measure: {
-            // Type: ObjQualifier
-            item: {
-                identifier: '<measure-identifier>'    // Or URI: '<measure-uri>'
-            },
-            aggregation: 'sum', // Optional; by default 'sum'; possible values: 'sum' | 'count' | 'avg' | 'min' | 'max' | 'median' | 'runsum'
-            filters: [],        // Optional; by default []; type: CompatibilityFilter[]
-            computeRatio: true  // Optional; by default false
-        }
-    },
-    alias: 'Custom measure title',  // Optional; overrides the default measure title
-    format: '#,##0.00'  // Optional; overrides the default measure format; ignored in some special cases, see the sections below
-}
+-  measures created by aggregating facts in your LDM
+-  measures created by referencing an existing, potentially complex MAQL Metric
+-  time-over-time comparison measures constructed by 'shifting' the calculation in time
+-  arithmetic measures constructed by combining existing measures as operands of arithmetic operations
 
-```
+The [catalog-export](02_start__catalog_export.md) tool will automatically create measure definitions for all facts
+and MAQL metrics in your workspace.
 
-`item` either contains a measure URL...:
-
-```javascript
-item: {
-    uri: '<measure-uri>'
-}
-```
-
-...or a measure identifier:
-
-```javascript
-item: {
-    identifier: '<measure-identifier>'
-}
-
-```
-
-Besides `uri` or `identifier`, a measure requires a `localIdentifier` string that uniquely identifies the measure in the context of the current AFM. This is used in dimension definitions, sorting, and any other place where you need to target a measure or an attribute.
-
-Though you can use either object URIs or object identifiers \(`ObjQualifier = IObjUriQualifier | IObjIdentifierQualifier`\), we recommend that you use the **object identifiers**, which are consistent across your domain regardless of the GoodData project that they live in. That means that an object that is used in any project within your domain, has the _same_ object identifier in _any_ of those projects.
-
-To get the list of catalog items and date datasets from a GoodData project in the form of a JavaScript object, use [gdc-catalog-export](02_start__catalog_export.md).
+You can then use the [execution model functions](02_start__model_helpers.md) to create [arithmetic measures](20_misc__arithmetic_measure.md)
+and [time-over-time comparison measures](20_misc__time_over_time_comparison.md).
 
 ### Aggregation inside a measure
 
-Each measure can specify `aggregation` of data. Aggregation is represented by a string value that defines the aggregation type.
+Each measure created from a fact can specify `aggregation` of data. Aggregation is represented by a string value that defines the aggregation type.
 
 | Type | Description |
 | :--- | :--- |
@@ -126,198 +95,49 @@ Each measure can specify `aggregation` of data. Aggregation is represented by a 
 | `'median'` | Counts the statistical median - an order statistic that gives the "middle" value of a sample. If the "middle" falls between two values, the function returns average of the two middle values. Null values are ignored. |
 | `'runsum'` | Returns a sum of numbers increased by the sum from the previous value \(accumulating a sum incrementally\) |
 
+The [catalog-export](02_start__catalog_export.md) generates measure definitions for all available aggregations for you.
+
 ### Filters in a measure definition
 
-Each measure can be filtered by attribute filters. Filters are represented by an array of `FilterItem` objects. Measure attribute filters use the same `FilterItem` interface as [AFM global filters](50_custom__execution.md).
+Each measure can be filtered by attribute filters. Filters are represented by an array of `IFilter` objects. 
 
 Only one filter of the `DateFilter` type is allowed in the measure's filter definition.
 
-* When both the measure filter of the `DateFilter` type and the AFM global filter of the `DateFilter` type are set with the **same** date dimension, the measure date filter overrides the AFM global date filter for this measure \(global date filters are still applied to other measures that do not have a measure date filter defined\).
-* When the measure filter of the DateFilter type and the AFM global filter of the DateFilter type are set with **different** date dimensions, the filters are interpreted as an intersection of those filters (f1 AND f2).
+* When both the measure filter of the `DateFilter` type and the global filter of the `DateFilter` type are set with 
+  the **same** date dimension, the measure date filter overrides the AFM global date filter for this measure 
+  \(global date filters are still applied to other measures that do not have a measure date filter defined\).
+* When the measure filter of the DateFilter type and the global filter of the DateFilter type are set 
+  with **different** date dimensions, the filters are interpreted as an intersection of those filters (f1 AND f2).
 
 ### Show a measure as a percentage
 
-When an AFM is executed on the GoodData platform, the result measure data is, by default, returned as raw values \(numbers\).
+When an the execution runs on the Analytical Backend, the result measure data is, by default, returned as raw values \(numbers\).
 
-If you want the measures data to be displayed as a percentage instead, add a `computeRatio` property and set it to `true`.
+If you want the measures data to be displayed as a percentage instead, you can use the `modifySimpleMeasure` function
+of the execution model to turn on the `computeRatio` functionality:
+
+```javascript
+import { modifySimpleMeasure } from "@gooddata/sdk-model";
+import { Ldm } from "./ldm";
+
+// This will modify existing simple measure, turn on computeRatio functionality and associate new, default localId
+const ratioMeasure = modifySimpleMeasure(Ldm.$FranchiseFees, m => m.ratio().defaultLocalId());
+
+// This will modify existing simple measure, turn off computeRatio functionality and associate new, default localId
+const noRatio = modifySimpleMeasure(ratioMeasure, m => m.noRatio().defaultLocalId());
+```
 
 When the property is enabled, the measure's `format` value is ignored. The default format `#,##0.00%` is used instead.
 
-When `computeRatio` is not specified, it defaults to `false`, and values from execution are displayed as numbers.
-
 ### Compare a measure over time
 
-To compare a measure over time, add one of the supported measure types described in [Time Over Time Comparison](20_misc__time_over_time_comparison.md) to `afm.measures`.
+To compare a measure over time, add one of the supported measure types described 
+in [Time Over Time Comparison](20_misc__time_over_time_comparison.md) to `afm.measures`.
 
 ### Calculated measures
 
-To create calculated measures (for example, when you want to subtract a measure from another measure), add arithmetic measures described in [Arithmetic Measure](20_misc__arithmetic_measure.md) to `afm.measures`.
+To create arithmetic measures (for example, when you want to subtract a measure from another measure), 
+add arithmetic measures described in [Arithmetic Measure](20_misc__arithmetic_measure.md) to the execution items.
 
-### Examples of measures
+**NOTE**: Do not forget to add all the arithmetic measure operands into the execution as well.
 
-#### Simple measure
-
-```javascript
-{
-    measures: [
-        // Type: IMeasure
-        {
-            definition: {
-                measure: {
-                    item: {
-                        identifier: '<measure-identifier>'    // Or URI: '<measure-uri>'
-                    }
-                }
-            },
-            localIdentifier: '<measure-local-identifier>'
-        }
-    ]
-}
-```
-
-#### Complex measure
-
-```javascript
-// Type: IAfm
-{
-    measures: [
-        // Type: IMeasure
-        {
-            localIdentifier: '<measure-local-identifier>',
-            // Type: MeasureDefinition
-            definition: {
-                measure: {
-                    // Type: ObjQualifier
-                    item: {
-                        identifier: '<measure-identifier>'    // Or URI: '<measure-uri>'
-                    },
-                    aggregation: 'count',   // Optional; by default 'sum'; possible values: 'sum' | 'count' | 'avg' | 'min' | 'max' | 'median' | 'runsum'
-                    // Optional; By default []; type: CompatibilityFilter[]
-                    filters: [
-                        // Type: IAbsoluteDateFilter
-                        {
-                            absoluteDateFilter: {
-                                dataSet: {
-                                    identifier: '<date-dataset-identifier>' // Or URI: '<date-dataset-uri>'
-                                },
-                                from: '2017-07-31', // Supported string format 'YYYY-MM-DD'
-                                to: '2017-08-29' // Supported string format 'YYYY-MM-DD'
-                            }
-                        },
-                        // Type: IPositiveAttributeFilter
-                        {
-                            positiveAttributeFilter: {
-                                displayForm: {
-                                    identifier: '<attribute-displayForm-identifier>' // Or URI: '<attribute-displayForm-uri>'
-                                },
-                                in: ['<attribute-element-uri-1>', '<attribute-element-uri-2>'] // Elements to filter by are specified by URI
-                            }
-                        },
-                    ],
-                    computeRatio: true      // Optional; by default false
-                }
-            },
-            alias: 'Custom measure title',  // Optional; overrides the default measure title
-            format: '#,##0.00'  // Optional; overrides the default measure format
-        }
-    ]
-}
-```
-
-#### Measure with global filters
-
-```javascript
-// Type: IAfm
-{
-    measures: [
-        // Type: IMeasure
-        {
-            localIdentifier: '<measure-local-identifier>',
-            // Type: MeasureDefinition
-            definition: {
-                measure: {
-                    // Type: ObjQualifier
-                    item: {
-                        identifier: '<measure-identifier>'    // Or URI: '<measure-uri>'
-                    },
-                    aggregation: 'count',   // Optional; by default 'sum'; possible values: 'sum' | 'count' | 'avg' | 'min' | 'max' | 'median' | 'runsum'
-                    computeRatio: true      // Optional; by default false
-                }
-            },
-            alias: 'Custom measure title',  // Optional; overrides the default measure title
-            format: '#,##0.00'  // Optional; overrides the default measure format
-        }
-    ],
-    // Optional; By default []; Type: CompatibilityFilter[]
-    filters: [
-        // Type: IAbsoluteDateFilter
-        {
-            absoluteDateFilter: {
-                    dataSet: {
-                    identifier: '<date-dataset-identifier>' // Or URI: '<date-dataset-uri>'
-                },
-                from: '2017-07-31', // Supported string format 'YYYY-MM-DD'
-                to: '2017-08-29' // Supported string format 'YYYY-MM-DD'
-            }
-        },
-        // Type: IPositiveAttributeFilter
-
-        {
-            positiveAttributeFilter: {
-                displayForm: {
-                    identifier: '<attribute-displayForm-identifier>' // Or URI: '<attribute-displayForm-uri>'
-                },
-                in: ['<attribute-element-value-1>', '<attribute-element-value-2>'], // Elements to filter by are specified by value
-                textFilter: true
-            }
-        }
-    ]
-
-}
-```
-
-## Native total
-
-Native totals in the AFM structure represent a definition of the data needed for computing correct results.
-
-### Definition
-
-```javascript
-...
-nativeTotals: [
-    {
-        measureIdentifier: string       // The local measure identifier for which total is defined
-        attributeIdentifiers: string[]  // A subset of local attribute identifiers in AFM defining total placement
-    },
-    ...
-]
-```
-
-### Prerequisites
-
-Native total items must be in sync with [result specification \(ResultSpec\)](50_custom__result_specification.md) and its dimension totals. If they are not in sync, it is treated as a bad execution request.
-
-### Limitations
-
-Native total are curretly supported only for:
-
-* Table visualizations
-* Grand native totals
-  * `nativeTotal.attributeIdentifiers` is an empty array.
-
-### Defining native totals
-
-See [Table Totals in ExecutionObject](table_totals_in_execution_context.md).
-
-### Example
-
-```javascript
-...
-nativeTotals: [
-    {
-        measureIdentifier: '<measure-local-identifier-1>',
-        attributeIdentifiers: [] // only Grand totals are currently supported so the array should be empty
-    },
-    ...
-]
-```
