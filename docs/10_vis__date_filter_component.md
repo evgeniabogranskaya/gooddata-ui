@@ -7,7 +7,7 @@ copyright: (C) 2007-2019 GoodData Corporation
 
 > **The DateFilter component is in the beta stage.**
 >
-> The DateFilter component may contain bugs. The component may be changed in future releases, even in a backward incompatible way.
+> The component may be changed in future releases, even in a backward incompatible way.
 
 > **Known issues**:
 > - `availableGranularities` in `relativeForm` is ignored. `availableGranularities` from the DateFilter component is used instead.
@@ -28,10 +28,10 @@ In the following example, attribute values are listed and the ```onApply``` call
 
 ```jsx harmony
 import React, { Component } from "react";
-import { DateFilter } from "@gooddata/react-components";
+import { DateFilter } from "@gooddata/sdk-ui-filters";
 import { myDateFilterOptions } from "myDateFilterConfiguration";
 
-import "@gooddata/react-components/styles/css/dateFilter.css";
+import "@gooddata/sdk-ui-filters/styles/css/main.css";
 
 const availableGranularities = [
     "GDC.time.month",

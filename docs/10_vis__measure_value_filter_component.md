@@ -11,9 +11,9 @@ The Measure Value Filter component is a dropdown component that allows you to cr
 
 ## Structure
 
-```javascript
-import "@gooddata/react-components/styles/css/main.css";
-import { MeasureValueFilter } from "@gooddata/react-components";
+```jsx
+import "@gooddata/sdk-ui-filters/styles/css/main.css";
+import { MeasureValueFilter } from "@gooddata/sdk-ui-filters";
 
 <MeasureValueFilter
   onApply={<on-apply-callback>}
@@ -29,28 +29,17 @@ import { MeasureValueFilter } from "@gooddata/react-components";
 
 The following example shows a bar chart displaying one measure sliced by one attribute. A user can use the Measure Value Filter component to filter the displayed bars and see the relevant data only.
 
-```javascript
+```jsx
 import React, { Component } from "react";
-import "@gooddata/react-components/styles/css/main.css";
-import {
-  BarChart,
-  Model,
-  MeasureValueFilter
-} from "@gooddata/react-components";
+import "@gooddata/sdk-ui-filters/styles/css/main.css";
+import "@gooddata/sdk-ui-charts/styles/css/main.css";
+import { MeasureValueFilter } from "@gooddata/sdk-ui-filters";
+import { Ldm } from "./ldm";
 
 const measureTitle = "$ Total Sales";
 
-const totalSales = Model.measure("totalSalesIdentifier")
-  .format("#,##0")
-  .localIdentifier("totalSales")
-  .title(measureTitle);
-
-const locationResort = Model.attribute(
-  "locationResortIdentifier"
-).localIdentifier("locationResort");
-
 export default class SalesByResort extends Component {
-    this.state = { filters: [] };
+    this.state = { filters: [ newMeasureValueFilter(Ldm.$TotalSales, "GREATER_THAN", 0) ] };
 
     onApply = filter => {
         this.setState({ filters: [filter] });
@@ -67,9 +56,8 @@ export default class SalesByResort extends Component {
                     buttonTitle={measureTitle}
                 />
                 <BarChart
-                    projectId={projectId}
-                    measures={[totalSales]}
-                    viewBy={[locationResort]}
+                    measures={[Ldm.$TotalSales]}
+                    viewBy={[Ldm.LocationResort]}
                     filters={filters}
                 />
             </div>
@@ -138,67 +126,4 @@ The component has all the same properties as the Measure Value Filter component 
 * The `onCancel` property is mandatory for the  Measure Value Filter Dropdown component, because it is supposed to be used to hide the dropdown.
 * The Measure Value Filter Dropdown component has one additional property, `anchorEl`. This optional property specifies the element which the dropdown is aligned to, which is typically your toggle button. The property can be an event target or a string and defaults to `'body'`.
 
-The following is an example of using the Measure Value Filter Dropdown component:
-
-```javascript
-import React, { Component } from "react";
-import "@gooddata/react-components/styles/css/main.css";
-import {
-  BarChart,
-  Model,
-  MeasureValueFilterDropdown
-} from "@gooddata/react-components";
-
-const measureTitle = "$ Total Sales";
-
-const totalSales = Model.measure("totalSalesIdentifier")
-  .format("#,##0")
-  .localIdentifier("totalSales")
-  .title(measureTitle);
-
-const locationResort = Model.attribute(
-  "locationResortIdentifier"
-).localIdentifier("locationResort");
-
-export default class SalesByResort extends Component {
-    this.state = { filters: [], displayDropdown: false };
-
-    onApply = filter => {
-        this.setState({ filters: [filter], displayDropdown: false });
-    };
-
-    onCancel = () => {
-        this.toggleButtonRef = null;
-        this.setState({ displayDropdown: false });
-    };
-
-    toggleDropdown = e => {
-        this.toggleButtonRef = !this.state.displayDropdown ? e.currentTarget : null;
-        this.setState(state => ({ ...state, displayDropdown: !state.displayDropdown }));
-    };
-
-    render() {
-        const { filters, displayDropdown } = this.state;
-
-        return (
-            <div>
-                <button onClick={this.toggleDropdown}>{`Measure: ${measureTitle}`}</button>
-                {displayDropdown ? (
-                    <MeasureValueFilterDropdown
-                        onApply={this.onApply}
-                        onCancel={this.onCancel}
-                        filter={filters[0]}
-                        anchorEl={this.toggleButtonRef}
-                    />
-                ) : null}
-                <BarChart
-                    projectId={projectId}
-                    measures={[totalSales]}
-                    viewBy={[locationResort]}
-                    filters={filters}
-                />
-            </div>
-        );
-    }
-}
-```
+Check out our [live examples](https://github.com/gooddata/gooddata-ui-sdk/tree/master/examples/sdk-examples) for demonstration.
