@@ -102,30 +102,4 @@ Hello GoodData Support team, could you please enable https://smart-app.example.c
 Thank you.
 ```
 
-### Step 3. Update your code
-
-Add the GoodData.UI factory calls to your executable code. To keep your code clean, you can split it into two files: `config.js` and `mycomponent.js`.
-
-`config.js`
-
-```javascript
-import { factory as sdkFactory } from '@gooddata/gooddata-js';
-const sdk = sdkFactory({ domain: 'https://analytics.example.com' });
-export default {
-projectId: '<project-id>',
-sdk
-};
-```
-
-`mycomponent.js`
-
-```javascript
-import config from './config';
-...
-<Visualization
-identifier="<some-identifier>"
-{...config}
-/>
-```
-
 **NOTE:** If you followed the instructions from the tutorial [How to Create Your First Application with GoodData UI SDK](02_start__no_boilerplate.md), you can now remove the `setupProxy.js` file because it is not required anymore.
