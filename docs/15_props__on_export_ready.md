@@ -5,7 +5,7 @@ copyright: (C) 2007-2020 GoodData Corporation
 id: on_export_ready
 ---
 
-The `onExportReady` parameter returns the `getExportMeta` function that allows you to export data from an existing insight into CSV or XLSX. The `getExportMeta` function accepts one parameter (the `exportConfig` object), and returns the URI of the exported file.
+The `onExportReady` parameter returns the `getExportedData` function that allows you to export data from an existing insight into CSV or XLSX. The `getExportedData` function accepts one parameter (the `exportConfig` object), and returns the URI of the exported file.
 
 The `onExportReady` parameter is available in all visual components except for the KPI, the AFM components, and the AttributeFilter component.
 
@@ -19,17 +19,20 @@ The `exportConfig` object includes the following properties:
 
 ## Structure
 
-```javascript
-<Visualization
-    projectId="<project-id>"
+```jsx
+import { InsightView } from "@gooddata/sdk-ui-ext";
+
+<InsightView
     identifier="<visualization-identifier>"
-    onExportReady={(getExportMeta) => getExportMeta()}
+    onExportReady={(getExportedData) => { /* hold onto function and call to do export as needed */ }}
 />
 ```
 
 ## Example
 
-```javascript
+```jsx
+import { InsightView } from "@gooddata/sdk-ui-ext";
+
 export class Example extends React.Component {
     constructor(props) {
         super(props);
@@ -37,13 +40,13 @@ export class Example extends React.Component {
         this.onExportReady = this.onExportReady.bind(this);
     }
 
-    onExportReady(getExportMeta) {
-        this.getExportMeta = getExportMeta;
+    onExportReady(getExportedData) {
+        this.getExportedData = getExportedData;
     }
 
     async doExport() {
         try {
-            const result = await this.getExportMeta({
+            const result = await this.getExportedData({
                 format: 'xlsx',
                 includeFilterContext: true,
                 mergeHeaders: true,
@@ -58,8 +61,7 @@ export class Example extends React.Component {
     render() {
         return (
             <div style={{ height: 367 }}>
-                <Visualization
-                    projectId="<project-id>"
+                <InsightView
                     identifier="<visualization-identifier>"
                     onExportReady={this.onExportReady}
                 />

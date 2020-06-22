@@ -25,9 +25,10 @@ This parameter is not available in the Table component.
 
 ## Example
 
-```javascript
-<Visualization
-    projectId="<project-id>"
+```jsx
+import { InsightView } from "@gooddata/sdk-ui-ext";
+
+<InsightView
     identifier="<visualization-identifier>"
     config={{
        legend: {

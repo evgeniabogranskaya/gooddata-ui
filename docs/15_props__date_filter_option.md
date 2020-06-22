@@ -11,7 +11,7 @@ The DateFilter options define the category of a date filter and a set of the dat
 
 > **The DateFilter component is in the beta stage.**
 >
-> The DateFilter component may contain bugs. The component may be changed in future releases, even in a backward incompatible way.
+> The component may be changed in future releases, even in a backward incompatible way.
 
 > **Known issues**:
 > - `availableGranularities` in `relativeForm` is ignored. `availableGranularities` from the DateFilter component is used instead.
