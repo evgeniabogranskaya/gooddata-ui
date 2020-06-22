@@ -11,10 +11,10 @@ Every SDK instance is connected to a specific domain. To use multiple domains in
 
 ## Example
 
-```javascript
+```jsx
 import React, { PureComponent } from 'react';
-import { factory as sdkFactory } from '@gooddata/gooddata-js';
-import { Visualization } from '@gooddata/react-components';
+import bearFactory from '@gooddata/sdk-backend-bear';
+import { InsightView } from '@gooddata/sdk-ui-ext';
  
  
 export default class SampleVisualizations extends PureComponent {
@@ -22,27 +22,27 @@ export default class SampleVisualizations extends PureComponent {
         super(props);
          
         const domain1 = 'my-custom-domain.com';
-        this.sdkDomain1 = sdkFactory({ domain: domain1 });
+        this.backend1 = bearFactory({ hostname: domain1 });
      
         const domain2 = 'another-custom-domain.com';
-        this.sdkDomain2 = sdkFactory({ domain: domain2 });
+        this.backend2 = bearFactory({ hostname: domain2 });
     }
  
     render() {
         return (
             <div>
                 <div style={{ height: 400, width: 600 }}>
-                    <Visualization
-                        identifier="<identifier-from-domain1>"
-                        projectId="<projectId-from-domain1>"
-                        sdk={this.sdkDomain1}
+                    <InsightView
+                        backend={this.backend1}
+                        workspace="<projectId-from-backend1>"
+                        identifier="<identifier-from-backend1>"
                     />
                 </div>
                 <div style={{ height: 400, width: 600 }}>
-                    <Visualization
-                        identifier="<identifier-from-domain2>"
-                        projectId="<projectId-from-domain2>"
-                        sdk={this.sdkDomain2}
+                    <InsightView
+                        backend={this.backend2}
+                        workspace="<projectId-from-backend2>"
+                        identifier="<identifier-from-backend2>"
                     />
                 </div>
             </div>
