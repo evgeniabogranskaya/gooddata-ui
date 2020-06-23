@@ -170,6 +170,7 @@ class Versions extends React.Component {
                   <td>
                     <a href={this.docUrl('about_gooddataui.html', 'next')}>Documentation</a>
                   </td>
+                  { this.renderMigrationGuide("8.0.0") }
                 </tr>
               </tbody>
             </table>

@@ -6,8 +6,11 @@
     ],
     "Introduction": [
       "about_gooddataui",
+      "whats_new_8",
       "framework_overview",
-      "platform_intro"
+      "platform_intro",
+      "breaking_changes_8",
+      "migration_guide_8"
     ],
     "Getting Started": [
       "installation",

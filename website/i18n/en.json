@@ -29,6 +29,10 @@
         "title": "Connecting To Analytical Backend",
         "sidebar_label": "Connecting To Analytical Backend"
       },
+      "model_helpers": {
+        "title": "Execution Model",
+        "sidebar_label": "Execution Model"
+      },
       "installation": {
         "title": "Installation",
         "sidebar_label": "Installation"
@@ -88,6 +92,10 @@
       "heatmap_component": {
         "title": "Heatmap",
         "sidebar_label": "Heatmap"
+      },
+      "visualization_component": {
+        "title": "InsightView",
+        "sidebar_label": "InsightView"
       },
       "kpi_component": {
         "title": "KPI",
@@ -185,10 +193,6 @@
         "title": "Embed an Insight Created in Analytical Designer",
         "sidebar_label": "Embed an Insight"
       },
-      "model_helpers": {
-        "title": "Model Helpers",
-        "sidebar_label": "Model Helpers"
-      },
       "sso": {
         "title": "Set Up Authentication and Single Sign-On",
         "sidebar_label": "Set Up Authentication and Single Sign-On"
@@ -229,9 +233,9 @@
         "title": "Specify Result Structure",
         "sidebar_label": "Specify Result Structure"
       },
-      "execution_rest_api_and_result": {
-        "title": "Execution Response and Execution Result",
-        "sidebar_label": "Execution Response and Execution Result"
+      "breaking_changes_8": {
+        "title": "Breaking Changes in v8",
+        "sidebar_label": "Breaking Changes in v8"
       },
       "ex_global_filters": {
         "title": "Global Filters Example",
@@ -245,6 +249,10 @@
         "title": "Live Examples",
         "sidebar_label": "Live Examples"
       },
+      "migration_guide_8": {
+        "title": "Migration from v7",
+        "sidebar_label": "Migration from v7"
+      },
       "migration_guide_7": {
         "title": "Migration guide to React Components v7.x.x",
         "sidebar_label": "Migration guide to v7.x.x"
@@ -253,9 +261,9 @@
         "title": "Support Options",
         "sidebar_label": "Support Options"
       },
-      "visualization_component": {
-        "title": "Visualization",
-        "sidebar_label": "Visualization"
+      "whats_new_8": {
+        "title": "What's New in v8",
+        "sidebar_label": "What's New in v8"
       },
       "version-4.1.1/version-4.1.1-about_gooddataui": {
         "title": "Getting Started",
