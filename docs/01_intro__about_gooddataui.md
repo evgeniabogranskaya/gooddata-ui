@@ -17,7 +17,7 @@ With GoodData.UI, you can:
    
 * Create visualizations of data stored on an GoodData platform using [visual components](10_vis__start_with_visual_components.md).
 
-* Embed insights created in Analytical Designer using [InsightView](visualization_component.md).
+* Embed insights created in Analytical Designer using [InsightView](10_vis__insight_view.md).
 
 * Create [new visual components](50_custom__create_new_visualization.md) for your data to address your specific analytical needs.
 

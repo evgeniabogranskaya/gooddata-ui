@@ -5,7 +5,7 @@ copyright: (C) 2007-2018 GoodData Corporation
 id: ht_embed_visualization
 ---
 
-To embed an existing visualization created in Analytical Designer, use the `Visualization` component.
+To embed an existing visualization created in Analytical Designer, use the `InsightView` component.
 
 **Steps:**
 
@@ -21,6 +21,7 @@ import { InsightView } from '@gooddata/sdk-ui-ext';
 
 ```jsx
 import { InsightView } from '@gooddata/sdk-ui-ext';
+import '@gooddata/sdk-ui-ext/styles/css/main.css';
 
 <InsightView
     identifier="aby3polcaFxy"
@@ -33,3 +34,5 @@ import { InsightView } from '@gooddata/sdk-ui-ext';
     }}
 />
 ```
+
+See [InsightView](10_vis__insight_view.md) for more.
