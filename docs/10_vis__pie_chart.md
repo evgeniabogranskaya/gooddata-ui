@@ -43,7 +43,7 @@ import { Ldm } from "./ldm";
 | measures | true | [IMeasure[]](50_custom__execution.md#measure) | An array of measure definitions |
 | viewBy | false | [IAttribute](50_custom__execution.md#attribute) | An attribute definition |
 | filters | false | [IFilter[]](30_tips__filter_visual_components.md) | An array of filter definitions |
-| sortBy | false | [ISortItem[]](50_custom__result_specification.md#sorting) | An array of sort definitions |
+| sortBy | false | [ISortItem[]](50_custom__result.md#sorting) | An array of sort definitions |
 | config | false | [IChartConfig](15_props__chart_config.md) | The chart configuration object |
 | locale | false | string | The localization of the chart. Defaults to `en-US`. For other languages, see the [full list of available localizations](https://github.com/gooddata/gooddata-sdk-ui-charts/tree/master/src/translations). |
 | drillableItems | false | [IDrillableItem[]](15_props__drillable_item.md) | An array of points and attribute values to be drillable. |

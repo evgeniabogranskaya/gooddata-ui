@@ -34,7 +34,7 @@ filtered by `filters` array.
 On top of that, it configures `sorting` of the result data and how to lay out the data into `dimensions`. 
 
 This page describes the different items and filters that you can input as execution items. For description of sorting
-and dimensionality setup, please see [result specification](50_custom__result_specification.md) page.
+and dimensionality setup, please see [result specification](50_custom__result.md) page.
 
 ## Attribute
 
@@ -78,7 +78,7 @@ You can construct measures of multiple types:
 The [catalog-export](02_start__catalog_export.md) tool will automatically create measure definitions for all facts
 and MAQL metrics in your workspace.
 
-You can then use the [execution model functions](02_start__model_helpers.md) to create [arithmetic measures](20_misc__arithmetic_measure.md)
+You can then use the [execution model functions](02_start__execution_model.md) to create [arithmetic measures](20_misc__arithmetic_measure.md)
 and [time-over-time comparison measures](20_misc__time_over_time_comparison.md).
 
 ### Aggregation inside a measure

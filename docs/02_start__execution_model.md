@@ -175,3 +175,42 @@ const attributeSort = newAttributeSort(attribute, "asc");
 const measureSortWithoutAttributeLocator = newMeasureSort(measure, "asc"); 
 const measureSortWithAttributeLocator = newMeasureSort(measure, "asc", [newAttributeLocator(attribute, "element-uri")])
 ```
+
+### Attribute Area sort
+
+You can also specify that the attribute sort should sort attribute values based on an aggregation function applied to 
+all valid values belonging to each attribute value. This is extremely useful when sorting stacked visualizations such 
+as stack bars or area charts.
+
+Currently, only sorting by the `sum` function is supported.
+
+The following example shows sorting a table with two measures and a 'Year' attribute. You can set sorting based on the Year attribute with:
+
+```javascript
+import { newAttribute, newAttributeAreaSort } from '@gooddata/sdk-model';
+
+const attribute = newAttribute('displayFormIdentifier', m => m.alias("Custom Dimension"));
+
+newAttributeAreaSort(attribute, "asc")
+```
+
+Consider the following original data:
+
+| Year | 2006 | 2006 | 2007 | 2007 |
+| :--- | :--- | :--- | :--- | :--- |
+| Measures | M1 | M2 | M1 | M2 |
+| Values | 1 | 2 | 3 | 4 |
+
+The sorting function (`sum`) is applied to all attribute element values for each attribute element (2006 and 2007). 
+Notice that the area sort is summing up values across different measures (M1 and M2):
+
+| 2006 | 2007 |
+| :--- | :--- |
+| 1 + 2 = 3 | 3 + 4 = 7 |
+
+Attribute values are then sorted by this computed value (3 and 7, respectivelly):
+
+| Year | 2007 | 2007 | 2006 | 2006 |
+| :--- | :--- | :--- | :--- | :--- |
+| Measures | M1 | M2 | M1 | M2 |
+| Values | 3 | 4 | 1 | 2 |

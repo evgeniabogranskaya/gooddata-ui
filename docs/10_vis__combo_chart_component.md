@@ -96,7 +96,7 @@ import { ComboChart } from '@gooddata/sdk-ui-charts';
 | secondaryMeasures | false | [IMeasure[]](50_custom__execution.md#measure) | An array of secondary measure definitions |
 | viewBy | false | [IAttribute](50_custom__execution.md#attribute) &#124; [Attribute[]](50_custom__execution.md#attribute) | An attribute definition or an array of two attribute definitions. If set to a two-attribute array, the first attribute wraps up the second one. |
 | filters | false | [IFilter[]](30_tips__filter_visual_components.md) | An array of filter definitions |
-| sortBy | false | [ISortItem[]](50_custom__result_specification.md#sorting) | An array of sort definitions |
+| sortBy | false | [ISortItem[]](50_custom__result.md#sorting) | An array of sort definitions |
 | config | false | [IChartConfig](15_props__chart_config.md) | The chart configuration object |
 | locale | false | string | The localization of the chart. Defaults to `en-US`. For other languages, see the [full list of available localizations](https://github.com/gooddata/gooddata-ui-sdk/blob/master/libs/sdk-ui/src/base/localization/Locale.ts). |
 | drillableItems | false | [IDrillableItem[]](15_props__drillable_item.md) | An array of points and attribute values to be drillable |

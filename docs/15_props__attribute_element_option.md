@@ -17,7 +17,7 @@ All top-level options are optional. You can use only those options that are rele
 | :--- | :--- | :--- | :--- |
 | limit | false | number | The number of values returned in one portion |
 | offset | false | number | The offset of the first value in the returned list |
-| order | false | [SortDirection](50_custom__result_specification.md#sorting) | The order of the returned values |
+| order | false | [SortDirection](50_custom__result.md#sorting) | The order of the returned values |
 | filter | false | string | The search keyword/phrase to look for in the value titles |
 | uris | false | string[] | The URIs of specific values to obtain; can be used to preload selected values in the attribute filter |
 | includeTotalCountWithoutFilters | false | boolean | When set to `true`, includes the total number of the values (without filters applied) in the response |
