@@ -5,7 +5,7 @@ copyright: (C) 2007-2018 GoodData Corporation
 id: on_fire_drill_event
 ---
 
-The `onFiredDrillEvent` parameter allows you to catch drilling events from visualizations on non-embedded KPI dashboards and to respond to them using the function that you have chosen to use and implemented.
+The `onDrill` parameter allows you to catch drilling events from visualizations on non-embedded KPI dashboards and to respond to them using the function that you have chosen to use and implemented.
 
 When a user clicks a [drillable item](15_props__drillable_item.md) in a visualization on a non-embedded KPI dashboard, a default drill event is generated. This event has a format of `{ drillContext, executionContext }` and is sent to the function that you have chosen.
 
