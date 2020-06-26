@@ -5,9 +5,9 @@ copyright: (C) 2007-2020 GoodData Corporation
 id: on_export_ready
 ---
 
-The `onExportReady` parameter returns the `getExportedData` function that allows you to export data from an existing insight into CSV or XLSX. The `getExportedData` function accepts one parameter (the `exportConfig` object), and returns the URI of the exported file.
+The **onExportReady parameter** returns the `getExportedData` function that allows you to export data from an existing insight into CSV or XLSX. The `getExportedData` function accepts one parameter (the `exportConfig` object), and returns the URI of the exported file.
 
-The `onExportReady` parameter is available in all visual components except for the KPI, the AFM components, and the AttributeFilter component.
+The onExportReady parameter is available in all visual components except for the KPI, the AFM components, and the AttributeFilter component.
 
 ## exportConfig
 
