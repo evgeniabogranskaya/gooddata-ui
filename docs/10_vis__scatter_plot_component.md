@@ -5,7 +5,7 @@ copyright: (C) 2007-2018 GoodData Corporation
 id: scatter_plot_component
 ---
 
-A **scatter plot** shows data as points using Cartesian coordinates. Scatter plots typically have a minimum of two measures, one for the X-axis and the other for the Y-axis, and one attribute, which determines the meaning of each data point.
+Scatter plot shows data as points using Cartesian coordinates. Scatter plots typically have a minimum of two measures, one for the X-axis and the other for the Y-axis, and one attribute, which determines the meaning of each data point.
 Scatter plots are useful for analyzing trends between two measures or for tracking the magnitude of two measures from the same chart.
 
 ![Scatter Plot Component](assets/scatter_plot.png "Scatter Plot Component")
@@ -45,9 +45,9 @@ import { Ldm } from "./ldm";
 
 | Name | Required? | Type | Description |
 | :--- | :--- | :--- | :--- |
-| xAxisMeasure | false | [Measure](50_custom__execution.md#measure) | The measure definition (at least one of `xAxisMeasure` or `yAxisMeasure` must be provided for the scatter plot to render properly) |
-| yAxisMeasure | false | [Measure](50_custom__execution.md#measure) | The measure definition (at least one of `xAxisMeasure` or `yAxisMeasure` must be provided for the scatter plot to render properly) |
-| attribute | false | [Attribute](50_custom__execution.md#attribute) | The attribute definition |
+| xAxisMeasure | false | [Measure](50_custom__execution.md#measure) | A measure definition (at least one of xAxisMeasure or yAxisMeasure must be provided for the scatter plot to render properly) |
+| yAxisMeasure | false | [Measure](50_custom__execution.md#measure) | A measure definition (at least one of xAxisMeasure or yAxisMeasure must be provided for the scatter plot to render properly) |
+| attribute | false | [Attribute](50_custom__execution.md#attribute) | An attribute definition |
 | filters | false | [Filter[]](30_tips__filter_visual_components.md) | An array of filter definitions |
 | sortBy | false | [SortItem[]](50_custom__result.md#sorting) | An array of sort definitions |
 | config | false | [ChartConfig](15_props__chart_config.md) | The chart configuration object |
@@ -59,8 +59,7 @@ import { Ldm } from "./ldm";
 | onExportReady | false | Function | A callback when the component is ready for exporting its data |
 | onLoadingChanged | false | Function | A callback when the component updates its loading state |
 
-The following example shows the supported `config` structure with sample values. For the descriptions of the individual options, see [ChartConfig](15_props__chart_config.md).
-
+The following example shows the supported `config` structure with sample values. To see descriptions of individual options, see [ChartConfig section](15_props__chart_config.md).
 ```javascript
 {
     colors: ['rgb(195, 49, 73)', 'rgb(168, 194, 86)'],

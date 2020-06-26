@@ -5,7 +5,7 @@ sidebar_label: Attribute Filter
 copyright: (C) 2007-2018 GoodData Corporation
 ---
 
-The **Attribute Filter component** is a dropdown component that lists attribute values. You pass a callback function, which receives a list of the selected values when a user clicks **Apply**.
+Attribute Filter component is a dropdown component that lists attribute values. You pass a callback function, which receives a list of the selected values when a user clicks **Apply**.
 
 Optionally, you can define what attribute values should be selected in the filter by default.
 
@@ -14,7 +14,7 @@ Optionally, you can define what attribute values should be selected in the filte
 ### Example
 
 In the following example, attribute values are listed and the ```onApply``` callback function is triggered when a user clicks **Apply** to confirm the selection.
-The `onApply` callback receives a new filter definition that you can use to filter charts.
+The onApply callback receives new filter definition which you can use to filter charts.
 
 ```jsx
 import React, { Component } from 'react';
@@ -59,6 +59,7 @@ To define the attribute values that should be selected in the filter by default,
         );
     }
 ```
+
 
 ## Properties
 
