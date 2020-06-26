@@ -5,7 +5,7 @@ copyright: (C) 2007-2018 GoodData Corporation
 id: bubble_chart_component
 ---
 
-Bubble chart shows data as bubbles using Cartesian coordinates.
+A **bubble chart** shows data as bubbles using Cartesian coordinates.
 Bubble charts typically have three measures, one for the X-axis, one for the Y-axis, and one that determines the size of each bubble.
 The data is sliced by an attribute, with each bubble (an attribute item) noted with a different color.
 
@@ -49,23 +49,23 @@ import { Ldm } from "./ldm";
 
 | Name | Required? | Type | Description |
 | :--- | :--- | :--- | :--- |
-| xAxisMeasure | false | [IMeasure](50_custom__execution.md#measure) | A measure definition (at least one of xAxisMeasure or yAxisMeasure must be provided for the bubble chart to render properly) |
-| yAxisMeasure | false | [IMeasure](50_custom__execution.md#measure) | A measure definition (at least one of xAxisMeasure or yAxisMeasure must be provided for the bubble chart to render properly) |
-| size | false | [IMeasure](50_custom__execution.md#measure) | A measure definition that determines the size of the bubbles |
-| viewBy | false | [IAttribute](50_custom__execution.md#attribute) | An attribute definition |
+| xAxisMeasure | false | [IMeasure](50_custom__execution.md#measure) | The measure definition (at least one of `xAxisMeasure` or `yAxisMeasure` must be provided for the bubble chart to render properly) |
+| yAxisMeasure | false | [IMeasure](50_custom__execution.md#measure) | The measure definition (at least one of `xAxisMeasure` or `yAxisMeasure` must be provided for the bubble chart to render properly) |
+| size | false | [IMeasure](50_custom__execution.md#measure) | The measure definition that determines the size of the bubbles |
+| viewBy | false | [IAttribute](50_custom__execution.md#attribute) | The attribute definition |
 | filters | false | [IFilter[]](30_tips__filter_visual_components.md) | An array of filter definitions |
 | sortBy | false | [ISortItem[]](50_custom__result.md#sorting) | An array of sort definitions |
 | config | false | [IChartConfig](15_props__chart_config.md) | The chart configuration object |
 | locale | false | string | The localization of the chart. Defaults to `en-US`. For other languages, see the [full list of available localizations](https://github.com/gooddata/gooddata-ui-sdk/blob/master/libs/sdk-ui/src/base/localization/Locale.ts). |
-| drillableItems | false | [IDrillableItem[]](15_props__drillable_item.md) | An array of points and attribute values to be drillable. |
+| drillableItems | false | [IDrillableItem[]](15_props__drillable_item.md) | An array of points and attribute values to be drillable |
 | ErrorComponent | false | Component | A component to be rendered if this component is in error state |
 | LoadingComponent | false | Component | A component to be rendered if this component is in loading state |
 | onError | false | Function | A callback when the component updates its error state |
 | onExportReady | false | Function | A callback when the component is ready for exporting its data |
 | onLoadingChanged | false | Function | A callback when the component updates its loading state |
--->
 
-The following example shows the supported `config` structure with sample values. To see descriptions of individual options, see [ChartConfig section](15_props__chart_config.md).
+The following example shows the supported `config` structure with sample values. For the descriptions of the individual options, see [ChartConfig](15_props__chart_config.md).
+
 ```javascript
 {
     colors: ['rgb(195, 49, 73)', 'rgb(168, 194, 86)'],

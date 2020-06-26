@@ -5,7 +5,7 @@ copyright: (C) 2020 GoodData Corporation
 id: geo_pushpin_chart_component
 ---
 
-Geo pushpin chart visualizes data broken down by geographic region across an actual map and points the latitude and longitude of locations.
+A **geo pushpin chart** visualizes data broken down by geographic region across an actual map and points the latitude and longitude of locations.
 
 ![Geo Pushpin Chart Component](assets/geo_pushpin_chart.png "Geo Pushpin Chart Component")
 
@@ -52,10 +52,10 @@ const config = {
 
 | Name | Required? | Type | Description |
 | :--- | :--- | :--- | :--- |
-| location | true | [IAttribute](50_custom__execution.md#attribute) | An attribute definition that determines the longitude and latitude of the pins |
-| segmentBy | false | [IAttribute](50_custom__execution.md#attribute) | An attribute definition that categorizes the pins |
-| size | false | [IMeasure](50_custom__execution.md#measure) | A measure definition that determines the size of the pins |
-| color | false | [IMeasure](50_custom__execution.md#measure) | A measure definition that determines color saturation of the pins |
+| location | true | [IAttribute](50_custom__execution.md#attribute) | The attribute definition that determines the longitude and latitude of the pins |
+| segmentBy | false | [IAttribute](50_custom__execution.md#attribute) | The attribute definition that categorizes the pins |
+| size | false | [IMeasure](50_custom__execution.md#measure) | The measure definition that determines the size of the pins |
+| color | false | [IMeasure](50_custom__execution.md#measure) | The measure definition that determines color saturation of the pins |
 | filters | false | [IFilter[]](30_tips__filter_visual_components.md) | An array of filter definitions |
 | config | true | [IGeoConfig](#geo-config) | The geo chart configuration object |
 | locale | false | string | The localization of the chart. Defaults to `en-US`. For other languages, see the [full list of available localizations](https://github.com/gooddata/gooddata-ui-sdk/blob/master/libs/sdk-ui/src/base/localization/Locale.ts). |
@@ -68,7 +68,7 @@ const config = {
 ## Geo Config
 | Name | Required? | Type | Description |
 | :--- | :--- | :--- | :--- |
-| mapboxToken | true | string | A map access token that the chart uses to render the map requiring such a token <br> To create a Mapbox account and an access token, see [this guide](https://docs.mapbox.com/help/how-mapbox-works/access-tokens/). |
+| mapboxToken | true | string | A map access token that the chart uses to render the map requiring such a token. To create a Mapbox account and an access token, see [this guide](https://docs.mapbox.com/help/how-mapbox-works/access-tokens/). |
 | points | false | GeoPointsConfig | A configuration object where you can define clustering and the minimum and maximum sizes of the pins |
 | viewport | false | GeoConfigViewport | The region that the viewport should focus on after the chart is rendered |
 | tooltipText | false | [Attribute](50_custom__execution.md#attribute) | An additional item that shows a user-friendly label for the location attribute instead of the longitude and latitude |
