@@ -10,7 +10,7 @@ This tutorial will guide you through the process of creating your first analytic
 After you complete this tutorial, you will be able to display various measures and charts from your GoodData project within the context of your React application.
 
 * Before you start this tutorial, make sure that you have a GoodData account (see [About GoodData.UI](01_intro__about_gooddataui.md#supported-technologies)).
-* We use `yarn` dependency manager in this tutorial. To install it, review its [documentation](https://yarnpkg.com/lang/en/docs/install/).
+* We use the `yarn` dependency manager in this tutorial. To install it, review its [documentation](https://yarnpkg.com/lang/en/docs/install/).
 
 **TIP:** Instead of creating the application from scratch, you can use [GoodData `create-gooddata-react-app` and Accelerator Toolkit](02_start__using_boilerplate.md), which will guide you through the process of creating the application step by step.
 
@@ -108,7 +108,7 @@ Start the server by running the following command:
 
 Open [https://localhost:3000/account.html](https://localhost:3000/account.html) in your browser, and enter your GoodData credentials. You are now logged in to GoodData.
 
-**NOTE:**
+**NOTES:**
 * If you are on Windows and using Microsoft Edge or Internet Explorer, replace `localhost` in this URI with the IP address that you get after running the server.
 * If you see a warning about an insecure connection due to using a self-signed certificate, accept the exception. You can trust your localhost.
 
@@ -136,13 +136,13 @@ Now, you can start adding your first GoodData component:
     import '@gooddata/sdk-ui-charts/styles/css/main.css';
     ```
    
-4. Initialize Analytical Backend implemented by the GoodData platform
+4. Initialize the Analytical Backend implemented by the GoodData platform:
 
     ```javascript
     const backend = bearFactory().withAuthentication(new ContextDeferredAuthProvider());
     ```
 
-5. Add `BackendProvider` and `WorkspaceProvider` to your application
+5. Add `BackendProvider` and `WorkspaceProvider` to your application:
 
    ```jsx
    import { BackendProvider, WorkspaceProvider } from "@gooddata/sdk-ui";
@@ -158,15 +158,15 @@ Now, you can start adding your first GoodData component:
    }
    ```
     
-5. Add a simple line chart:
+6. Add a simple line chart:
 
-    5a. Define measures and attributes.
+    6a. Define measures and attributes:
     ```javascript
     const measures = [ newMeasure('aaEGaXAEgB7U', m => m.format('#,##0') ];
     const attribute = newAttribute('date.abm81lMifn6q');
     ```
    
-    5b. Replace the placeholder in your `App` functional component with the following elements:
+    6b. Replace the placeholder in your `App` functional component with the following elements:
     ```jsx
     <div style={{ height: 300 }}>
       <LineChart
@@ -180,7 +180,7 @@ Now, you can start adding your first GoodData component:
     ```
     > This example uses the project ID and measure/attribute identifiers from the [live examples](https://gooddata-examples.herokuapp.com/). If you want to use this code in your project, replace the properties with the appropriate values from your project. For more details, see [Line Chart](10_vis__line_chart_component.md).
 
-6. Save the changes. The content of your `App.js` file should now look something like the following example:
+7. Save the changes. The content of your `App.js` file should now look something like the following example:
 
     ```jsx
     import React from 'react';
@@ -215,7 +215,7 @@ Now, you can start adding your first GoodData component:
     export default App;
     ```
 
-7. Return to your browser window. The default page now looks like the following:
+8. Return to your browser window. The default page now looks like the following:
 
 ![Welcome to GoodData components](assets/Welcome_to_React_GoodData_component.png)
 

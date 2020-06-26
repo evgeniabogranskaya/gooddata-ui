@@ -6,7 +6,7 @@ copyright: (C) 2007-2018 GoodData Corporation
 ---
 
 GoodData.UI follows principles of the layered architecture and draws a clean line between the different UI components and
-the backend server that calculates the data to render. The UI components integrate with backend server through an interface 
+the backend server that calculates the data to render. The UI components integrate with a backend server through an interface 
 that we call **Analytical Backend**. 
 
 The **Analytical Backend** is designed as a Service Provider Interface (SPI) with clearly described contracts that
@@ -17,20 +17,20 @@ GoodData.UI comes with a full implementation of the Analytical Backend SPI for t
 For now, the full documentation of the SPI is provided only at the code level. For more information, see the 
 `@gooddata/sdk-backend-spi` package.
 
-## Available Packages
+## Available packages
 
-GoodData.UI consists of several packages each with its own defined set of responsibilities and exposed APIs. As a 
-developer you can pick and choose packages according to requirements of your application.
+GoodData.UI consists of several packages, each with its own set of responsibilities and exposed APIs. As a 
+developer, you can pick and choose packages according to requirements of your application.
 
-| Package | Description |
+| Package | Contents |
 | :--- | :--- |
-| @gooddata/api-client-bear | contains the REST API client; formerly known as `gooddata-js` | 
-| @gooddata/api-model-bear | contains the type definitions for REST API client; formerly known as `typings` | 
-| @gooddata/sdk-backend-bear | contains the analytical backend implementation for GoodData platform | 
-| @gooddata/sdk-model | contains the APIs and models used to construct inputs to executions and charts |
-| @gooddata/sdk-ui | contains the React infrastructure and headless components such as the Execute component | 
-| @gooddata/sdk-ui-charts | contains the React components for all charts| 
-| @gooddata/sdk-ui-geo | contains the React components for Geo Pushpin chart| 
-| @gooddata/sdk-ui-pivot | contains the React component for Pivot Table| 
-| @gooddata/sdk-ui-filters | contains the filtering components| 
-| @gooddata/sdk-ui-ext | contains the components for embedding insights created in Analytical Designer|  
+| @gooddata/api-client-bear | The REST API client (formerly known as `gooddata-js`) | 
+| @gooddata/api-model-bear | The type definitions for the REST API client (formerly known as `typings`) | 
+| @gooddata/sdk-backend-bear | The analytical backend implementation for the GoodData platform | 
+| @gooddata/sdk-model | The APIs and models used to construct inputs to executions and charts |
+| @gooddata/sdk-ui | The React infrastructure and headless components such as the Execute component | 
+| @gooddata/sdk-ui-charts | The React components for all charts | 
+| @gooddata/sdk-ui-geo | The React components for the Geo Pushpin Chart component | 
+| @gooddata/sdk-ui-pivot | The React component for the Pivot Table component | 
+| @gooddata/sdk-ui-filters | The filtering components | 
+| @gooddata/sdk-ui-ext | The components for embedding insights created in Analytical Designer |

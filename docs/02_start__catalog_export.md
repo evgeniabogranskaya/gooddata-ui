@@ -1,14 +1,14 @@
 ---
-title: Export catalog 
-sidebar_label: Export catalog 
+title: Export Catalog 
+sidebar_label: Export Catalog 
 copyright: (C) 2007-2018 GoodData Corporation
 id: gdc_catalog_export
 ---
 
 GoodData.UI visual components render data stored in your GoodData platform projects. Your application specifies what 
-data to render by referencing the Logical Data Model (LDM) Objects - attributes, display forms, facts and measures. 
+data to render by referencing the Logical Data Model (LDM) objects: attributes, display forms, facts, and measures. 
 
-To simplify this task, GoodData.UI offers the `@gooddata/catalog-export` tool. The `@gooddata/catalog-export` exports a 
+To simplify this task, GoodData.UI offers the `@gooddata/catalog-export` tool. `@gooddata/catalog-export` exports a 
 list of catalog items and date datasets from a GoodData project into JavaScript or TypeScript code. The generated code 
 contains exported constant-per-LDM-object.
 
@@ -16,7 +16,7 @@ Using this generated code, you can create charts and execution definitions in a 
 
 ## Installing @gooddata/catalog-export
 
-We recommend including the `catalog-export` as a devDependency of your application and define an NPM script `refresh-ldm` to
+We recommend that you include `catalog-export` as a devDependency of your application and define an NPM script `refresh-ldm` to
 run the program.
 
 To install the stable version, run one of the following commands **depending on your package manager**:
@@ -36,7 +36,7 @@ $ npm install @gooddata/catalog-export --save-dev
 
 `catalog-export` is a command-line program that loads metadata from a workspace and transforms it into TypeScript, JavaScript, or a JSON representation. The program can run in interactive, silent, or hybrid modes.
 
-**NOTE**: The JSON representation is deprecated. We will remove it in next major version.
+**NOTE**: The JSON representation is deprecated. We will remove it in a future major version.
 
 This is how it works:
 
@@ -54,7 +54,7 @@ This is how it works:
     }
     ```
 
-    NOTE: TypeScript, JavaScript or JSON output files are generated based on the filename extension specified in the output parameter.
+    **NOTE:** TypeScript, JavaScript or JSON output files are generated based on the filename extension specified in the output parameter.
 
 2.  The program reads input parameters from the command line. To learn more about the available parameters, run the following command:
     
@@ -64,7 +64,7 @@ This is how it works:
 
 3.  If all required parameters are entered, the program runs and exports the metadata from the workspace. If any parameter is missing, the program will prompt you to enter it.
 
-    **IMPORTANT!** _The program does not accept passwords via the command line. You can either put the password into .gdcatalogrc or enter it interactively. Do NOT save .gdcatalogrc in a version control system._
+    **IMPORTANT!** The program does not accept passwords via the command line. You can either put the password into `.gdcatalogrc` or enter it interactively. Do NOT save `.gdcatalogrc` in a version control system.
 
 
 ### Subsequent catalog exports
@@ -73,27 +73,27 @@ This is how it works:
 
 The catalog export will overwrite the generated files. If you need to modify the generated constants or add new LDM objects, do so through a layer of indirection: in a different file adjacent to the generated code.
 
-#### JSON Representation
+#### JSON representation
 
 A catalog export maintains keys used in an existing catalog export JSON file. You can rename keys inside the following properties:
 
-* visualizations
-* measures
-* attributes
+* Visualizations
+* Measures
+* Attributes
 * dateDataSets
 * displayForms
 
-At the next run, `gdc-catalog-export` tries to resolve the new items from the server against the existing items, and do the following:
+At the next run, `catalog-export` tries to resolve the new items from the server against the existing items, and does the following:
 
-* Preserve the existing keys by matching their identifier attributes
-* Remove the keys that do not exist on the server
-* Add the new keys from the server equal to their title property
+* Preserves the existing keys by matching their identifier attributes
+* Removes the keys that do not exist on the server
+* Adds the new keys from the server equal to their title property
 
 In addition, the existing catalog file is renamed to `catalogue.json.bak`, and the last backup gets rewritten.
 
 ### Recommendations
 
--  Include the `@gooddata/catalog-export` as a devDependency of your application and define an NPM script `refresh-ldm` to run the program.
+-  Include `@gooddata/catalog-export` as a devDependency of your application and define an NPM script `refresh-ldm` to run the program.
 -  Do not import the constants directly. Instead, wrap the constants into a namespace as follows:
 
     ```javascript
@@ -106,9 +106,9 @@ In addition, the existing catalog file is renamed to `catalogue.json.bak`, and t
 
 ### Limitations
 
-`@gooddata/catalog-export` exports only data from a project \(production data\). 
+`catalog-export` exports only data from a project \(production data\). 
 
-If you [uploaded data to your project from a file](https://help.gooddata.com/display/doc/Add+Data+from+a+File+to+a+Project), the data from the file is added as a separate dataset \(non-production data\), and `@gooddata/catalog-export` cannot retrieve it. This also includes any measures that were created using the data from that separate dataset.
+If you [uploaded data to your project from a file](https://help.gooddata.com/display/doc/Add+Data+from+a+File+to+a+Project), the data from the file is added as a separate dataset \(non-production data\), and `catalog-export` cannot retrieve it. This also includes any measures that were created using the data from that separate dataset.
 
 ### Example 
 
@@ -167,7 +167,7 @@ export const $FranchiseFeesAdRoyalty = newMeasure("aabHeqImaK0d");
 export const $FranchiseFeesOngoingRoyalty = newMeasure("aaWGcgnsfxIg");
 ```
 
-For facts, catalog-export generates an object with keys for each supported aggregation:
+For facts, `catalog-export` generates an object with keys for each supported aggregation:
 
 ```javascript
 /**
@@ -214,7 +214,7 @@ export const Cost = {
 };
 ```
 
-For date datasets, catalog-export includes one constant per attribute. The date dimension name is the prefix of the constant name. Attributes with multiple display forms are generated as follows:
+For date datasets, `catalog-export` includes one constant per attribute. The date dimension name is the prefix of the constant name. Attributes with multiple display forms are generated as follows:
 
 ```javascript
 export const TimelineMonth = {
