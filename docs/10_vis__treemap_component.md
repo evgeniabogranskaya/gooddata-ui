@@ -4,7 +4,7 @@ sidebar_label: Treemap
 copyright: (C) 2007-2018 GoodData Corporation
 id: treemap_component
 ---
-Treemap chart presents your data hierarchically as nested rectangles. Treemaps are useful for comparing proportions within the hierarchy.
+A **treemap** presents data hierarchically as nested rectangles. Treemaps are useful for comparing proportions within the hierarchy.
 
 ![Treemap Component](assets/treemap.png "Treemap Component")
 
@@ -47,19 +47,20 @@ import { Ldm } from "./ldm";
 | Name | Required? | Type | Description |
 | :--- | :--- | :--- | :--- |
 | measures | true | [Measure[]](50_custom__execution.md#measure) | An array of measure definitions|
-| viewBy | false | [Attribute](50_custom__execution.md#attribute) | An attribute definition |
-| segmentBy | false | [Attribute](50_custom__execution.md#attribute) | An attribute definition |
+| viewBy | false | [Attribute](50_custom__execution.md#attribute) | The attribute definition |
+| segmentBy | false | [Attribute](50_custom__execution.md#attribute) | The attribute definition |
 | filters | false | [Filter[]](30_tips__filter_visual_components.md) | An array of filter definitions |
 | config | false | [ChartConfig](15_props__chart_config.md) | The chart configuration object |
 | locale | false | string | The localization of the chart. Defaults to `en-US`. For other languages, see the [full list of available localizations](https://github.com/gooddata/gooddata-sdk-ui-charts/tree/master/src/translations). |
 | drillableItems | false | [DrillableItem[]](15_props__drillable_item.md)  | An array of points and attribute values to be drillable |
-| ErrorComponent | false | Component | A component to be rendered if this component is in error state. See [ErrorComponent](15_props__error_component.md).|
-| LoadingComponent | false | Component | A component to be rendered if this component is in loading state. See [LoadingComponent](15_props__loading_component.md).|
+| ErrorComponent | false | Component | A component to be rendered if this component is in error state (see [ErrorComponent](15_props__error_component.md)) |
+| LoadingComponent | false | Component | A component to be rendered if this component is in loading state (see [LoadingComponent](15_props__loading_component.md)) |
 | onError | false | Function | A callback when the component updates its error state |
 | onExportReady | false | Function | A callback when the component is ready for exporting its data |
 | onLoadingChanged | false | Function | A callback when the component updates its loading state |
 
-The following example shows the supported `config` structure with sample values. To see descriptions of individual options, see [ChartConfig section](15_props__chart_config.md).
+The following example shows the supported `config` structure with sample values. For the descriptions of the individual options, see [ChartConfig](15_props__chart_config.md).
+
 ```javascript
 {
     colors: ['rgb(195, 49, 73)', 'rgb(168, 194, 86)'],
