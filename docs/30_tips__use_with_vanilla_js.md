@@ -5,12 +5,7 @@ sidebar_label: Use Vanilla JavaScript
 copyright: (C) 2007-2018 GoodData Corporation
 ---
 
-You can build a custom bundle, include it using the `<script src=...>` HTML tag, and use it without the React framework - for example, with Vanilla JavaScript, jQuery, or other JavaScript frameworks that use direct DOM manipulation.
-
-
-* Using [webpack](https://webpack.js.org/) to transpile and bundle the files provided by GoodData.UI into a single minified file that can be included by the `<script src=...>` HTML tag
-* Creating Vanilla JavaScript helper functions for attaching and detaching React components to/from DOM nodes
-* Copying the CSS style sheet from GoodData.UI and including it in your HTML page using the `<link src=...>` HTML tag
+You can build a custom bundle, include it using the `<script src=...>` HTML tag, and use it without the React framework, for example, with Vanilla JavaScript, jQuery, or other JavaScript frameworks that use direct DOM manipulation.
 
 This tutorial focuses only on integrating GoodData.UI with Vanilla JavaScript and covers the following functional areas:
 
@@ -20,11 +15,11 @@ This tutorial focuses only on integrating GoodData.UI with Vanilla JavaScript an
 
 ## Sample code
 
-To complement this tutorial, a sample code is available at [https://github.com/gooddata/ui-sdk-examples/tree/master/vanillajs](https://github.com/gooddata/ui-sdk-examples/tree/master/vanillajs) for you to try it out.
+To complement this tutorial, sample code is available at [https://github.com/gooddata/ui-sdk-examples/tree/master/vanillajs](https://github.com/gooddata/ui-sdk-examples/tree/master/vanillajs) for you to try it out.
 
-The sample code at [Vanilla JS](https://github.com/gooddata/ui-sdk-examples/tree/master/vanillajs) is intended only for educational purposes and is subject to change. The sample code is not a production-quality part of the GoodData product offer and is provided as-is.
+This sample code is intended only for educational purposes and is subject to change. The sample code is not a production-quality part of the GoodData product offer and is provided as-is.
 
-## Step 1. Prepare the bundle
+## Step 1. Prepare the bundle.
 
 Create a simple `node.js` project with a `package.json` descriptor and an entry point JavaScript file.
 
@@ -46,47 +41,45 @@ The `package.json` npm descriptor [https://github.com/gooddata/ui-sdk-examples/b
 
 The entry point JavaScript file ([vanilla.js](https://github.com/gooddata/ui-sdk-examples/blob/vanillajs/vanillajs/create-bundle/vanilla.js)) does the following:
 
-* Imports `react` and `@gooddata/react-components`.
-* Exports an object wrapping of the GoodData.UI React components, helper functions for attaching and detaching React components to/from DOM nodes, and other elements of the GoodData.UI.
+* Imports `react` and `@gooddata/react-components`
+* Exports an object wrapping of the GoodData.UI React components, helper functions for attaching and detaching React components to/from DOM nodes, and other elements of the GoodData.UI
 
 For more information about the helper functions, see the blogpost by Benjamin Winterberg at [http://winterbe.com/posts/2015/08/24/integrate-reactjs-into-jquery-webapps/](http://winterbe.com/posts/2015/08/24/integrate-reactjs-into-jquery-webapps/).
 
 The key points are the following:
 
 * A function that mounts a specified React component with the specified props to a specific DOM element:
+    ```javascript
+    var nodes = [];
+    var render = function(component, props, targetNode, callback) {
+      var reactElement = React.createElement(component, props, null);
+      ReactDOM.render(reactElement, targetNode, callback);
+      nodes.push(targetNode);
+      return reactElement;
+    }
+    ```
 
-```javascript
-var nodes = [];
-var render = function(component, props, targetNode, callback) {
-  var reactElement = React.createElement(component, props, null);
-  ReactDOM.render(reactElement, targetNode, callback);
-  nodes.push(targetNode);
-  return reactElement;
-}
-```
-
-If you want to change props of an already mounted component, you can call the render function again rather than modify the `reactElement` created by the `React.createElement()` call.
+    If you want to change props of an already mounted component, you can call the render function again rather than modify the `reactElement` created by the `React.createElement()` call.
 
 * A function or functions that unmount(s) mounted React components to prevent memory leaks:
+    ```javascript
+    var unmountAll = function() {
+      if (nodes.length === 0) {
+        return;
+      }
+      nodes.forEach(node => React.unmountComponentAtNode(node));
+      nodes = [];
+    };
+    var unmount = function(node) {
+      React.unmountComponentAtNode(node)
+    };
+    ```
 
-```javascript
-var unmountAll = function() {
-  if (nodes.length === 0) {
-    return;
-  }
-  nodes.forEach(node => React.unmountComponentAtNode(node));
-  nodes = [];
-};
-var unmount = function(node) {
-  React.unmountComponentAtNode(node)
-};
-```
+    The sample code wraps these functions with an object named `ReactContentRenderer`.
 
-The sample code wraps these functions with an object named `ReactContentRenderer`.
+## Step 2. Build the bundle.
 
-## Step 2. Build the bundle
-
-To build the bundle and copy the CSS style sheet from the the@gooddata/react-components package, run the following commands:
+To build the bundle and copy the CSS style sheet from the `@gooddata/react-components` package, run the following commands:
 
 ```bash
 webpack --config webpack.conf.js --output-path './dist/'
@@ -107,7 +100,7 @@ yarn dist
 
 These commands create the `dist` folder with the JavaScript bundle named `gooddata_react_components_bundle.js` and the CSS style sheet named `gooddata_react_components_bundle.css`.
 
-## Step 3. Use the bundle
+## Step 3. Use the bundle.
 Make the `gooddata_react_components_bundle.js` and `gooddata_react_components_bundle.css` files accessible from the Internet so they can be referenced from your HTML code using the usual HTML elements, for example:
 
 ```javascript
@@ -127,9 +120,9 @@ or
 yarn demo
 ```
 
-Once the `gooddata_react_components_bundle.js` file is included in your HTML page, it creates a GoodData React component and the helper functions mentioned in entry point JavaScript file (`render`, `unmountAll`, `unmount`).
+Once the `gooddata_react_components_bundle.js` file is included in your HTML page, it creates a GoodData React component and the helper functions mentioned in the entry point JavaScript file (`render`, `unmountAll`, `unmount`).
 
-The following sample code shows how to render a number, which was retrieved using the Kpi component, inside a specific `<div>` element:
+The following sample code shows how to render a number retrieved using the KPI component inside a specific `<div>` element:
 
 ```javascript
 <div id="kpi"></div>

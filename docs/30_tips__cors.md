@@ -20,7 +20,7 @@ You have to overcome the CORS restriction before you can develop or deploy your 
 
 You can set up a proxy to bypass the CORS restriction on a local dev machine, because making a cross-origin request from a trusted application is safe. The proxy will make the GoodData API accessible under the same hostname and port as your web application, that is, [https://localhost:3000/gdc/](https://localhost:3000/gdc/).
 
-To set up a proxy, in your project's `/src` directory, create the `setupProxy.js` file with the following content.
+To set up a proxy, in your project's `/src` directory, create the `setupProxy.js` file with the following content:
 
 ```javascript
 const proxy = require('http-proxy-middleware');
@@ -52,12 +52,11 @@ module.exports = function (app) {
  };
 ```
 
-* If you are using Microsoft Edge or Microsoft Explorer browsers on a Windows machine, Set `cookieDomainRewrite` to the IP address on which your local web server runs
-    For example:
-    ```javascript
-    "cookieDomainRewrite": "127.0.0.1"
-    ```
-    You can get your IP address from the console output after the server started.
+**NOTE:** If you are using Microsoft Edge or Microsoft Explorer browsers on a Windows machine, set `cookieDomainRewrite` to the IP address on which your local web server runs. You can get your IP address from the console output after the server started. For example:
+
+```javascript
+"cookieDomainRewrite": "127.0.0.1"
+```
 
 The `/gdc` prefix refers to the GoodData APIs as they are hosted under [https://secure.gooddata.com/gdc](https://secure.gooddata.com/gdc). The `"secure: false"` section allows you to set up a proxy against your localhost server that may use a self-signed certificate.
 
@@ -69,9 +68,9 @@ In addition, proxying the `/*.html` pages allows you to easily establish a use
 
 Setting up CORS allows you to develop and run web applications that can communicate directly with the GoodData APIs.
 
-This section does **not** address authentication. The easiest way to make sure that your API requests to the GoodData platform are authenticated is to be logged into your white-labelled domain in the same browser you are using for your local development.
+This section does **not** address authentication. The easiest way to make sure that your API requests to the GoodData platform are authenticated is to be logged in to your white-labeled domain in the same browser that you are using for your local development.
 
-### Step 1. Get a white-labeled GoodData domain
+### Step 1. Get a white-labeled GoodData domain.
 
 By default, you access the GoodData Portal via `https://secure.gooddata.com`. If you white-label the GoodData Portal URL, you can have it at, for example, `https://analytics.example.com`.
 
@@ -81,13 +80,12 @@ White-labeling is done by the GoodData Support specialists per request submitted
 
 You can white-label a brand new domain \(see [White-Label a New Domain](https://help.gooddata.com/display/doc/White-Label+a+New+Domain)\) or an existing domain \([White-Label an Existing Domain](https://help.gooddata.com/display/doc/White-Label+an+Existing+Domain)\).
 
-### Step 2. Configure CORS
+### Step 2. Configure CORS.
 
 To request CORS setup, submit a request via the [GoodData Support Portal](https://support.gooddata.com/hc/en-us). In your request, provide the following:
 
-* The name of your GoodData domain.
-* (Optional, but recommended) URLs to enable API calls from a local machine during development. For example, `https://local.test:8443` \(you have to set up
-  `local.test` as an alias for `localhost` because using the actual localhost is not allowed\).
+* The name of your GoodData domain
+* (Optional, but recommended) URLs to enable API calls from a local machine during development, for example, `https://local.test:8443` \(you have to set up `local.test` as an alias for `localhost` because using the actual localhost is not allowed\)
 
 **Example:**
 If your white-labelled GoodData domain is `analytics.example.com` and your app is expected to be hosted at `https://smart-app.example.com/`, you can request CORS by submitting the following request:
@@ -102,4 +100,4 @@ Hello GoodData Support team, could you please enable https://smart-app.example.c
 Thank you.
 ```
 
-**NOTE:** If you followed the instructions from the tutorial [How to Create Your First Application with GoodData UI SDK](02_start__no_boilerplate.md), you can now remove the `setupProxy.js` file because it is not required anymore.
+**NOTE:** If you followed the instructions from the tutorial [Create Your First Application from Scratch](02_start__no_boilerplate.md), you can now remove the `setupProxy.js` file because it is not required anymore.

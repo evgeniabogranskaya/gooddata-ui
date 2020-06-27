@@ -5,9 +5,9 @@ copyright: (C) 2007-2018 GoodData Corporation
 id: ht_use_react_component_in_angular_2.x
 ---
 
-To be able to use the GoodData.UI Visual Components in your Angular 2+ environment, wrap each component into an Angular component, and then render the React component using `ReactDom.render` inside.
+To be able to use the visual components in your Angular 2+ environment, wrap each component into an Angular component, and then render the React component using `ReactDom.render` inside.
 
-## 1. Install dependencies
+## Step 1. Install dependencies.
 <!-- 
     For GDC developer:
     - Install ng cli using `npm install -g @angular/cli` or `yarn global add @angular/cli` and create angular app with `ng new my-sba-app`.
@@ -38,7 +38,7 @@ To be able to use the GoodData.UI Visual Components in your Angular 2+ environm
     - add KpiComponent to app.module.ts section NgModule.declarations
  -->
  
-Install latest dependencies using either `npm` or `yarn`. Your application must be able to render React components from `@gooddata/react-components` using a unique ID \(`uuid`\), and you also must be able to issue an `invariant` exception if the DOM node is not available.
+Install the latest dependencies using either `npm` or `yarn`. Your application must be able to render React components from `@gooddata/react-components` using a unique ID \(`uuid`\), and you also must be able to issue an `invariant` exception if the DOM node is not available.
 
 ```bash
 npm install --save uuid invariant react@^16.5.2 react-dom@^16.5.2 @gooddata/react-components rxjs-compat@6
@@ -52,13 +52,13 @@ yarn add @types/react @types/react-intl@2.3.8 --dev
 
 **NOTE:** When using Angular 6+, be sure to add the `(window as any).global = window;` snippet to the `polyfills.ts` file due to missing `global`.
 
-## 2. Declare the Angular wrapper component
+## Step 2. Declare the Angular wrapper component.
 The Angular wrapper component renders a React component and re-renders it on a property change.
 
 The component wrapper must be able to render React components imported from `@gooddata/react-components`. 
 You can import any supported components from the package, and then either put them together using multiple `React.createElement` functions, or make an abstract wrapper component that accepts a React component reference as a parameter. 
 
-The following examples are using a single KPI component.
+The following examples are using a single KPI component:
 
 **kpi.component.ts**:
 ```javascript
@@ -201,15 +201,13 @@ If you want to render some charts, do the following:
     
     ```
 
-**NOTE:** If you are using the `PivotTable` component, import the `pivotTable.css` file into your global styles.
+**NOTE:** If you are using the Pivot Table component, import the `pivotTable.css` file into your global styles. For more details about importing global styles in an Angular app, see the [Angular documentation](https://angular.io/guide/workspace-config#styles-and-scripts-configuration).
 
-For more details about importing global styles in an Angular app, see the [Angular documentation](https://angular.io/guide/workspace-config#styles-and-scripts-configuration).
-
-**NOTE:** When this article was last updated, there was an [outstanding issue in Angular 4](https://github.com/angular/angular/issues/14252). `ngOnDestroy` is called _after_ a DOM node has already been removed. Not calling `ReactDOM.unmountComponentAtNode(this.getRootDomNode())` results in memory leaks.
+**Important!** When this article was last updated, there was an [outstanding issue in Angular 4](https://github.com/angular/angular/issues/14252). `ngOnDestroy` is called **after** a DOM node has already been removed. Not calling `ReactDOM.unmountComponentAtNode(this.getRootDomNode())` results in memory leaks.
 
 Verify whether the issue is present in your version of Angular. If not, uncomment the commented-out line in `ngOnDestroy`.
 
-## 3. Use the component
+## 3. Use the component.
 You are now ready to use the GoodData React components in your Angular app.
 
 You can use wrapped components across your app, pass the component props to it, and even update them using data-binding.
@@ -221,7 +219,7 @@ You can use wrapped components across your app, pass the component props to it, 
 </app-kpi>
 ```
 
-If you want to handle loading and error content yourself, and you do not want to use the default LoadingComponent and ErrorComponent, pass null explicitly:
+If you want to handle the loading and error content yourself and you do not want to use the default LoadingComponent and ErrorComponent, pass a null explicitly:
 
 * `LoadingComponent={null}`
 * `ErrorComponent={null}`
