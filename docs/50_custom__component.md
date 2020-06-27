@@ -1,11 +1,11 @@
 ---
-title: Execute API Call
-sidebar_label: Execute API Call
+title: Execute an API Call
+sidebar_label: Execute an API Call
 copyright: (C) 2007-2018 GoodData Corporation
 id: execute_component
 ---
 
-Execute component allows you to execute input data and send it to the function that you chose to use and then implemented. You can use the Execute component, for example, to create a report using an arbitrary chart library.
+The Execute component allows you to execute input data and send it to the function that you chose to use and then implemented. You can use the Execute component, for example, to create a report using an arbitrary chart library.
 
 You specify the input data by using the component parameters. Then, the execution result is sent to the function that you specify as a child in the Execution component.
 
@@ -57,7 +57,7 @@ import { Execute, isEmptyResult } from '@gooddata/react-components';
 
 ## Execution result
 
-Execution result is a data structure that is returned from the GET command on the execution request URL.
+The execution result is a data structure that is returned from the GET command on the execution request URL.
 
 ### Structure
 
@@ -108,25 +108,25 @@ Execution result is a data structure that is returned from the GET command on th
 }
 ```
 
-**Data**
+**data**
 
 The `data` property lists the requested measure values, usually in a two-dimensional array. The array dimensions match the dimensions defined in `ResultSpec`. For example, in the previous code example, the first line matches the measure value \(`Sum of Orders`\) of the attribute on the first dimension \(`Apparel`\), and the first value in the second dimension matches the attribute value on the second dimension \(`Midwest`\).
 
-**Paging**
+**paging**
 
 Currently, the Execute component fetches sequentially all pages in all dimensions, so this section contains "paging" data for the first fetched page. That means only the `total` property is correct, and equals to the counts of the `data` array.
 
 Paging lists:
 
-* count \(count of items on the current page\)
-* offset \(count of items on all previous pages\)
-* total \(total count of all items on all pages\)
+* `count` \(the number of items on the current page\)
+* `offset` \(the number of items on all previous pages\)
+* `total` \(the total number of all items on all pages\)
 
 The values are listed in an array for each dimension separately. This means that you can, for example, request a paged data table in two dimensions \(lines and columns\).
 
-**Header items**
+**headerItems**
 
-The header items array lists all header items \(also called elements\) in a three-dimensional array, where:
+The `headerItems` array lists all header items \(also called elements\) in a three-dimensional array, where:
 
 * The first level has the dimensions: one or two records, one for each respective dimensions in `resultSpec.dimensions`. In the previous code example, `Apparel` is an attribute value on the first dimension, `Midwest` is an attribute value on the second dimension, and `Sum of Orders` is a measure on the second dimension.
 * The second level has the items: one record for each item in the dimension's `itemIdentifiers`. The order is the same as they were defined in `ResultSpec`.
@@ -134,7 +134,7 @@ The header items array lists all header items \(also called elements\) in a thre
 
 ## Complex use case example
 
-The following example shows how to handle `onLoadingChanged` and `onError` callbacks within a custom component. The React `key` prop is used to force remounting of the Execute component on retry. The example fails randomly 50% of the time to showcase handling of error states.
+The following example shows how to handle the `onLoadingChanged` and `onError` callbacks within a custom component. The React `key` prop is used to force remounting of the Execute component on retry. The example fails randomly 50% of the time to showcase handling of error states.
 
 ```javascript
 import React, { Component } from 'react';
