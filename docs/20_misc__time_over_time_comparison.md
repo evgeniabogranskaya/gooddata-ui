@@ -27,11 +27,11 @@ To add a SP derived measure to a visualization, use the following `newPopMeasure
 newPopMeasure(masterMeasureOrLocalId, overPeriodAttributeId, modifications)
 ```
 
-Where:
+where:
  
--  `masterMeasureOrLocalId` is the measure with data to compare; specify either measure's localIdentifier or measure itself
--  `overPeriodAttributeId` is the identifier of date dimension year attribute to use for shift
--  `modifications` is a function which receives an object with functions to customize `format()` and `alias()` 
+-  `masterMeasureOrLocalId` is the measure with data to compare; specify either the measure's `localIdentifier` or the measure itself.
+-  `overPeriodAttributeId` is the identifier of the date dimension year attribute to use for the shift.
+-  `modifications` is a function that receives an object with functions to customize `format()` and `alias()`.
  
 
 ### Example
@@ -57,7 +57,7 @@ const measures = [
 
 **Time shift**: a specified number of periods
 
-**Period**: defined by global [date filters](filter_visual_components.html#date-filter) referenced by the date data set URI or identifier in the derived measure definition.
+**Period**: defined by global [date filters](filter_visual_components.html#date-filter) referenced by the date dataset URI or identifier in the derived measure definition
 
 * For an [absolute date filter](filter_visual_components.html#absolute-date-filter), the period is N days.
 * For a [relative date filter](filter_visual_components.html#relative-date-filter), the period can be N days, weeks, months, quarters, or years depending on the selected granularity.
@@ -70,12 +70,11 @@ To add a PP derived measure to a visualization, use the following `newPreviousPe
 newPreviousPeriodMeasure(masterMeasureOrLocalId, dateDataSetsShift, modifications);
 ```
 
-Where:
+where:
 
--  `masterMeasureOrLocalId` is the measure with data to compare; specify either measure's localIdentifier or measure itself
--  `dateDataSetsShift` is definition of period shift to apply; it is an object that with `dataSet` prop for date data set identifier and
-   `periodsAgo` prop to specify the period shift
--  `modifications` is a fucntion which receives an object with functions to customize `format()` and `alias()`.
+-  `masterMeasureOrLocalId` is the measure with data to compare; specify either the measure's `localIdentifier` or the measure itself.
+-  `dateDataSetsShift` is the definition of the period shift to apply; it is an object with the `dataSet` prop for the date dataset identifier and the `periodsAgo` prop to specify the period shift.
+-  `modifications` is a fucntion that receives an object with functions to customize `format()` and `alias()`.
 
 ### Example
 

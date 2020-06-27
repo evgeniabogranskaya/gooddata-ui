@@ -35,18 +35,22 @@ To add an arithmetic measure to a visualization, use the `newArithmeticMeasure` 
 newArithmeticMeasure(operands, operator, modifications)
 ```
 
-An arithmetic measure can reference the following as its operand:
+An arithmetic measure can reference the following as its **operand**:
 * Simple measures
 * Derived measures (see [Time Over Time Comparison](20_misc__time_over_time_comparison.md))
 * Another arithmetic measures
 
-You can specify operands either by their `localIdentifier` or by their value and the factory function will extract
+You can specify operands either by their `localIdentifier` or by their value, and the factory function will extract
 the local identifier for you.
 
-The operator is one of: "sum", "difference", "multiplication", "ratio" or "change".
+The **operator** can be one of the following:
+* `sum`
+* `difference`
+* `multiplication`
+* `ratio`
+* `change`
 
-The modifications is optional and is a function with single parameter - an object with functions which you can use
-to override measure `format()` or `alias()`. 
+The **modifications** part is optional and is a function with a single parameter, which is an object with functions that you can use to override the measure's `format()` or `alias()`.
 
 If arithmetic measures reference each other in an infinite loop or the referenced measure is not found in the visualization (there is no measure with the referenced *localIdentifier*), the error message is rendered instead of the visualization.
 
