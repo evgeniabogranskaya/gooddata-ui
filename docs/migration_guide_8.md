@@ -1,6 +1,6 @@
 ---
-title: Migration from v7
-sidebar_label: Migration from v7
+title: Migration from Version 7.x
+sidebar_label: Migration from Version 7.x
 copyright: (C) 2007-2019 GoodData Corporation
 id: migration_guide_8
 ---

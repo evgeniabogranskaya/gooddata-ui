@@ -1,11 +1,11 @@
 ---
-title: Time Over Time Comparison
-sidebar_label: Time Over Time Comparison
+title: Time-over-Time Comparison
+sidebar_label: Time-over-Time Comparison
 copyright: (C) 2020 GoodData Corporation
 id: time_over_time_comparison
 ---
 
-Time over time comparison allows you to add a measure representing data from the past and compare it to another measure in a visualization. The visualization must contain at least one measure that the measure with the data from the past can reference.
+Time-over-time comparison allows you to add a measure representing data from the past and compare it to another measure in a visualization. The visualization must contain at least one measure that the measure with the data from the past can reference.
 
 The measure with the data from the past is called **derived measure**. The referenced measure is called **master measure**.
 

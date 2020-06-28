@@ -1,7 +1,7 @@
 ---
 id: platform_intro
 title: GoodData Platform Introduction
-sidebar_label: Platform Introduction
+sidebar_label: GoodData Platform Introduction
 copyright: (C) 2007-2018 GoodData Corporation
 ---
 

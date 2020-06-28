@@ -1,6 +1,6 @@
 ---
-title: Migration guide to React Components v7.x.x
-sidebar_label: Migration guide to v7.x.x
+title: Migration Guide to React Components Version 7.x
+sidebar_label: Migration Guide to React Components Version 7.x
 copyright: (C) 2007-2019 GoodData Corporation
 id: migration_guide_7
 ---

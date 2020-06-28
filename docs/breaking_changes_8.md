@@ -1,6 +1,6 @@
 ---
-title: Breaking Changes in v8
-sidebar_label: Breaking Changes in v8
+title: Breaking Changes in Version 8.0
+sidebar_label: Breaking Changes in Version 8.0
 copyright: (C) 2007-2019 GoodData Corporation
 id: breaking_changes_8
 ---

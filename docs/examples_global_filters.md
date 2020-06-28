@@ -1,6 +1,6 @@
 ---
 id: ex_global_filters
-title: Global Filters Example
+title: Global Filters
 sidebar_label: Global Filters
 copyright: (C) 2007-2018 GoodData Corporation
 ---

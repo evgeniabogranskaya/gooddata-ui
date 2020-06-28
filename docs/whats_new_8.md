@@ -1,6 +1,6 @@
 ---
-title: What's New in v8
-sidebar_label: What's New in v8
+title: What's New in Version 8.0
+sidebar_label: What's New in Version 8.0
 copyright: (C) 2007-2019 GoodData Corporation
 id: whats_new_8
 ---
