@@ -27,7 +27,7 @@ id: glossary
 
 ## E
 
-**Execution** is a term that encapsulates the process of specifying what data to calculate and how to obtain them from the backend. See [execution](50_custom__execution.md) page for more detail.
+**execution** is a term that encapsulates the process of specifying what data to calculate and how to obtain them from the backend. See [Custom Executions](50_custom__execution.md).
 
 ## F
 
